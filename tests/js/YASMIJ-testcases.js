@@ -1,4 +1,4 @@
-﻿/**
+/**
 * @project YASMIJ.js
 * @requires YASMIJ.js, Sinon.js, jQuery.js
 */
@@ -89,6 +89,13 @@ $(function(){
 		Equation.checkInput();
 		ok( stub.called );
 	});
+	test( "test Equation.convertExpressionToObject() with valid input", function(){
+		var func = Equation.convertExpressionToObject;
+		
+		deepEqual( func( "a + b -c + 4e" ), {"e":4,"c":-1,"b":1,"a":1} );
+		deepEqual( func( "-a - 1b -20c - 1.23e43d -1e-13e" ), {"d":-1.23e+43,"c":-20,"b":-1,"a":-1} );
+		deepEqual( func( "+a + 1b +20c + 1.23e43d +1e-13e" ), {"d":1.23e+43,"c":20,"b":1,"a":1} );
+	});
 	test( "test that Equation.parse calls Equation.checkInput ", function(){	
 		var stub = sinon.stub( Equation, 'checkInput' );
 		Equation.parse();
@@ -112,7 +119,7 @@ $(function(){
 		deepEqual(func( "-2x" ), {lhs:{x:-2}} );
 		deepEqual(func( "-20.2x" ), {lhs:{x:-20.2}} );
 		deepEqual(func( "-20.000042x" ), {lhs:{x:-20.000042}} );
-		deepEqual(func( "-20.34ex" ), {lhs:{x:-20e34}} );
+		deepEqual(func( "-20e34x" ), {lhs:{x:-20e34}} );
 		deepEqual(func( "-1.23e-34x" ), {lhs:{x:-1.23e-34}} );
 	});
 	
