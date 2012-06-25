@@ -1,4 +1,4 @@
-﻿/*
+/*
 * @project YASMIJ.js, "Yet another simplex method implementation in Javascript"
 */
 // Equation Class
@@ -17,9 +17,13 @@ Equation.hasOtherMathSigns = function( str ){
 	return /[\*\/%]/.test(str);
 };
 Equation.hasIncompleteBinaryOperator = function( str ){
-	var noSpaceStr = (""+str).replace( /\s/g, "" );
-	var RE_hasNoPlusOrMinus = /^[^\+\-\d]+$/, RE_noLeftAndRightTerms = /[\+\-][><=\+\-]|[><=\+\-]$/;	
-	return RE_hasNoPlusOrMinus.test(noSpaceStr) || RE_noLeftAndRightTerms.test(noSpaceStr);
+	var hasError, 
+		noSpaceStr = (""+str).replace( /\s/g, "" ),
+		RE_hasNoPlusOrMinus = /^[^\+\-]+$/, 
+		RE_noLeftAndRightTerms = /[\+\-][><=\+\-]|[><=\+\-]$/;
+	hasError =  /\s/.test( ("" + str).trim() ) && RE_hasNoPlusOrMinus.test(noSpaceStr);
+	hasError = hasError || RE_noLeftAndRightTerms.test(noSpaceStr);
+	return hasError;
 };
 Equation.getErrorMessage = function( str ){
 	var errMsg;
@@ -40,6 +44,19 @@ Equation.checkInput = function( str ){
 		throw new Error( errMsg );
 	}
 };
+Equation.convertExpressionToObject = function (str) {
+	var noSpacesStr = ("" + str).replace(/\s/g, ''),
+	RE_findTerms = /[\-]?[^\-\+=><]+/g,
+	matches = noSpacesStr.match(RE_findTerms),
+	term,
+	obj = {}, i = matches.length;
+	while( i-- ){
+		term = matches[ i ];
+		val = parseFloat( term );
+		obj[ term.match(/[^\d\-\+]+$/) ] = parseFloat( term ) || ( /^-/.test( term ) ? -1 : 1);
+	}
+	return obj;
+};
 Equation.parse = function( str ){
 	Equation.checkInput( str );
 	if( !str ){
@@ -48,6 +65,10 @@ Equation.parse = function( str ){
 	if( !isNaN( str ) ){
 		return { lhs: {1: parseFloat(str) } }
 	}
+	var obj = {
+		lhs: Equation.convertExpressionToObject(str)
+	}
+	return obj;
 };
 /*
 // Simplex Class
