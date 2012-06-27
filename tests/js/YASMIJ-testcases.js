@@ -89,12 +89,62 @@ $(function(){
 		Equation.checkInput();
 		ok( stub.called );
 	});
+	test( "test Equation.convertStrToTermArray() with positive terms", function(){
+		var func = Equation.convertStrToTermArray;
+		
+		deepEqual( func(""), [1, ""] );
+		deepEqual( func("e"), [1, "e"] );
+		deepEqual( func("1e"), [1, "e"] );
+		deepEqual( func("23e"), [23, "e"] );
+		
+		deepEqual( func("4.4e"), [4.4, "e"] );
+		deepEqual( func("1.23e-32e"), [1.23e-32, "e"] );
+		deepEqual( func("1.23e32e"), [1.23e32, "e"] );
+		
+		deepEqual( func("1.23e+32e"), [1.23e32, "e"] );
+	});
+	test( "test Equation.convertStrToTermArray() with negative terms", function(){
+		var func = Equation.convertStrToTermArray;
+		
+		deepEqual( func("-e"), [-1, "e"] );
+		deepEqual( func("-1e"), [-1, "e"] );
+		deepEqual( func("-44e"), [-44, "e"] );
+		
+		deepEqual( func("-4.4e"), [-4.4, "e"] );
+		deepEqual( func("-1.23e-32e"), [-1.23e-32, "e"] );
+		deepEqual( func("-1.23e32e"), [-1.23e32, "e"] );
+		
+		deepEqual( func("-1.23e+32e"), [-1.23e32, "e"] );
+	});
+	test( "test Equation.getTermsFromStr() with positive terms", function(){
+		var func = Equation.getTermsFromStr;
+		
+		deepEqual( func("a"), ["a"] );
+		deepEqual( func("+a + b + c"), ["a","b", "c"] );
+		deepEqual( func("3a + 34b + 2.3c + 1.3e23d"), ["3a","34b", "2.3c", "1.3e23d"] );
+		deepEqual( func("3e3a + 1e+34b + 2.3e+30c + 1.3e+23d"), ["3e3a", "1e+34b", "2.3e+30c", "1.3e+23d"] );
+		deepEqual( func("3e-3a + 1e-34b + 2.3e-30c + 1.3e-23d"), ["3e-3a", "1e-34b", "2.3e-30c", "1.3e-23d"] );
+	});
+	test( "test Equation.getTermsFromStr() with negative terms", function(){
+		var func = Equation.getTermsFromStr;
+		
+		deepEqual( func("-a"), ["-a"] );
+		deepEqual( func("-a - b -c"), ["-a","-b", "-c"] );
+		deepEqual( func("-3a -34b -2.3c -1.3e23d"), ["-3a","-34b", "-2.3c", "-1.3e23d"] );
+		deepEqual( func("-3e3a -1e+34b -2.3e+30c -1.3e+23d"), ["-3e3a", "-1e+34b", "-2.3e+30c", "-1.3e+23d"] );
+		deepEqual( func("-3e-3a -1e-34b -2.3e-30c -1.3e-23d"), ["-3e-3a", "-1e-34b", "-2.3e-30c", "-1.3e-23d"] );
+	});
+	test( "test Equation.getTermsFromStr() with negative terms", function(){
+		var func = Equation.getTermsFromStr;
+		
+		deepEqual( func("-a + b -c +d"), ["-a","b","-c","d"] );
+	});
 	test( "test Equation.convertExpressionToObject() with valid input", function(){
 		var func = Equation.convertExpressionToObject;
 		
 		deepEqual( func( "a + b -c + 4e" ), {"e":4,"c":-1,"b":1,"a":1} );
-		deepEqual( func( "-a - 1b -20c - 1.23e43d -1e-13e" ), {"d":-1.23e+43,"c":-20,"b":-1,"a":-1} );
-		deepEqual( func( "+a + 1b +20c + 1.23e43d +1e-13e" ), {"d":1.23e+43,"c":20,"b":1,"a":1} );
+		deepEqual( func( "-a - 1b -20c - 1.23e43d -1e-13e" ), { "e":-1e-13, "d":-1.23e+43,"c":-20,"b":-1,"a":-1} );
+		deepEqual( func( "+a + 1b +20c + 1.23e43d +1e-13e" ), { "e":1e-13, "d":1.23e+43,"c":20,"b":1,"a":1} );
 	});
 	test( "test that Equation.parse calls Equation.checkInput ", function(){	
 		var stub = sinon.stub( Equation, 'checkInput' );
