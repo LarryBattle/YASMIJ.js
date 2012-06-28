@@ -1,24 +1,60 @@
 /*
- * @project YASMIJ.js, "Yet another simplex method implementation in Javascript"
- */
+* @project YASMIJ.js, "Yet another simplex method implementation in Javascript"
+* @author Larry Battle
+* @date 06/27/2012
+*/
+ 
+/*
+* Expands the string object to support trimming of a the trim.
+*
+* @returns {String}
+* @example "  x  ".trim() == "x";
+*/
 String.prototype.trim = String.prototype.trim || function(){
 	return (this||"").replace(/^\s+|\s+$/g, "");
 };
-// Equation Class
+/*
+* Create an Equation Object
+*
+* @constructor
+* @returns
+* @example
+*/
 var Equation = function () {
 	this.comparison = "";
 	this.leftSide = {};
 	this.rightSide = {};
 	this.terms = [];
 };
+/*
+* Checks to see if string has more than 1 >, < or =.
+*
+* @param {String}
+* @returns {Boolean}
+* @example Equation.hasManyCompares( "a < b < c" ) == true;
+*/
 Equation.hasManyCompares = function (str) {
 	var RE_compares = /[<>]=?|=/g;
 	var matches = ("" + str).replace(/\s/g, "").match(RE_compares) || [];
 	return 1 < matches.length;
 };
+/*
+* Checks to see if string has more than *, \, % character.
+*
+* @param {String}
+* @returns {Boolean}
+* @example Equation.hasOtherMathSigns( "a * b + c" ) == true;
+*/
 Equation.hasOtherMathSigns = function (str) {
 	return (/[\*\/%]/).test(str);
 };
+/*
+* Checks to see if string doesn't a left and right terms with each addition and subtraction operation.
+*
+* @param {String}
+* @returns {Boolean}
+* @example Equation.hasIncompleteBinaryOperator( "a + b +" ) == true;
+*/
 Equation.hasIncompleteBinaryOperator = function (str) {
 	var hasError,
 	noSpaceStr = ("" + str).replace(/\s/g, ""),
@@ -28,6 +64,13 @@ Equation.hasIncompleteBinaryOperator = function (str) {
 	hasError = hasError || RE_noLeftAndRightTerms.test(noSpaceStr);
 	return hasError;
 };
+/*
+* Checks to see if string comply with standards.
+*
+* @param {String}
+* @returns {String} Error Message 
+* @example Equation.getErrorMessage( "a + b" ) == null;
+*/
 Equation.getErrorMessage = function (str) {
 	var errMsg;
 	if (Equation.hasManyCompares(str)) {
@@ -41,22 +84,54 @@ Equation.getErrorMessage = function (str) {
 	}
 	return errMsg;
 };
+/*
+* Checks to see if string doesn't comply with standards.
+*
+* @param {String}
+* @throws Error
+* @example Equation.checkInput( "a / b" ); // throws Error();
+*/
 Equation.checkInput = function (str) {
 	var errMsg = Equation.getErrorMessage(str);
 	if (errMsg) {
 		throw new Error(errMsg);
 	}
 };
+/*
+* Extracts coeffient and variable name from a variable.
+*
+* @param {String}
+* @returns {Array[ Number, String ]} 
+* @example Equation.convertStrToTermArray( "10cows" ); //returns [10, "cows"]
+*/
 Equation.convertStrToTermArray = function(str){
+	// try thing... str.match( /(\d+)(.+)/ ).splice(1)
+	var term = (""+((/[^\d\-]+$/).exec(str)||"")) || "1";
 	var coeff = parseFloat(str) || (/^\s*-/.test(str)?-1:1);
-	var term = ""+((/[^\d\-]+$/).exec(str)||"");
-    return [ coeff, term ];
+	if( +str == 0){
+		coeff = 0;
+	}
+    return [ +coeff, term ];
 };
-// @returns {array}
+/*
+* Split string by terms.
+*
+* @param {String}
+* @returns {String[]} 
+* @example Equation.convertStrToTermArray( "-a + 32c" ); //returns [ "-a", "32c"]
+*/
 Equation.getTermsFromStr = function(str){
 	var RE_findSignForTerm = /([\+\-])\s+/g; 
-	return (""+str).replace(/^\s*\+/,"").replace( RE_findSignForTerm, "$1").split(/\s+[\+]?/);
+	var RE_spaceOrPlus = /\s+[\+]?/;
+	return (""+str).replace(/^\s*\+/,"").replace( RE_findSignForTerm, "$1").split( RE_spaceOrPlus );
 };
+/*
+* Converts an linear algebraic expression into an object.
+*
+* @param {String}
+* @returns {Object} 
+* @example Equation.convertExpressionToObject( "a + 20b + 10" ); //returns {a:1, b:20, 1:10}
+*/
 Equation.convertExpressionToObject = function (str) {
 	var term, obj = {},
 		matches = Equation.getTermsFromStr( str ),
@@ -67,6 +142,13 @@ Equation.convertExpressionToObject = function (str) {
 	}
 	return obj;
 };
+/*
+* 
+*
+* @param {String}
+* @returns {} 
+* @example Equation.convertExpressionToObject(  ); //returns 
+*/
 Equation.parse = function (str) {
 	Equation.checkInput(str);
 	str = (""+(str||"")).trim();
@@ -75,12 +157,14 @@ Equation.parse = function (str) {
 		obj = {
 			0 : 1
 		};
-	}else if ( !obj && !isNaN(str)) {
-		obj = {
-			1 : parseFloat(str)
-		};		
 	}else{
-		obj = Equation.convertExpressionToObject(str);
+		if ( !isNaN(str)) {
+			obj = {
+				1 : parseFloat(str)
+			};		
+		}else{
+			obj = Equation.convertExpressionToObject(str);
+		}
 	}
 	return {lhs:obj};
 };
