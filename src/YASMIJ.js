@@ -1,7 +1,7 @@
 /*
 * @project YASMIJ.js, "Yet another simplex method implementation in Javascript"
 * @author Larry Battle
-* @date 06/27/2012
+* @date 06/29/2012
 */
  
 /*
@@ -109,17 +109,14 @@ Equation.convertStrToTermArray = function(str){
 	var re = /^[\+\-]?\d+(\.\d+)?(e[\+\-]?\d+)?/i;
     var coeff = ""+(str.match(re)||[""])[0];
     var term = str.replace( re, '') || "1";
+	if( +str === 0){
+		coeff = 0;
+	}
 	if(coeff === ""){
 		coeff = /^\-/.test(term) ? -1 : 1;
 		term = term.replace( /^[\+\-]/, "" );
 	}
     return [ +coeff, term ];
-	// var term = (""+((/[^\d\-]+$/).exec(str)||"")) || "1";
-	// var coeff = parseFloat(str) || (/^\s*-/.test(str)?-1:1);
-	// if( +str === 0){
-		// coeff = 0;
-	// }
-    // return [ +coeff, term ];
 };
 /*
 * Split string by terms.
@@ -143,7 +140,7 @@ Equation.getTermsFromStr = function(str){
 */
 Equation.convertExpressionToObject = function (str) {
 	var term, obj = {},
-		matches = Equation.getTermsFromStr( str ),
+		matches = Equation.getTermsFromStr( (str||"").trim() ),
 		i = matches.length;
 	while (i--) {
 		term = Equation.convertStrToTermArray( matches[i] );
