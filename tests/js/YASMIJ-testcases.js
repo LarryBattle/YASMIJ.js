@@ -84,14 +84,6 @@ $(function(){
 		ok( func( "a * b" ) );
 		ok( func( "a + b+" ) );
 	});
-	test( "test that Equation.checkInput calls Equation.getErrorMessage", function(){	
-		var oldFunc = Equation.getErrorMessage;
-		var stub = sinon.stub( Equation, 'getErrorMessage' );
-		Equation.checkInput();
-		ok( stub.called );
-		//stub.restore();
-		Equation.getErrorMessage = oldFunc;
-	});
 	test( "test Equation.convertStrToTermArray() with positive terms", function(){
 		var func = Equation.convertStrToTermArray;
 		
@@ -215,13 +207,6 @@ $(function(){
 		deepEqual(func( "-20.2x + 2.4y +10e30" ), {x:-20.2, y:2.4, 1:10e30} );
 		deepEqual(func( "-20e34x + 23 - 4 - 4x + 1" ), {x:-2e+35, 1:20} );
 	});
-	test( "test that Equation.parse calls Equation.checkInput ", function(){	
-		var oldFunc = Equation.parse;
-		var stub = sinon.stub( Equation, 'checkInput' );
-		Equation.parse();
-		ok( stub.called );
-		Equation.parse = oldFunc;
-	});
 	test("test Equation.parse() with invalid input", function(){
 		var func = Equation.parse;
 		raises(function(){
@@ -239,132 +224,35 @@ $(function(){
 	});
 	test("test Equation.parse() with valid expressions", function(){
 		var func = Equation.parse;
-		deepEqual( func( "10x1 -2x2 - 10" ), {lhs:{"x1":10,"x2":-2, 1:-10}} );
+		deepEqual( func( "10x1 -2x2 - 10" ), {lhs:{"x1":10,"x2":-2, "1":-10}} );
 	});
-	// test("test Equation.parse() with different compares", function(){
-		// var func = Equation.parse;
-		// deepEqual( func(), {
-			// lhs:{}
-		// });
-	// });
-	test( "test number only re check", function(){
-		var re = /^[\+\-]?\d+(\.\d+)?$/;
-		var func = function(str){
-			return re.test(str);
-		};
-		equal( func( "0" ), true );
-		equal( func( "1.0" ), true );
-		equal( func( "+10" ), true );
-		equal( func( "-12" ), true );
-		equal( func( "+10.3" ), true );
-		equal( func( "-12.34" ), true );
-		
-		equal( func( ".0" ), false );
-		equal( func( ".1.0" ), false );
-		equal( func( ".+1.0" ), false );
-		equal( func( ".-1-2" ), false );
-		equal( func( "+10+.3" ), false );
-		equal( func( "-1.2.34" ), false );
-	});
-	test( "test scientific notated numbers only re check", function(){
-		var re = /^[\+\-]?\d+(\.\d+)?e[\+\-]?\d+$/;
-		var func = function(str){
-			return re.test(str);
-		};
-		equal( func( "+1e10" ), true );
-		equal( func( "-23e10" ), true );
-		
-		equal( func( "+1.34e9" ), true );
-		equal( func( "-8.34e90" ), true );
-		
-		equal( func( "+1.34e+9" ), true );
-		equal( func( "-321.34e+39" ), true );
-		
-		equal( func( "+1.34e-9" ), true );
-		equal( func( "-321.34e-39" ), true );
-		
-		equal( func( "1e10" ), true );
-		equal( func( "23e10" ), true );
-		
-		equal( func( "1.34e9" ), true );
-		equal( func( "8.34e90" ), true );
-		
-		equal( func( "1.34e+9" ), true );
-		equal( func( "321.34e+39" ), true );
-		
-		equal( func( "1.34e-9" ), true );
-		equal( func( "321.34e-39" ), true );
-		
-		equal( func( "e1e10" ), false );
-		equal( func( "23e1-0" ), false );
-		
-		equal( func( "1.34e?9" ), false );
-		equal( func( "8.3.4e90" ), false );
-		
-		equal( func( "1.34+e+9" ), false );
-		equal( func( "321.3-4e+39" ), false );
-		
-		equal( func( "1.x34e-9" ), false );
-		equal( func( "321.34e-39." ), false );
-		
-	});
-	test( "test both scientifc numbers and numbers with re check", function(){
-		var re = /^[\+\-]?\d+(\.\d+)?(e[\+\-]?\d+)?/i;
-		var func = function(str){
-			return re.test(str);
-		};
-		var func = function(str){
-			return re.test(str);
-		};
-		equal( func( "0" ), true );
-		equal( func( "1.0" ), true );
-		equal( func( "+10" ), true );
-		equal( func( "-12" ), true );
-		equal( func( "+10.3" ), true );
-		equal( func( "-12.34" ), true );
-		
-		equal( func( ".0" ), false );
-		equal( func( ".1.0" ), false );
-		equal( func( ".+1.0" ), false );
-		equal( func( ".-1-2" ), false );
-		equal( func( "+10+.3" ), false );
-		equal( func( "-1.2.34" ), false );
-		
-		equal( func( "+1e10" ), true );
-		equal( func( "-23e10" ), true );
-		
-		equal( func( "+1.34e9" ), true );
-		equal( func( "-8.34e90" ), true );
-		
-		equal( func( "+1.34e+9" ), true );
-		equal( func( "-321.34e+39" ), true );
-		
-		equal( func( "+1.34e-9" ), true );
-		equal( func( "-321.34e-39" ), true );
-		
-		equal( func( "1e10" ), true );
-		equal( func( "23e10" ), true );
-		
-		equal( func( "1.34e9" ), true );
-		equal( func( "8.34e90" ), true );
-		
-		equal( func( "1.34e+9" ), true );
-		equal( func( "321.34e+39" ), true );
-		
-		equal( func( "1.34e-9" ), true );
-		equal( func( "321.34e-39" ), true );
-		
-		equal( func( "e1e10" ), false );
-		equal( func( "23e1-0" ), false );
-		
-		equal( func( "1.34e?9" ), false );
-		equal( func( "8.3.4e90" ), false );
-		
-		equal( func( "1.34+e+9" ), false );
-		equal( func( "321.3-4e+39" ), false );
-		
-		equal( func( "1.x34e-9" ), false );
-		equal( func( "321.34e-39." ), false );
+	test("test Equation.parse() with different compares", function(){
+		var func = Equation.parse;
+		deepEqual( func( "2a + 3b <= 30" ), {
+			lhs:{ "a":2,"b":3},
+			rhs:{ "1":30 },
+			relation:"<="
+		});
+		deepEqual( func( "2a - 30 >= 4 + a2" ), {
+			lhs:{ "a":2, "1": -30 },
+			rhs:{ "a2": 1, "1": 4 },
+			relation:">="
+		});
+		deepEqual( func( "2a - 30 > 4 + a2" ), {
+			lhs:{ "a":2, "1": -30 },
+			rhs:{ "a2": 1, "1": 4 },
+			relation:">"
+		});
+		deepEqual( func( "2a - 30 < 4 + a2" ), {
+			lhs:{ "a":2, "1": -30 },
+			rhs:{ "a2": 1, "1": 4 },
+			relation:"<"
+		});
+		deepEqual( func( "2a + 12 = 2a + 12" ), {
+			lhs:{ "a":2, "1": 12 },
+			rhs:{ "a":2, "1": 12 },
+			relation:"="
+		});
 	});
 	/*
 	module( "Input Class" );
