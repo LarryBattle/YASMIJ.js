@@ -105,12 +105,21 @@ Equation.checkInput = function (str) {
 * @example Equation.convertStrToTermArray( "10cows" ); //returns [10, "cows"]
 */
 Equation.convertStrToTermArray = function(str){
-	var term = (""+((/[^\d\-]+$/).exec(str)||"")) || "1";
-	var coeff = parseFloat(str) || (/^\s*-/.test(str)?-1:1);
-	if( +str === 0){
-		coeff = 0;
+	str = ""+str;
+	var re = /^[\+\-]?\d+(\.\d+)?(e[\+\-]?\d+)?/i;
+    var coeff = ""+(str.match(re)||[""])[0];
+    var term = str.replace( re, '') || "1";
+	if(coeff === ""){
+		coeff = /^\-/.test(term) ? -1 : 1;
+		term = term.replace( /^[\+\-]/, "" );
 	}
     return [ +coeff, term ];
+	// var term = (""+((/[^\d\-]+$/).exec(str)||"")) || "1";
+	// var coeff = parseFloat(str) || (/^\s*-/.test(str)?-1:1);
+	// if( +str === 0){
+		// coeff = 0;
+	// }
+    // return [ +coeff, term ];
 };
 /*
 * Split string by terms.

@@ -309,7 +309,7 @@ $(function(){
 		
 	});
 	test( "test both scientifc numbers and numbers with re check", function(){
-		var re = /^[\+\-]?\d+(\.\d+)?(e[\+\-]?\d+)?$/i;
+		var re = /^[\+\-]?\d+(\.\d+)?(e[\+\-]?\d+)?/i;
 		var func = function(str){
 			return re.test(str);
 		};
