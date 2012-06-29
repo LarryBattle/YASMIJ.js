@@ -105,10 +105,9 @@ Equation.checkInput = function (str) {
 * @example Equation.convertStrToTermArray( "10cows" ); //returns [10, "cows"]
 */
 Equation.convertStrToTermArray = function(str){
-	// try thing... str.match( /(\d+)(.+)/ ).splice(1)
 	var term = (""+((/[^\d\-]+$/).exec(str)||"")) || "1";
 	var coeff = parseFloat(str) || (/^\s*-/.test(str)?-1:1);
-	if( +str == 0){
+	if( +str === 0){
 		coeff = 0;
 	}
     return [ +coeff, term ];
@@ -123,6 +122,7 @@ Equation.convertStrToTermArray = function(str){
 Equation.getTermsFromStr = function(str){
 	var RE_findSignForTerm = /([\+\-])\s+/g; 
 	var RE_spaceOrPlus = /\s+[\+]?/;
+	//var re = /(?=[^e\s])(-)(?=[^e])/gi;
 	return (""+str).replace(/^\s*\+/,"").replace( RE_findSignForTerm, "$1").split( RE_spaceOrPlus );
 };
 /*
@@ -130,7 +130,7 @@ Equation.getTermsFromStr = function(str){
 *
 * @param {String}
 * @returns {Object} 
-* @example Equation.convertExpressionToObject( "a + 20b + 10" ); //returns {a:1, b:20, 1:10}
+* @example Equation.convertExpressionToObject( "13 + 3a -2b +5b -3" ); //returns {a:3,b:3,1:10}
 */
 Equation.convertExpressionToObject = function (str) {
 	var term, obj = {},
@@ -138,7 +138,7 @@ Equation.convertExpressionToObject = function (str) {
 		i = matches.length;
 	while (i--) {
 		term = Equation.convertStrToTermArray( matches[i] );
-		obj[term[1]] = term[0];
+		obj[term[1]] = (obj[term[1]]) ? (obj[term[1]]) + term[0] : term[0];
 	}
 	return obj;
 };
@@ -146,27 +146,20 @@ Equation.convertExpressionToObject = function (str) {
 * 
 *
 * @param {String}
-* @returns {} 
-* @example Equation.convertExpressionToObject(  ); //returns 
+* @returns {Object} 
+* @example 
 */
 Equation.parse = function (str) {
 	Equation.checkInput(str);
-	str = (""+(str||"")).trim();
-	var obj;
-	if (!str) {
-		obj = {
-			0 : 1
-		};
-	}else{
-		if ( !isNaN(str)) {
-			obj = {
-				1 : parseFloat(str)
-			};		
-		}else{
-			obj = Equation.convertExpressionToObject(str);
-		}
+	var re = /[><]=?|=/;
+	var arr = (""+str).split(re);
+	var obj = {};
+	obj.lhs = Equation.convertExpressionToObject(arr[0]);
+	if( 1 < arr.length ){
+		obj.rhs = Equation.convertExpressionToObject(arr[1]);
+		obj.relation = "" + re.exec(str);
 	}
-	return {lhs:obj};
+	return obj;
 };
 /*
 // Simplex Class
