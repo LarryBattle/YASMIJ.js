@@ -1,7 +1,8 @@
 /*
 * @project YASMIJ.js, "Yet another simplex method implementation in Javascript"
 * @author Larry Battle
-* @date 06/29/2012
+* @license MIT License <http://www.opensource.org/licenses/mit-license>
+* @date 07/02/2012
 */
  
 /*
@@ -24,12 +25,13 @@ var Equation = function () {
 	this.comparison = "";
 	this.leftSide = {};
 	this.rightSide = {};
-	this.terms = [];
+	this.terms = {};
+	return this;
 };
 /*
-* Checks to see if string has more than 1 >, < or =.
+* Checks to see if a string has more than one of these symbols; ">", "<", ">=", "<=", "=".
 *
-* @param {String}
+* @param {String} str
 * @returns {Boolean}
 * @example Equation.hasManyCompares( "a < b < c" ) == true;
 */
@@ -39,9 +41,9 @@ Equation.hasManyCompares = function (str) {
 	return 1 < matches.length;
 };
 /*
-* Checks to see if string has more than *, \, % character.
+* Checks to see if a string has any of the these symbols; "*", "\", "%".
 *
-* @param {String}
+* @param {String} str
 * @returns {Boolean}
 * @example Equation.hasOtherMathSigns( "a * b + c" ) == true;
 */
@@ -49,9 +51,9 @@ Equation.hasOtherMathSigns = function (str) {
 	return (/[\*\/%]/).test(str);
 };
 /*
-* Checks to see if string doesn't a left and right terms with each addition and subtraction operation.
+* Checks to see if a string doesn't have a left and right terms with each addition and subtraction operation.
 *
-* @param {String}
+* @param {String} str
 * @returns {Boolean}
 * @example Equation.hasIncompleteBinaryOperator( "a + b +" ) == true;
 */
@@ -67,7 +69,7 @@ Equation.hasIncompleteBinaryOperator = function (str) {
 /*
 * Checks to see if string comply with standards.
 *
-* @param {String}
+* @param {String} str
 * @returns {String} Error Message 
 * @example Equation.getErrorMessage( "a + b" ) == null;
 */
@@ -87,7 +89,7 @@ Equation.getErrorMessage = function (str) {
 /*
 * Checks to see if string doesn't comply with standards.
 *
-* @param {String}
+* @param {String} str
 * @throws Error
 * @example Equation.checkInput( "a / b" ); // throws Error();
 */
@@ -100,7 +102,7 @@ Equation.checkInput = function (str) {
 /*
 * Extracts coeffient and variable name from a variable.
 *
-* @param {String}
+* @param {String} str
 * @returns {Array[ Number, String ]} 
 * @example Equation.convertStrToTermArray( "10cows" ); //returns [10, "cows"]
 */
@@ -121,20 +123,19 @@ Equation.convertStrToTermArray = function(str){
 /*
 * Split string by terms.
 *
-* @param {String}
+* @param {String} str
 * @returns {String[]} 
 * @example Equation.convertStrToTermArray( "-a + 32c" ); //returns [ "-a", "32c"]
 */
 Equation.getTermsFromStr = function(str){
 	var RE_findSignForTerm = /([\+\-])\s+/g; 
 	var RE_spaceOrPlus = /\s+[\+]?/;
-	//var re = /(?=[^e\s])(-)(?=[^e])/gi;
 	return (""+str).replace(/^\s*\+/,"").replace( RE_findSignForTerm, "$1").split( RE_spaceOrPlus );
 };
 /*
 * Converts an linear algebraic expression into an object.
 *
-* @param {String}
+* @param {String} str
 * @returns {Object} 
 * @example Equation.convertExpressionToObject( "13 + 3a -2b +5b -3" ); //returns {a:3,b:3,1:10}
 */
@@ -151,81 +152,64 @@ Equation.convertExpressionToObject = function (str) {
 /*
 * 
 *
+* @param {String} obj
+* @returns {Object} 
+* @example 
+*/
+Equation.getTerms = function (obj) {
+	if( typeof obj !== "object" ){
+		return [];
+	}
+	var terms = [], key;
+	for (key in obj) {
+		if (!obj.hasOwnProperty(key)) {			
+			continue;
+		}
+		if(+key){
+			terms.push(obj[key]);
+		}else{
+			terms.push(key);
+		}
+	}
+	return terms;
+};
+/*
+* 
+*
 * @param {String}
 * @returns {Object} 
 * @example 
 */
-Equation.parse = function (str) {
+Equation.parseToObject = function (str) {
 	Equation.checkInput(str);
-	var re = /[><]=?|=/;
-	var arr = (""+str).split(re);
+	var RE_relation = /[><]=?|=/;
+	var arr = (""+str).split(RE_relation);
 	var obj = {};
 	obj.lhs = Equation.convertExpressionToObject(arr[0]);
 	if( 1 < arr.length ){
 		obj.rhs = Equation.convertExpressionToObject(arr[1]);
-		obj.relation = "" + re.exec(str);
+		obj.relation = "" + RE_relation.exec(str);
 	}
 	return obj;
 };
 /*
-// Simplex Class
-var Simplex = function(){
-this.input = new Input();
-this.output = new Output();
-this.tableau = new Tableau();
-this.state;
+* 
+*
+* @param {String}
+* @returns {Object} 
+* @example 
+*/
+Equation.parse = function(str){
+	var obj = Equation.parseToObject(str), e;
+	if( obj ){
+		e = new Equation();
+		this.relation = obj.relation;
+		this.leftSide = obj.lhs;
+		this.rightSide = obj.rhs;
+		this.terms = {
+			lhs: Equation.getTerms(obj.lhs),
+			rhs: Equation.getTerms(obj.rhs)
+		};
+	}
+	return e;
 };
-Simplex.prototype = {
-toString:function(){
-},
-setInput:function( obj ){
-this.input.parse( obj );
-}
-};
-// Input Class
-var Input = function(){
-this.z;
-this.raw;
-this.type;
-this.variables;
-this.constraints;
-};
-Input.checkForRequirements = function( obj ){
-var errMsg = "Input Object";
-if( !obj || typeof obj !== "object" ){
-errMsg = "must be an object with properies `z`, `constraints` and `type`.";
-}
-return errMsg;
-}
-Input.prototype = {
-toString:function(){
-},
-parse:function( obj ){
-this.raw = obj;
-var zEquation = new Equation(obj.z);
-this.z = obj.z;
-}
-};
-// Matrix Class
-var Matrix = function(){
-this.columnLength;
-this.rowLength;
-this.matrix;
-};
-// Tableau Class
-var Tableau = function(){
-this.matrix;
-this.limit;
-this.state;
-};
-
-// Output Class
-var Output = function(){
-this.matrix;
-this.result;
-};
-Output.prototype = {
-toString:function(){
-}
-};
- */

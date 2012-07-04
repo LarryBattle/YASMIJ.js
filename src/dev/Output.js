@@ -4,10 +4,10 @@
 * @license MIT License <http://www.opensource.org/licenses/mit-license>
 * @date 07/02/2012
 */
-
-tests.runYASMIJTests = function(){
-	module( "YASMIJ Class" );
-	test( "test YASMIJ Class", function(){
-		ok(1);
-	});
-}
+ 
+// Output Class
+var Output = function(){
+	this.matrix;
+	this.result;
+};
+Output.prototype.toString = function(){};

@@ -5,9 +5,9 @@
 * @date 07/02/2012
 */
 
-tests.runYASMIJTests = function(){
-	module( "YASMIJ Class" );
-	test( "test YASMIJ Class", function(){
+tests.runInputTests = function(){
+	module( "Input Class" );
+	test( "test Input Class", function(){
 		ok(1);
 	});
 }

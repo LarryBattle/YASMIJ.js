@@ -5,9 +5,9 @@
 * @date 07/02/2012
 */
 
-tests.runYASMIJTests = function(){
-	module( "YASMIJ Class" );
-	test( "test YASMIJ Class", function(){
+tests.runTableauTests = function(){
+	module( "Tableau Class" );
+	test( "test Tableau Class", function(){
 		ok(1);
 	});
 }
