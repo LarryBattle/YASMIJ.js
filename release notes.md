@@ -1,13 +1,20 @@
-## Project YASMIJ.js
-
-## Project Page ## 
+#YASMIJ.js
+## Project Page
 https://github.com/LarryBattle/yasmij.js
 
-## Version: 0.0.2
+## Version: 
+0.0.9.1
 
-## Date: 07/3/12
+## Date: 
+07/3/12
 
 ## Release notes
+
+###@Version: 0.0.9.1
+Unstable.
+
+###@Version: 0.0.9
+Undocumented 
 
 ###@Version: 0.0.2
 File: "release notes.md"
