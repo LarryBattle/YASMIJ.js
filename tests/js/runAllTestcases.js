@@ -4,4 +4,5 @@
 */
 var runAllTests = function(){
 	tests.runEquationTests();
+	tests.runExpressionTests();
 };
