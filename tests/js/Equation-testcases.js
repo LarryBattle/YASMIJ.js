@@ -69,21 +69,41 @@ tests.runEquationTests = function(){
 		ok( func( "a * b" ) );
 		ok( func( "a + b+" ) );
 	});
-	module( "Equation Class: input conversion" );
-	test("test Equation.checkInput() with invalid input", function(){
+	module( "Equation Class: Check input" );
+	test("test Equation.getErrorMessage() with valid input.", function(){
+		var func = Equation.getErrorMessage;
+		var x = undefined;
+		equal( func( "a < c" ), x );
+		equal( func( "a > c" ), x );
+		equal( func( "a <= c" ), x );
+		
+		equal( func( "a >= c" ), x );
+		equal( func( "a = c" ), x );
+		equal( func( "a < c + 12" ), x );
+		
+		equal( func( "a - 3 > c" ), x );
+		equal( func( "12 + 2 <= c" ), x );
+		equal( func( "2 >= 1" ), x );
+		
+		equal( func( "13 = 13" ), x );
+	});
+	test("test Equation.checkInput() will throw an error when Equation.getErrorMessage returns a message.", function(){
+		var args = "error";
+		var oldFunc = Equation.getErrorMessage;
+		Equation.getErrorMessage = function(){
+			return args;
+		};
 		var func = Equation.checkInput;
-		raises(function(){
-			func( "a < b < c" );
-		});
-		raises(function(){
-			func( "a == b" );
-		});
-		raises(function(){
-			func( "a += b" );
-		});
-		raises(function(){
-			func( "a <= b * -1" );
-		});
+		try{
+			raises(function(){
+				func();
+			});
+			args = "";
+			ok(	!func() );
+		}
+		catch(e){
+		}
+		Equation.getErrorMessage = oldFunc;
 	});
 	test("test Equation.parseToObject() with valid expressions", function(){
 		var func = Equation.parseToObject;
@@ -118,10 +138,6 @@ tests.runEquationTests = function(){
 		});
 	});
 	test("test Equation.getVariableNames()", function(){
-		ok(1);
-	});
-	test("test Equation.checkInput()", function(){
-		var func = Equation.checkInput;
 		ok(1);
 	});
 	test("test Equation.parse()", function(){
