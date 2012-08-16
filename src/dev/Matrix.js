@@ -7,17 +7,13 @@
  
 // Matrix Class
 var Matrix = function(){
-	this.columnLength;
-	this.rowLength;
-	this.matrix;
+	this.columnLength = null;
+	this.rowLength = null;
+	this.matrix = null;
 };
 
-clear();
 var row = function(el){
-    this.el = [];
-    if(typeof el === "object" ){
-        this.el = el;
-    }
+    this.el = (typeof el === "object" ) ? el : [];
 };
 row.prototype.toString = function(){
     return this.el.join(',');

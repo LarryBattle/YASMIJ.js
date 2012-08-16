@@ -4,12 +4,13 @@
 * @license MIT License <http://www.opensource.org/licenses/mit-license>
 * @date 07/08/2012
 */
- 
+
 /**
 * Create an Equation Object.
 * Goals for the Equation Object:
 * - Convert String to Object such that the terms, constants and sign and be easily accessed.
 * - Allow for terms to be moved from one side to the other.
+* - The standard will be (variables, ...) (comparison) (constants)
 *
 * @constructor
 * @returns {Equation}
@@ -20,6 +21,12 @@ var Equation = function () {
 	this.rightSide = {};
 	this.terms = {};
 	return this;
+};
+/*
+* Checks to see if an object equals the current instance of Equation.
+*/
+Equation.equals = function( obj ){
+	return mixin.areObjectsSame( this, obj );
 };
 /**
 * Checks to see if a string has more than one of these symbols; ">", "<", ">=", "<=", "=".
@@ -41,13 +48,11 @@ Equation.hasManyCompares = function (str) {
 * @example Equation.hasIncompleteBinaryOperator( "a + b +" ) == true;
 */
 Equation.hasIncompleteBinaryOperator = function (str) {
-	var hasError,
-	noSpaceStr = ("" + str).replace(/\s/g, ""),
-	RE_hasNoPlusOrMinus = /^[^\+\-]+$/,
-	RE_noLeftAndRightTerms = /[\+\-][><=\+\-]|[><=\+\-]$/;
-	hasError = /\s/.test(("" + str).trim()) && RE_hasNoPlusOrMinus.test(noSpaceStr);
-	hasError = hasError || RE_noLeftAndRightTerms.test(noSpaceStr);
-	return hasError;
+	var noSpaceStr = ("" + str).replace(/\s/g, ""),		
+		hasNoOperatorBetweenValues = /[^+\-><=]\s+[^+\-><=]/.test( (""+str) ),
+		RE_noLeftAndRightTerms = /[+\-][><=+\-]|[><=+\-]$/;
+		
+	return RE_noLeftAndRightTerms.test(noSpaceStr) || hasNoOperatorBetweenValues;
 };
 /**
 * Checks to see if string comply with standards.
@@ -137,4 +142,13 @@ Equation.parse = function(str){
 */
 Equation.prototype.toString = function(){
 	return [this.leftSide, this.relation, this.rightSide].join("");
+};
+/**
+* Converts to the standard form.
+* Standard form - [coeff of vars, ... , "comparison", constants ]
+* returns {Array}
+*/
+Equation.prototype.setToStandardForm = function(){
+	return [this.leftSide, this.relation, this.rightSide];
+	return this;
 };

@@ -7,7 +7,7 @@
 
 // Tableau Class
 var Tableau = function(){
-	this.matrix;
-	this.limit;
-	this.state;
+	this.matrix = null;
+	this.limit = null;
+	this.state = null;
 };

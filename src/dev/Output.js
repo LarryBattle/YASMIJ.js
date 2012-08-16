@@ -9,12 +9,12 @@
 */
 // Output Class
 var Output = function(){
-	this.matrix;
-	this.result;
+	this.matrix = null;
+	this.result = null;
 };
 Output.prototype.toString = function(){
 	var str = "";
-	str += "matrix = " + ( typeof this.matrix == Matrix ? this.matrix.toString() : [] );
+	str += "matrix = " + ( this.matrix instanceof Matrix ? this.matrix.toString() : [] );
 	str += "\n result = " + JSON.stringify(result);
 	return str;
 };

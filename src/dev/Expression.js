@@ -6,7 +6,6 @@
 */
 
 /**
-* Create an Equation Object.
 * Goals for the Expression Object:
 * - Convert String to Object such that the terms, constants and sign and be easily accessed.
 *
@@ -74,9 +73,9 @@ Expression.hasIncompleteBinaryOperator = function (str) {
 *
 * @param {String} str
 * @returns {Boolean} 
-* @example Expression.hasCompares( "a = b" ) == true;
+* @example Expression.hasComparison( "a = b" ) == true;
 */
-Expression.hasCompares = function(str){
+Expression.hasComparison = function(str){
 	return (/[><=]/).test(str);
 };
 /**
@@ -88,7 +87,7 @@ Expression.hasCompares = function(str){
 */
 Expression.getErrorMessage = function (str) {
 	var errMsg;
-	if (Expression.hasCompares(str)) {
+	if (Expression.hasComparison(str)) {
 		errMsg = "An expression shouldn't have a comparison in it.";
 	}
 	if (!errMsg && Expression.hasExcludedOperations(str)) {

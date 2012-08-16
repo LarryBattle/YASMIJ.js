@@ -6,8 +6,8 @@
 */
 tests.runExpressionTests = function(){
 	module( "Expression Class: Checking input" );
-	test( "test Expression.hasCompares() with 1 compare", function(){
-		var func = Expression.hasCompares;
+	test( "test Expression.hasComparison() with 1 compare", function(){
+		var func = Expression.hasComparison;
 		equal( func( "a < b" ), true );
 		equal( func( "a > b" ) , true );
 		equal( func( "a = b" ) , true );

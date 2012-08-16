@@ -38,41 +38,37 @@ tests.runEquationTests = function(){
 	});
 	test( "test Equation.hasIncompleteBinaryOperator() with valid expressions.", function(){
 		var func = Equation.hasIncompleteBinaryOperator;
-		
-		equal( func( "" ), false );
-		equal( func( "-1" ), false );
-		equal( func( "1" ), false );
-		equal( func( "+1" ), false );
-		equal( func( "+1003" ), false );
-		equal( func( " +13.23 " ), false );
-		equal( func( "-a" ), false );
-		equal( func( "+a" ), false );
-		equal( func( "a" ), false );
+
 		equal( func( "+a - b" ), false );
 		equal( func( "a + b" ), false );
+		equal( func( "a < b" ), false );
+		equal( func( "a > b" ), false );
+		equal( func( "a >= b" ), false );
+		equal( func( "a = 1" ), false );
+		equal( func( "a - b + 1 > c + 1e34" ), false );
 	});
 	test( "test Equation.hasIncompleteBinaryOperator() with invalid expressions.", function(){
 		var func = Equation.hasIncompleteBinaryOperator;
 		
 		equal( func( "a b" ), true );
-		equal( func( "a < b c" ), true );
+		equal( func( "a b > c" ), true );
+		equal( func( "a + b < c d" ), true );
 		equal( func( "a-" ), true );
 		equal( func( "a+" ), true );
 		equal( func( "a+ < c-" ), true );
 		equal( func( "a+ b -= c" ), true );
 		equal( func( "a+ b += c" ), true );
 	});
-	test( "test that Equation.getErrorMessage() ", function(){	
+	test( "test that Equation.getErrorMessage() ", function(){
 		var func = Equation.getErrorMessage;
 		ok( !func( "a+b" ) );
 		ok( func( "a b" ) );
 		ok( func( "a * b" ) );
 		ok( func( "a + b+" ) );
 	});
-	module( "Equation Class: Check input" );
 	test("test Equation.getErrorMessage() with valid input.", function(){
 		var func = Equation.getErrorMessage;
-		var x = undefined;
+		var x;
 		equal( func( "a < c" ), x );
 		equal( func( "a > c" ), x );
 		equal( func( "a <= c" ), x );
@@ -107,33 +103,54 @@ tests.runEquationTests = function(){
 	});
 	test("test Equation.parseToObject() with valid expressions", function(){
 		var func = Equation.parseToObject;
-		deepEqual( func( "10x1 -2x2 - 10" ), {lhs:{terms:{"x1":10,"x2":-2, "1":-10}}} );
+		var y = {
+			lhs : {
+				terms:{
+					"x1":10,"x2":-2, "1":-10
+				}
+			}
+		};
+		ok( mixin.areObjectsSame( func( "10x1 -2x2 - 10" ), y ) );
 	});
 	test("test Equation.parseToObject() with different compares", function(){
 		var func = Equation.parseToObject;
-		deepEqual( func( "2a + 3b <= 30" ), {
-			lhs:{ "a":2,"b":3},
-			rhs:{ "1":30 },
+		var compare = mixin.areObjectsSame;
+		var check = function( str, expect ){
+			var result = func( str );
+			var errMsg = "`" + str + "` failed to match object." ;
+			if( compare( result, expect ) ){
+				ok( true );
+			}else{
+				if( JSON.stringify ){
+					equal( JSON.stringify( result ), JSON.stringify( expect ), errMsg );
+				}else{
+					ok( false, errMsg + " Note: Use browser with `JSON.stringify` support for more details");
+				}
+			}
+		};
+		check( "2a + 3b <= 30", {
+			lhs:{terms:{ "a":2,"b":3}},
+			rhs:{terms:{ "1":30 }},
 			relation:"<="
 		});
-		deepEqual( func( "2a - 30 >= 4 + a2" ), {
-			lhs:{ "a":2, "1": -30 },
-			rhs:{ "a2": 1, "1": 4 },
+		check( "2a - 30 >= 4 + a2", {
+			lhs:{terms:{ "a":2, "1": -30 }},
+			rhs:{terms:{ "a2": 1, "1": 4 }},
 			relation:">="
 		});
-		deepEqual( func( "2a - 30 > 4 + a2" ), {
-			lhs:{ "a":2, "1": -30 },
-			rhs:{ "a2": 1, "1": 4 },
+		check( "2a - 30 > 4 + a2", {
+			lhs:{terms:{ "a":2, "1": -30 }},
+			rhs:{terms:{ "a2": 1, "1": 4 }},
 			relation:">"
 		});
-		deepEqual( func( "2a - 30 < 4 + a2" ), {
-			lhs:{ "a":2, "1": -30 },
-			rhs:{ "a2": 1, "1": 4 },
+		check( "2a - 30 < 4 + a2", {
+			lhs:{terms:{ "a":2, "1": -30 }},
+			rhs:{terms:{ "a2": 1, "1": 4 }},
 			relation:"<"
 		});
-		deepEqual( func( "2a + 12 = 2a + 12" ), {
-			lhs:{ "a":2, "1": 12 },
-			rhs:{ "a":2, "1": 12 },
+		check( "2a + 12 = 2a + 12", {
+			lhs:{terms:{ "a":2, "1": 12 }},
+			rhs:{terms:{ "a":2, "1": 12 }},
 			relation:"="
 		});
 	});

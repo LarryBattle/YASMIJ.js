@@ -7,11 +7,11 @@
 
 // Input Class
 var Input = function(){
-	this.z;
-	this.raw;
-	this.type;
-	this.variables;
-	this.constraints;
+	this.z = null;
+	this.raw = null;
+	this.type = null;
+	this.variables = null;
+	this.constraints = null;
 };
 Input.checkForRequirements = function( obj ){
 	var errMsg = "Input Object";

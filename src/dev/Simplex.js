@@ -10,10 +10,10 @@ var Simplex = function(){
 	this.input = new Input();
 	this.output = new Output();
 	this.tableau = new Tableau();
-	this.state;
+	this.state = null;
 };
 Simplex.prototype.toString = function(){
-}
+};
 Simplex.prototype.setInput = function( obj ){
 	this.input.parse( obj );
 };
