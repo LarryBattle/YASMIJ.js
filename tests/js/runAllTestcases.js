@@ -5,4 +5,5 @@
 var runAllTests = function(){
 	tests.runExpressionTests();
 	tests.runEquationTests();
+	tests.runInputTests();
 };

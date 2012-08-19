@@ -26,8 +26,21 @@ Expression.parse = function(str){
 	}
 	Expression.checkString(str);
 	var obj = new Expression();
+	str = Expression.addSpaceBetweenTerms( str );
 	obj.terms = Expression.convertExpressionToObject(str);
 	return obj;
+};
+Expression.encodeE = function( str ){
+	str = ( str || "" ).toString();
+	str = str.replace( /(\de)([+])(\d)/gi, "$1_plus_$3" );
+	str = str.replace( /(\de)([-])(\d)/gi, "$1_sub_$3" );
+	return str;
+};
+Expression.decodeE = function( str ){
+	str = ( str || "" ).toString();
+	str = str.replace( /_plus_/g, "+" );
+	str = str.replace( /_sub_/g, "-" );
+	return str;
 };
 /**
 * Checks to see if a string has more than one of these symbols; ">", "<", ">=", "<=", "=".
@@ -40,6 +53,14 @@ Expression.hasManyCompares = function (str) {
 	var RE_compares = /[<>]=?|=/g;
 	var matches = ("" + str).replace(/\s/g, "").match(RE_compares) || [];
 	return 1 < matches.length;
+};
+Expression.addSpaceBetweenTerms = function(str){	
+	str = Expression.encodeE( str );
+	str = str.replace( /([\+\-])/g, " $1 " );
+	str = str.replace( /\s{2,}/g, " " );
+	str = str.trim();
+	str = Expression.decodeE( str );
+	return str;
 };
 /**
 * Checks to see if a string has any of the these symbols; "*", "\", "%".
@@ -207,7 +228,7 @@ Expression.prototype.getTermNames = function () {
 		}
 	}
 	terms = terms.sort();
-	if( obj[1] ){
+	if( obj && obj[1] ){
 		terms.push( obj[1].toString() );
 	}
 	return terms;

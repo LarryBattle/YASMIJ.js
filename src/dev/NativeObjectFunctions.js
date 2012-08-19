@@ -8,6 +8,19 @@ String.prototype.trim = String.prototype.trim || function(){
 	return (this||"").replace(/^\s+|\s+$/g, "");
 };
 var mixin = {};
+mixin.getUniqueArray = function( arr ){
+	var result = [], hash = {};
+	if( typeof arr !== "object" || !arr.length ){
+		return result;
+	}
+	for( var i = 0, len = arr.length; i < len; i++ ){
+		if(!hash[ arr[i] ]){
+			result.push( arr[i] );
+			hash[ arr[i] ] = 1;
+		}
+	}
+	return result;
+};
 mixin.areObjectsSame = function(obj1, obj2){
 	var a, b;
 	if( obj1 === obj2 ){

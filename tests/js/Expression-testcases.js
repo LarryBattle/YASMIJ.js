@@ -189,20 +189,52 @@ tests.runExpressionTests = function(){
 		deepEqual(func( "-20.2x + 2.4y +10e30" ), {x:-20.2, y:2.4, 1:10e30} );
 		deepEqual(func( "-20e34x + 23 - 4 - 4x + 1" ), {x:-2e+35, 1:20} );
 	});	
-	test("test Expression.checkInput() with invalid input", function(){
-		var func = Expression.checkInput;
-		raises(function(){
-			func( "a < b < c" );
-		});
-		raises(function(){
-			func( "a == b" );
-		});
-		raises(function(){
-			func( "a += b" );
-		});
-		raises(function(){
-			func( "a <= b * -1" );
-		});
+	test( "test Expression.encodeE", function(){
+		var func = Expression.encodeE;		
+		equal( func("-1e+4-1.1e+4"), "-1e_plus_4-1.1e_plus_4" );
+		equal( func("1e-4+1.1e-4"), "1e_sub_4+1.1e_sub_4" );
+		
+		equal( func("1e -4+1.1e-4"), "1e -4+1.1e_sub_4" );
+		equal( func("1e-4+ 1.1e-4"), "1e_sub_4+ 1.1e_sub_4" );
+	});
+	test( "test Expression.addSpaceBetweenTerms() with terms without spaces", function(){
+		var func = Expression.addSpaceBetweenTerms;
+		
+		equal( func( "1" ), "1" );
+		equal( func( "1-a" ), "1 - a" );
+		equal( func( "1+a" ), "1 + a" );
+		equal( func( "a+b" ), "a + b" );
+		equal( func( "a+1e3+e5" ), "a + 1e3 + e5" );
+		equal( func( "-1e-4+e4+a4-d3" ), "- 1e-4 + e4 + a4 - d3" );
+		equal( func( "-1.4e+4+23.9e4+a4-d3-3e+49" ), "- 1.4e+4 + 23.9e4 + a4 - d3 - 3e+49" );
+	});
+	test( "test Expression.addSpaceBetweenTerms() with terms with spaces", function(){
+		var func = Expression.addSpaceBetweenTerms;
+		
+		equal( func( " 1 " ), "1" );
+		equal( func( " 1 - a " ), "1 - a" );
+		equal( func( "  1 + a  " ), "1 + a" );
+		equal( func( " a +    b " ), "a + b" );
+		equal( func( "  1e + 5 " ), "1e + 5" );
+		equal( func( "  a + 1e3+e5" ), "a + 1e3 + e5" );
+		equal( func( " - 1e-4   + e4+a4-d3" ), "- 1e-4 + e4 + a4 - d3" );
+		equal( func( "-1.4e+ 4 +23.9e4+a4 -d3    -3e+49" ), "- 1.4e + 4 + 23.9e4 + a4 - d3 - 3e+49" );
+	});
+	test("test Expression.getErrorMessage() with invalid input", function(){
+		var func = Expression.getErrorMessage;		
+		
+		ok(func("a < b < c"), "Error because there can only be one comparison.");
+		ok(func("a == b"), "Error because == is not supported.");
+		ok(func("a += b"), "Error because += is not supported.");
+		
+		ok(func("a <= b * -1"), "Error because * is not supported.");
+		/*
+		ok(func("a-1"), "Error because there must be a space between terms.");
+		ok(func("1-a"), "Error because there must be a space between terms.");
+		
+		ok(func("a+b"), "Error because there must be a space between terms.");
+		ok(func("a-b + a + b"), "Error because there must be a space between terms.");
+		*/
 	});
 	test("test Expression.parse() with valid expressions", function(){
 		var func = function(str){

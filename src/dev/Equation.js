@@ -10,13 +10,13 @@
 * Goals for the Equation Object:
 * - Convert String to Object such that the terms, constants and sign and be easily accessed.
 * - Allow for terms to be moved from one side to the other.
-* - The standard will be (variables, ...) (comparison) (constants)
+* - The standard will be (variables, ...) (relation) (constants)
 *
 * @constructor
 * @returns {Equation}
 */
 var Equation = function () {
-	this.comparison = "";
+	this.relation = "";
 	this.leftSide = {};
 	this.rightSide = {};
 	this.terms = {};
@@ -91,11 +91,11 @@ Equation.checkInput = function (str) {
 *
 * @param {Object} obj
 * @returns {Array} 
-* @example Equation.parse("a = cats + 30").getVariableNames(); // returns ["a", "cats", "30" ]
+* @example Equation.parse("a = cats + 30").getTermNames(); // returns ["a", "cats", "30" ]
 */
-Equation.prototype.getVariableNames = function () {
-	var terms = this.leftSide.getTermNames().concat( this.rightSide.getTermNames() );
-	return terms.unique();
+Equation.prototype.getTermNames = function () {
+	var arr = [].concat( this.leftSide.getTermNames(), this.rightSide.getTermNames() );
+	return mixin.getUniqueArray( arr );
 };
 /**
 * 
@@ -108,7 +108,7 @@ Equation.parseToObject = function (str) {
 	Equation.checkInput(str);
 	var RE_relation = /[><]=?|=/;
 	var arr = (""+str).split(RE_relation);
-	var obj = {};
+	var obj = { rhs: Expression.parse( "0" ), relation:""};
 	obj.lhs = Expression.parse(arr[0]);
 	if( 1 < arr.length ){
 		obj.rhs = Expression.parse(arr[1]);
@@ -127,28 +127,23 @@ Equation.parse = function(str){
 	var obj = Equation.parseToObject(str), e;
 	if( obj ){
 		e = new Equation();
-		this.relation = obj.relation;
-		this.leftSide = obj.lhs;
-		this.rightSide = obj.rhs;
-		this.terms = {
-			lhs: Equation.getVariableNames(obj.lhs),
-			rhs: Equation.getVariableNames(obj.rhs)
-		};
+		e.relation = obj.relation;
+		e.leftSide = obj.lhs;
+		e.rightSide = obj.rhs;
 	}
 	return e;
 };
 /**
-* Returns a string representation of the Equation Object.
+* Returns a string representation of the Equation Object.r
 */
 Equation.prototype.toString = function(){
 	return [this.leftSide, this.relation, this.rightSide].join("");
 };
 /**
 * Converts to the standard form.
-* Standard form - [coeff of vars, ... , "comparison", constants ]
+* Standard form - [coeff of vars, ... , "relation", constants ]
 * returns {Array}
 */
 Equation.prototype.setToStandardForm = function(){
 	return [this.leftSide, this.relation, this.rightSide];
-	return this;
 };

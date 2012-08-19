@@ -5,6 +5,19 @@
 * @date 07/02/2012
 */
 tests.runEquationTests = function(){
+	var checkIfSame = function( func, str, expect ){
+		var result = func( str );
+		var errMsg = "`" + str + "` failed to match object." ;
+		if( mixin.areObjectsSame( result, expect ) ){
+			ok( true );
+		}else{
+			if( JSON.stringify ){
+				equal( JSON.stringify( result ), JSON.stringify( expect ), errMsg );
+			}else{
+				ok( false, errMsg + " Note: Use browser with `JSON.stringify` support for more details");
+			}
+		}
+	};
 	module( "Equation Class: Checking input" );
 	test( "test Equation.hasManyCompares() with 1 compare", function(){
 		var func = Equation.hasManyCompares;
@@ -108,57 +121,61 @@ tests.runEquationTests = function(){
 				terms:{
 					"x1":10,"x2":-2, "1":-10
 				}
-			}
+			},
+			rhs: {
+				terms:{
+					"1": 0
+				}
+			},
+			relation:""
 		};
-		ok( mixin.areObjectsSame( func( "10x1 -2x2 - 10" ), y ) );
+		checkIfSame( func, "10x1 -2x2 - 10", y );
 	});
 	test("test Equation.parseToObject() with different compares", function(){
 		var func = Equation.parseToObject;
-		var compare = mixin.areObjectsSame;
-		var check = function( str, expect ){
-			var result = func( str );
-			var errMsg = "`" + str + "` failed to match object." ;
-			if( compare( result, expect ) ){
-				ok( true );
-			}else{
-				if( JSON.stringify ){
-					equal( JSON.stringify( result ), JSON.stringify( expect ), errMsg );
-				}else{
-					ok( false, errMsg + " Note: Use browser with `JSON.stringify` support for more details");
-				}
-			}
-		};
-		check( "2a + 3b <= 30", {
+
+
+		checkIfSame( func, "2a + 3b <= 30", {
 			lhs:{terms:{ "a":2,"b":3}},
 			rhs:{terms:{ "1":30 }},
 			relation:"<="
 		});
-		check( "2a - 30 >= 4 + a2", {
+		checkIfSame( func, "2a - 30 >= 4 + a2", {
 			lhs:{terms:{ "a":2, "1": -30 }},
 			rhs:{terms:{ "a2": 1, "1": 4 }},
 			relation:">="
 		});
-		check( "2a - 30 > 4 + a2", {
+		checkIfSame( func, "2a - 30 > 4 + a2", {
 			lhs:{terms:{ "a":2, "1": -30 }},
 			rhs:{terms:{ "a2": 1, "1": 4 }},
 			relation:">"
 		});
-		check( "2a - 30 < 4 + a2", {
+		checkIfSame( func, "2a - 30 < 4 + a2", {
 			lhs:{terms:{ "a":2, "1": -30 }},
 			rhs:{terms:{ "a2": 1, "1": 4 }},
 			relation:"<"
 		});
-		check( "2a + 12 = 2a + 12", {
+		checkIfSame( func, "2a + 12 = 2a + 12", {
 			lhs:{terms:{ "a":2, "1": 12 }},
 			rhs:{terms:{ "a":2, "1": 12 }},
 			relation:"="
 		});
 	});
-	test("test Equation.getVariableNames()", function(){
-		ok(1);
+	test("test Equation.getTermNames()", function(){
+		var func = function( str ){
+			return Equation.parse( str ).getTermNames();
+		};
+		deepEqual( func( "a" ), ["a"] );
+		deepEqual( func( "2x1 + x2 + x3 <= 14" ), ["x1","x2","x3", "14"] );
 	});
 	test("test Equation.parse()", function(){
-		ok(1);
+		var func = function(str){
+			return Equation.parse(str);
+		};
+		var x = func( "2x1 + x2 + x3 <= 14" );
+		deepEqual( x.leftSide.toString(), "2x1 + x2 + x3" );
+		deepEqual( x.rightSide.toString(), "14" );
+		deepEqual( x.relation.toString(), "<=" );
 	});
 	test("test the Equation constructor", function(){
 		var a = new Equation();
