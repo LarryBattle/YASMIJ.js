@@ -12,6 +12,7 @@ var Input = function(){
 	this.type = null;
 	this.terms = null;
 	this.constraints = null;
+	this.isStandardMode = false;
 };
 Input.parse = function( type, z, constraints ){
 	var obj = new Input();
@@ -45,8 +46,8 @@ Input.prototype.getErrors = function(){
 	if( typeof this.z !== "string"){
 		errMsgs.push( "z must be a string." );
 	}
-	if( this.type !== "maximize" ){
-		errMsgs.push( "Maximize is the only type that is currently supported." );
+	if( this.type !== "maximize" && this.type !== "minimize" ){
+		errMsgs.push( "Maximize and minimize are the only types that is currently supported." );
 	}
 	if( "[object Array]" !== Object.prototype.toString.call( this.constraints ) || !this.constraints ){
 		errMsgs.push( "Constraints must be an array with at least one element." );
@@ -58,4 +59,20 @@ Input.prototype.checkForInputError = function(){
 	if( arr && arr.length ){
 		throw new Error( "Input Error: " + arr.join( '\n' ) );
 	}
+};
+Input.prototype.toString = function(){
+	return [ 
+		this.type + " z = " + this.z,
+		"where " + this.constraints.join( ", " )
+	].join( ", " );	
+};
+Input.prototype.convertToStandardForm = function(){
+	if( this.isStandardMode ){
+		return this;
+	}
+	if( /min/.test(this.type) ){
+		this.z = this.z.inverse();
+	}
+	this.isStandardMode = true;
+	return this;
 };

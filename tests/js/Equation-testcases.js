@@ -177,8 +177,30 @@ tests.runEquationTests = function(){
 		deepEqual( x.rightSide.toString(), "14" );
 		deepEqual( x.relation.toString(), "<=" );
 	});
-	test("test the Equation constructor", function(){
-		var a = new Equation();
-		ok(a);
+	test("test Equation.prototype.toString()", function(){
+		var func = function( str ){
+			return Equation.parse( str ).toString();
+		};
+		equal( func( "a+3<=3b"), "a + 3 <= 3b" );
+		equal( func( "-1.4e+ 4 +23.9e4 + a4 -d3 -3e+49 = 3"), "a4 - d3 - 1.4e - 3e+49 = 3" );
+	});
+	
+	test( "test Equation.protype.convertTo()", function(){
+		var func = function( str, varsSide, constantsSide, relation ){
+			return Equation.parse(str).convertTo(varsSide, constantsSide, relation).toString();
+		};
+		equal( func( "a - 10 <= 20", "left", "right", "<=" ), "a <= 30" );
+		equal( func( "a - 10 <= 20", "right", "left", ">=" ), "30 >= a" );
+		equal( func( "a - 10 = 20", "right", "left" ), "30 = a" );
+		equal( func( "a - 10 = 20", "left", "left" ), "a - 30 = 0" );
+		equal( func( "a - 10 = 20", "right", "right" ), "0 = -a + 30" );
+	});
+	test( "test Equation.protype.getStandardMaxForm()", function(){
+		var func = function( str ){
+			return Equation.parse(str).getStandardMaxForm();
+		};
+		equal( func( "a - 10 <= 20" ), "a <= 30" );
+		equal( func( "-1 + a < 21" ), "a <= 30" );
+		equal( func( "a + b - 10 >= 0" ), "a + b <= 10" );
 	});
 };

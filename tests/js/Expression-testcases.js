@@ -283,4 +283,33 @@ tests.runExpressionTests = function(){
 		equal( func( "a -b + 10" ), "a - b + 10" );
 		equal( func( "4c + c4" ), "4c + c4" );
 	});
+	test( "test Expression.prototype.inverse()", function(){
+		var func = function(str){
+			return Expression.parse(str).inverse().toString();
+		};
+		equal( func( "-a + 10" ), "a - 10" );
+		equal( func( "a + 10" ), "-a - 10" );
+		equal( func( "a -b + 10" ), "-a + b - 10" );
+		equal( func( "4c + c4" ), "-4c - c4" );
+	});
+	test( "test Expression.prototype.addTerm()", function(){
+		var func = function( str, name, value ){
+			return Expression.parse(str).addTerm(name, value).toString();
+		};
+		equal( func( "a", "a", 1 ), "2a" );
+		equal( func( "a", "a", -1 ), "0" );
+		equal( func( "a", "b", 1 ), "a + b" );
+		
+		equal( func( "a", "a", 3 ), "4a");
+		equal( func( "a", "b", 4 ), "a + 4b" );
+		equal( func( "a + b", "b", -4 ), "a - 3b" );
+	});
+	test( "test Expression.prototype.removeTerm()", function(){
+		var func = function( str, name ){
+			return Expression.parse(str).removeTerm(name).toString();
+		};
+		equal( func( "a - 1", "a" ), "-1" );
+		equal( func( "a - 1", 1 ), "a" );
+		equal( func( "a - 1", "b" ), "a - 1" );
+	});
 };

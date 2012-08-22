@@ -137,13 +137,48 @@ Equation.parse = function(str){
 * Returns a string representation of the Equation Object.r
 */
 Equation.prototype.toString = function(){
-	return [this.leftSide, this.relation, this.rightSide].join("");
+	return [this.leftSide, this.relation, this.rightSide].join(" ");
 };
-/**
-* Converts to the standard form.
-* Standard form - [coeff of vars, ... , "relation", constants ]
-* returns {Array}
+Equation.prototype.convertTo = function( variablesSide, constantSide, relation ){
+/*
+1) a < 10
+2) a <= 10
+3) a > 10
+4) a >= 10 
+5) a = 10
+
+- = N/A or NOP
+n = add/subtract number
+s = switch side
+e = error can't done.
+
+  1, 2, 3, 4, 5 (convert To)
+1 -  n  sn s  e      
+2 n  -  s sn  e      
+3       -  n  e 
+4          -  e  
+5             - 
+(are)
 */
-Equation.prototype.setToStandardForm = function(){
-	return [this.leftSide, this.relation, this.rightSide];
+	var that = this;
+	this.leftSide.forEachTerm( function( name, value, terms ){
+		if( (isNaN( name ) && "right" === variablesSide) || ("right" === constantSide && !isNaN( name ) )){
+			that.rightSide.addTerm( name, -value );
+			that.leftSide.removeTerm( name );
+			delete terms[ name ];
+		}
+	});
+	this.rightSide.forEachTerm( function( name, value, terms ){
+		if( (isNaN( name ) && "left" === variablesSide) || ("left" === constantSide && !isNaN( name ) )){
+			that.leftSide.addTerm( name, -value );
+			that.rightSide.removeTerm( name );
+			delete terms[ name ];
+		}
+	});
+	return this;
 };
+Equation.prototype.getStandardMaxForm = function(i){
+	return this;
+};
+// Equation.prototype.convertTo = function(){
+// };

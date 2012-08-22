@@ -21,11 +21,11 @@ var Expression = function () {
 * @returns {Expression} 
 */
 Expression.parse = function(str){
-	if( !str.length ){
-		return null;
+	var obj = new Expression();
+	if( typeof str !== "string" || !str.length ){
+		return obj;
 	}
 	Expression.checkString(str);
-	var obj = new Expression();
 	str = Expression.addSpaceBetweenTerms( str );
 	obj.terms = Expression.convertExpressionToObject(str);
 	return obj;
@@ -33,7 +33,7 @@ Expression.parse = function(str){
 Expression.encodeE = function( str ){
 	str = ( str || "" ).toString();
 	str = str.replace( /(\de)([+])(\d)/gi, "$1_plus_$3" );
-	str = str.replace( /(\de)([-])(\d)/gi, "$1_sub_$3" );
+	str = str.replace( /(\de)([\-])(\d)/gi, "$1_sub_$3" );
 	return str;
 };
 Expression.decodeE = function( str ){
@@ -233,17 +233,46 @@ Expression.prototype.getTermNames = function () {
 	}
 	return terms;
 };
+Expression.prototype.forEachTerm = function(fn){
+	fn = (typeof fn === "function") ? fn : function(){};
+	for( var prop in this.terms ){
+		if( this.terms.hasOwnProperty( prop ) ){
+			fn( prop, this.terms[ prop ], this.terms );
+		}
+	}
+};
 /**
 * Convers the Expression object a string by turning the terms property to a expression.
 *
 * @returns {String}
 */
 Expression.prototype.toString = function(){
-	var arr = [], obj = this.terms,	terms = this.getTermNames(),
-		i, prop, len;
+	var arr = [], obj = this.terms,	terms = this.getTermNames(), i, prop, len, func = Expression.termAtIndex;
+	if( !terms.length ){
+		return "0";
+	}
 	for( i = 0, len = terms.length; i < len; i++ ){
 		prop = terms[i];
-		arr.push( Expression.termAtIndex( i, prop, obj[prop] ) );
+		arr.push( func( i, prop, obj[prop] ) );
 	}
 	return arr.join( " " ).replace(/\s[\+\-]/g, "$& ");
+};
+Expression.prototype.inverse = function(){
+	this.forEachTerm(function( termName, value, terms ){
+		terms[ termName ] = -value;
+	});
+	return this;
+};
+Expression.prototype.addTerm = function( name, value ){
+	value += this.terms[ name ] || 0;
+	if(value){
+		this.terms[ name ] = value;
+	}else{
+		this.removeTerm( name );
+	}
+	return this;
+};
+Expression.prototype.removeTerm = function( name ){
+	delete this.terms[ name ];
+	return this;
 };
