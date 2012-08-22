@@ -117,19 +117,22 @@ tests.runEquationTests = function(){
 	test("test Equation.parseToObject() with valid expressions", function(){
 		var func = Equation.parseToObject;
 		var y = {
-			lhs : {
-				terms:{
-					"x1":10,"x2":-2, "1":-10
-				}
-			},
 			rhs: {
 				terms:{
 					"1": 0
 				}
 			},
-			relation:""
+			lhs : {
+				terms:{
+					"x1":10,"x2":-2, "1":-10
+				}
+			},
+			relation:"="
 		};
-		checkIfSame( func, "10x1 -2x2 - 10", y );
+		var x = func("10x1 -2x2 - 10");
+		deepEqual( x.rhs.terms, y.rhs.terms );
+		deepEqual( x.lhs.terms, y.lhs.terms );
+		deepEqual( x.relation, y.relation );
 	});
 	test("test Equation.parseToObject() with different compares", function(){
 		var func = Equation.parseToObject;
@@ -185,12 +188,30 @@ tests.runEquationTests = function(){
 		equal( func( "-1.4e+ 4 +23.9e4 + a4 -d3 -3e+49 = 3"), "a4 - d3 - 1.4e - 3e+49 = 3" );
 	});
 	
-	test( "test Equation.protype.convertTo()", function(){
+	test( "test Equation.prototype.moveVariableToOneSide()", function(){
+		var func = function( str, isLeft ){
+			return Equation.parse(str).moveVariableToOneSide(isLeft).toString();
+		};
+		equal( func( "a <= 30", true ), "a <= 30", "vars on left" );
+		equal( func( "a <= 30", false ), "0 <= -a + 30", "vars on right" );
+		
+		equal( func( "a + 4b - c <= 30 + a", false ), "0 <= -4b + c + 30", "right" );
+		equal( func( "4a + 3 - 94c <= 30 + 43", false ), "3 <= -4a + 94c + 73", "right" );
+	});
+	test( "test Equation.protype.convertTo() with two term equations", function(){
 		var func = function( str, varsSide, constantsSide, relation ){
 			return Equation.parse(str).convertTo(varsSide, constantsSide, relation).toString();
 		};
-		equal( func( "a - 10 <= 20", "left", "right", "<=" ), "a <= 30" );
-		equal( func( "a - 10 <= 20", "right", "left", ">=" ), "30 >= a" );
+		equal( func( "a <= 30", "left", "right" ), "a <= 30" );
+		equal( func( "a <= 30", "right", "left" ), "-30 <= -a" );
+		equal( func( "a <= 30", "right", "left", ">=" ), "30 >= a" );
+	});
+	test( "test Equation.protype.convertTo() with two or more terms equations", function(){
+		var func = function( str, varsSide, constantsSide, relation ){
+			return Equation.parse(str).convertTo(varsSide, constantsSide, relation).toString();
+		};
+		equal( func( "a - 10 <= 20", "right", "left", ">=" ), "-30 >= -a" );
+		equal( func( "a - 10 <= 20", "left", "right" ), "a <= 30" );
 		equal( func( "a - 10 = 20", "right", "left" ), "30 = a" );
 		equal( func( "a - 10 = 20", "left", "left" ), "a - 30 = 0" );
 		equal( func( "a - 10 = 20", "right", "right" ), "0 = -a + 30" );

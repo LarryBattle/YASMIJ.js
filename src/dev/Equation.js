@@ -108,7 +108,7 @@ Equation.parseToObject = function (str) {
 	Equation.checkInput(str);
 	var RE_relation = /[><]=?|=/;
 	var arr = (""+str).split(RE_relation);
-	var obj = { rhs: Expression.parse( "0" ), relation:""};
+	var obj = { rhs: Expression.parse( "0" ), relation:"="};
 	obj.lhs = Expression.parse(arr[0]);
 	if( 1 < arr.length ){
 		obj.rhs = Expression.parse(arr[1]);
@@ -139,46 +139,38 @@ Equation.parse = function(str){
 Equation.prototype.toString = function(){
 	return [this.leftSide, this.relation, this.rightSide].join(" ");
 };
+Equation.prototype.moveVariableToOneSide = function( isLeft ){
+	var sideA = (!isLeft) ? this.leftSide : this.rightSide,
+		sideB = (isLeft) ? this.leftSide : this.rightSide;
+	sideA.forEachTerm(function(name, value, terms){		
+		if( name.toString() !== "1" ){
+			sideB.addTerm( name, -value );
+			sideA.removeTerm( name );
+		}
+	});	
+	return this;
+};
+Equation.prototype.moveConstantToOneSide = function( isLeft ){
+	var sideA = (!isLeft) ? this.leftSide : this.rightSide,
+		sideB = (isLeft) ? this.leftSide : this.rightSide;
+	sideA.forEachTerm(function(name, value, terms){		
+		if( name.toString() === "1" ){
+			sideB.addTerm( name, -value );
+			sideA.removeTerm( name );
+		}
+	});	
+	return this;
+};
 Equation.prototype.convertTo = function( variablesSide, constantSide, relation ){
-/*
-1) a < 10
-2) a <= 10
-3) a > 10
-4) a >= 10 
-5) a = 10
-
-- = N/A or NOP
-n = add/subtract number
-s = switch side
-e = error can't done.
-
-  1, 2, 3, 4, 5 (convert To)
-1 -  n  sn s  e      
-2 n  -  s sn  e      
-3       -  n  e 
-4          -  e  
-5             - 
-(are)
-*/
-	var that = this;
-	this.leftSide.forEachTerm( function( name, value, terms ){
-		if( (isNaN( name ) && "right" === variablesSide) || ("right" === constantSide && !isNaN( name ) )){
-			that.rightSide.addTerm( name, -value );
-			that.leftSide.removeTerm( name );
-			delete terms[ name ];
-		}
-	});
-	this.rightSide.forEachTerm( function( name, value, terms ){
-		if( (isNaN( name ) && "left" === variablesSide) || ("left" === constantSide && !isNaN( name ) )){
-			that.leftSide.addTerm( name, -value );
-			that.rightSide.removeTerm( name );
-			delete terms[ name ];
-		}
-	});
+	var RE_left = /left/i;
+	if( variablesSide ){
+		this.moveVariableToOneSide( RE_left.test( variablesSide ) );
+	}
+	if( constantSide ){
+		this.moveConstantToOneSide( RE_left.test( constantSide ) );
+	}
 	return this;
 };
 Equation.prototype.getStandardMaxForm = function(i){
 	return this;
 };
-// Equation.prototype.convertTo = function(){
-// };
