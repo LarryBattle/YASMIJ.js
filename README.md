@@ -13,8 +13,8 @@ Maximize `5x1 + 3x2 + x3`
 
 Subject to
 
-  5x1 + 3x2 + 6x3 = 15
-	x1 + x2 + x3 = 6
+    5x1 + 3x2 + 6x3 = 15
+    x1 + x2 + x3 = 6
 
 where `x1`,`x2`, `x3` are all greater than or equal to 0.
 
