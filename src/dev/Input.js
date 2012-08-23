@@ -30,14 +30,14 @@ Input.prototype.convertConstraintsToStandardForm = function(){
 	var i = this.constraints.length;
 	this.z = Expression.parse( this.z );
 	while( i-- ){
-		this.constraints[ i ] = Equation.parse( this.constraints[ i ] );
+		this.constraints[ i ] = Constraint.parse( this.constraints[ i ] );
 	}
 };
 Input.prototype.setTermNames = function(){
-	var vars = [], i = this.constraints.length, equation;
+	var vars = [], i = this.constraints.length, Constraint;
 	while( i-- ){
-		equation = this.constraints[ i ];		
-		vars = vars.concat( equation.getTermNames() );		
+		Constraint = this.constraints[ i ];		
+		vars = vars.concat( Constraint.getTermNames() );		
 	}
 	this.terms = mixin.getUniqueArray(vars).sort();
 };
