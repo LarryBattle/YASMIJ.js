@@ -6,26 +6,26 @@
 */
 
 /**
-* Create an Equation Object.
-* Goals for the Equation Object:
+* Create an Constraint Object.
+* Goals for the Constraint Object:
 * - Convert String to Object such that the terms, constants and sign and be easily accessed.
 * - Allow for terms to be moved from one side to the other.
-* - The standard will be (variables, ...) (relation) (constants)
+* - The standard will be (variables, ...) (comparison) (constants)
 *
 * @constructor
-* @returns {Equation}
+* @returns {Constraint}
 */
-var Equation = function () {
-	this.relation = "";
+var Constraint = function () {
+	this.comparison = "";
 	this.leftSide = {};
 	this.rightSide = {};
 	this.terms = {};
 	return this;
 };
 /*
-* Checks to see if an object equals the current instance of Equation.
+* Checks to see if an object equals the current instance of Constraint.
 */
-Equation.equals = function( obj ){
+Constraint.equals = function( obj ){
 	return mixin.areObjectsSame( this, obj );
 };
 /**
@@ -33,9 +33,9 @@ Equation.equals = function( obj ){
 *
 * @param {String} str
 * @returns {Boolean}
-* @example Equation.hasManyCompares( "a < b < c" ) == true;
+* @example Constraint.hasManyCompares( "a < b < c" ) == true;
 */
-Equation.hasManyCompares = function (str) {
+Constraint.hasManyCompares = function (str) {
 	var RE_compares = /[<>]=?|=/g;
 	var matches = ("" + str).replace(/\s/g, "").match(RE_compares) || [];
 	return 1 < matches.length;
@@ -45,9 +45,9 @@ Equation.hasManyCompares = function (str) {
 *
 * @param {String} str
 * @returns {Boolean}
-* @example Equation.hasIncompleteBinaryOperator( "a + b +" ) == true;
+* @example Constraint.hasIncompleteBinaryOperator( "a + b +" ) == true;
 */
-Equation.hasIncompleteBinaryOperator = function (str) {
+Constraint.hasIncompleteBinaryOperator = function (str) {
 	var noSpaceStr = ("" + str).replace(/\s/g, ""),		
 		hasNoOperatorBetweenValues = /[^+\-><=]\s+[^+\-><=]/.test( (""+str) ),
 		RE_noLeftAndRightTerms = /[+\-][><=+\-]|[><=+\-]$/;
@@ -59,14 +59,14 @@ Equation.hasIncompleteBinaryOperator = function (str) {
 *
 * @param {String} str
 * @returns {String} Error message 
-* @example Equation.getErrorMessage( "a + b" ) == null;
+* @example Constraint.getErrorMessage( "a + b" ) == null;
 */
-Equation.getErrorMessage = function (str) {
+Constraint.getErrorMessage = function (str) {
 	var errMsg;
-	if (Equation.hasManyCompares(str)) {
-		errMsg = "Only 1 comparision (<,>,=, >=, <=) is allow in a equation.";
+	if (Constraint.hasManyCompares(str)) {
+		errMsg = "Only 1 comparision (<,>,=, >=, <=) is allow in a Constraint.";
 	}
-	if (!errMsg && Equation.hasIncompleteBinaryOperator(str)) {
+	if (!errMsg && Constraint.hasIncompleteBinaryOperator(str)) {
 		errMsg = "Math operators must be in between terms. Good:(a+b=c). Bad:(a b+=c)";
 	}
 	return errMsg;
@@ -76,10 +76,10 @@ Equation.getErrorMessage = function (str) {
 *
 * @param {String} str
 * @throws Error
-* @example Equation.checkInput( "a / b" ); // throws Error();
+* @example Constraint.checkInput( "a / b" ); // throws Error();
 */
-Equation.checkInput = function (str) {
-	var errMsg = Equation.getErrorMessage(str);
+Constraint.checkInput = function (str) {
+	var errMsg = Constraint.getErrorMessage(str);
 	if (errMsg) {
 		throw new Error(errMsg);
 	}
@@ -91,9 +91,9 @@ Equation.checkInput = function (str) {
 *
 * @param {Object} obj
 * @returns {Array} 
-* @example Equation.parse("a = cats + 30").getTermNames(); // returns ["a", "cats", "30" ]
+* @example Constraint.parse("a = cats + 30").getTermNames(); // returns ["a", "cats", "30" ]
 */
-Equation.prototype.getTermNames = function () {
+Constraint.prototype.getTermNames = function () {
 	var arr = [].concat( this.leftSide.getTermNames(), this.rightSide.getTermNames() );
 	return mixin.getUniqueArray( arr );
 };
@@ -104,42 +104,42 @@ Equation.prototype.getTermNames = function () {
 * @returns {Object} 
 * @example 
 */
-Equation.parseToObject = function (str) {
-	Equation.checkInput(str);
-	var RE_relation = /[><]=?|=/;
-	var arr = (""+str).split(RE_relation);
-	var obj = { rhs: Expression.parse( "0" ), relation:"="};
+Constraint.parseToObject = function (str) {
+	Constraint.checkInput(str);
+	var RE_comparison = /[><]=?|=/;
+	var arr = (""+str).split(RE_comparison);
+	var obj = { rhs: Expression.parse( "0" ), comparison:"="};
 	obj.lhs = Expression.parse(arr[0]);
 	if( 1 < arr.length ){
 		obj.rhs = Expression.parse(arr[1]);
-		obj.relation = "" + RE_relation.exec(str);
+		obj.comparison = "" + RE_comparison.exec(str);
 	}
 	return obj;
 };
 /**
-* Converts a string to an Equation Object.
+* Converts a string to an Constraint Object.
 *
 * @param {String}
-* @returns {Equation} 
+* @returns {Constraint} 
 * @example 
 */
-Equation.parse = function(str){
-	var obj = Equation.parseToObject(str), e;
+Constraint.parse = function(str){
+	var obj = Constraint.parseToObject(str), e;
 	if( obj ){
-		e = new Equation();
-		e.relation = obj.relation;
+		e = new Constraint();
+		e.comparison = obj.comparison;
 		e.leftSide = obj.lhs;
 		e.rightSide = obj.rhs;
 	}
 	return e;
 };
 /**
-* Returns a string representation of the Equation Object.r
+* Returns a string representation of the Constraint Object.r
 */
-Equation.prototype.toString = function(){
-	return [this.leftSide, this.relation, this.rightSide].join(" ");
+Constraint.prototype.toString = function(){
+	return [this.leftSide, this.comparison, this.rightSide].join(" ");
 };
-Equation.prototype.moveVariableToOneSide = function( isLeft ){
+Constraint.prototype.moveVariableToOneSide = function( isLeft ){
 	var sideA = (!isLeft) ? this.leftSide : this.rightSide,
 		sideB = (isLeft) ? this.leftSide : this.rightSide;
 	sideA.forEachTerm(function(name, value, terms){		
@@ -150,7 +150,25 @@ Equation.prototype.moveVariableToOneSide = function( isLeft ){
 	});	
 	return this;
 };
-Equation.prototype.moveConstantToOneSide = function( isLeft ){
+Constraint.prototype.inverse = function(){
+	this.leftSide.inverse();
+	this.rightSide.inverse();
+	return this;
+};
+Constraint.prototype.negateComparison = function( ){
+	var oppositeCompare = {
+		">=":"<",
+		">":"<=",
+		"<=":">",
+		"<":">="
+	};
+	if( oppositeCompare[ this.comparison ] ){
+		this.comparison = oppositeCompare[ this.comparison ];
+		this.inverse();
+	}
+	return this;
+};
+Constraint.prototype.moveConstantToOneSide = function( isLeft ){
 	var sideA = (!isLeft) ? this.leftSide : this.rightSide,
 		sideB = (isLeft) ? this.leftSide : this.rightSide;
 	sideA.forEachTerm(function(name, value, terms){		
@@ -161,7 +179,7 @@ Equation.prototype.moveConstantToOneSide = function( isLeft ){
 	});	
 	return this;
 };
-Equation.prototype.convertTo = function( variablesSide, constantSide, relation ){
+Constraint.prototype.convertTo = function( variablesSide, constantSide, doNegate ){
 	var RE_left = /left/i;
 	if( variablesSide ){
 		this.moveVariableToOneSide( RE_left.test( variablesSide ) );
@@ -169,8 +187,24 @@ Equation.prototype.convertTo = function( variablesSide, constantSide, relation )
 	if( constantSide ){
 		this.moveConstantToOneSide( RE_left.test( constantSide ) );
 	}
+	if( doNegate ){
+		this.negateComparison( doNegate );
+	}
 	return this;
 };
-Equation.prototype.getStandardMaxForm = function(i){
+Constraint.prototype.getStandardMaxForm = function(i){
 	return this;
 };
+
+
+
+
+
+
+
+
+
+
+
+
+
