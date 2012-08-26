@@ -1,3 +1,8 @@
+/*
+* @project {{=it.name}}
+* @author Larry Battle
+* @license {{=it.license.overview}}
+*/
 /**
 * Expands the string object to support trimming of a the trim.
 *
@@ -8,6 +13,13 @@ String.prototype.trim = String.prototype.trim || function(){
 	return (this||"").replace(/^\s+|\s+$/g, "");
 };
 var mixin = {};
+/**
+ *
+ *
+ * @param {String}
+ * @returns {Object}
+ * @example
+ */
 mixin.getUniqueArray = function( arr ){
 	var result = [], hash = {};
 	if( typeof arr !== "object" || !arr.length ){
@@ -21,6 +33,13 @@ mixin.getUniqueArray = function( arr ){
 	}
 	return result;
 };
+/**
+ *
+ *
+ * @param {String}
+ * @returns {Object}
+ * @example
+ */
 mixin.areObjectsSame = function(obj1, obj2){
 	var a, b;
 	if( obj1 === obj2 ){

@@ -1,7 +1,7 @@
 /*
-* @project YASMIJ.js, "Yet another simplex method implementation in Javascript"
+* @project {{=it.name}}
 * @author Larry Battle
-* @license MIT License <http://www.opensource.org/licenses/mit-license>
+* @license {{=it.license.overview}}
 * @date 07/08/2012
 */
 tests.runExpressionTests = function(){
@@ -228,13 +228,6 @@ tests.runExpressionTests = function(){
 		ok(func("a += b"), "Error because += is not supported.");
 		
 		ok(func("a <= b * -1"), "Error because * is not supported.");
-		/*
-		ok(func("a-1"), "Error because there must be a space between terms.");
-		ok(func("1-a"), "Error because there must be a space between terms.");
-		
-		ok(func("a+b"), "Error because there must be a space between terms.");
-		ok(func("a-b + a + b"), "Error because there must be a space between terms.");
-		*/
 	});
 	test("test Expression.parse() with valid expressions", function(){
 		var func = function(str){
@@ -311,5 +304,35 @@ tests.runExpressionTests = function(){
 		equal( func( "a - 1", "a" ), "-1" );
 		equal( func( "a - 1", 1 ), "a" );
 		equal( func( "a - 1", "b" ), "a - 1" );
+	});
+	test( "test Expression.prototype.forEachTerm", function(){
+		var func = function(str, fn){
+			return Expression.parse(str).forEachTerm(fn);
+		};
+		var arr = []; 
+		func("a + 10 - c", function(name){
+			arr.push( name );
+		});		
+		equal( 3, arr.length );
+	});
+	test( "test Expression.prototype.forEachVariable", function(){
+		var func = function(str, fn){
+			return Expression.parse(str).forEachVariable(fn);
+		};
+		var arr = []; 
+		func("a + 10 - c", function(name){
+			arr.push( name );
+		});		
+		equal( 2, arr.length );
+	});
+	test( "test Expression.prototype.forEachConstant", function(){
+		var func = function(str, fn){
+			return Expression.parse(str).forEachConstant(fn);
+		};
+		var arr = []; 
+		func("a + 10 - c", function(name){
+			arr.push( name );
+		});		
+		equal( 1, arr.length );
 	});
 };

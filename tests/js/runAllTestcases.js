@@ -1,5 +1,5 @@
 /**
-* @project YASMIJ.js
+* @project {{=it.name}}
 * @requires Equation.js and, jQuery.js
 */
 var runAllTests = function(){

@@ -1,13 +1,11 @@
 <!--
 /**
-* @project YASMIJ.js
+* @project {{=it.name}}
 * @purpose Testcases for new YASMIJ.js
-* @author Larry Battle , <http://bateru.com/news/contact-me>
-* @license MIT and GPL 3.0 
-* MIT License <http://www.opensource.org/licenses/mit-license>
-* GPL v3 <http://opensource.org/licenses/GPL-3.0>
-* @info Project page: <https://github.com/LarryBattle/YASMIJ.js/>
-* @version Beta 0.0.9, 2012.07.30
+* @author {{=it.contributor[0].name}} , {{=it.contributor[0].email}}
+* @license {{=it.license.overview}}
+* @info Project page: {{=it.homepage}}
+* @version {{=it.version}}, {{=it.lastModified}}
 */
 -->
 <!DOCTYPE>
@@ -27,13 +25,13 @@
 	<script src="../vendor/qunit/qunit.js"></script>
 	<!-- Source Files -->
 	<script src="../src/dev/NativeObjectFunctions.js"></script>
-	<script src="../src/dev/Equation.js"></script>
+	<script src="../src/dev/Constraint.js"></script>
 	<script src="../src/dev/Expression.js"></script>
 	<script src="../src/dev/Input.js"></script>
 	<!-- Test Files -->	
 	<script src="js/tests.js"></script>
 	<script src="js/Expression-testcases.js"></script>
-	<script src="js/Equation-testcases.js"></script>
+	<script src="js/Constraint-testcases.js"></script>
 	<script src="js/Input-testcases.js"></script>
 	<script src="js/runAllTestcases.js"></script>
 	<script type="text/javascript">

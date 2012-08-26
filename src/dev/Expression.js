@@ -1,7 +1,7 @@
 /**
-* @project YASMIJ.js, "Yet another simplex method implementation in Javascript"
+* @project {{=it.name}}
 * @author Larry Battle
-* @license MIT License <http://www.opensource.org/licenses/mit-license>
+* @license {{=it.license.overview}}
 * @date 07/08/2012
 */
 
@@ -30,12 +30,26 @@ Expression.parse = function(str){
 	obj.terms = Expression.convertExpressionToObject(str);
 	return obj;
 };
+/**
+ *
+ *
+ * @param {String}
+ * @returns {Object}
+ * @example
+ */
 Expression.encodeE = function( str ){
 	str = ( str || "" ).toString();
 	str = str.replace( /(\de)([+])(\d)/gi, "$1_plus_$3" );
 	str = str.replace( /(\de)([\-])(\d)/gi, "$1_sub_$3" );
 	return str;
 };
+/**
+ *
+ *
+ * @param {String}
+ * @returns {Object}
+ * @example
+ */
 Expression.decodeE = function( str ){
 	str = ( str || "" ).toString();
 	str = str.replace( /_plus_/g, "+" );
@@ -54,6 +68,13 @@ Expression.hasManyCompares = function (str) {
 	var matches = ("" + str).replace(/\s/g, "").match(RE_compares) || [];
 	return 1 < matches.length;
 };
+/**
+ *
+ *
+ * @param {String}
+ * @returns {Object}
+ * @example
+ */
 Expression.addSpaceBetweenTerms = function(str){	
 	str = Expression.encodeE( str );
 	str = str.replace( /([\+\-])/g, " $1 " );
@@ -109,16 +130,16 @@ Expression.hasComparison = function(str){
 Expression.getErrorMessage = function (str) {
 	var errMsg;
 	if (Expression.hasComparison(str)) {
-		errMsg = "An expression shouldn't have a comparison in it.";
+		errMsg = "Comparison are not allowed within an expression.";
 	}
 	if (!errMsg && Expression.hasExcludedOperations(str)) {
-		errMsg = "Only addition and subtraction is allowed. Get rid of math operators.";
+		errMsg = "Addition and subtraction are only supported.";
 	}
 	if (!errMsg && Expression.hasIncompleteBinaryOperator(str)) {
-		errMsg = "Math operators must be in between terms.\n Good:(a+b). Bad:(a b+=c).";
+		errMsg = "Exactly one math operators must be between terms.\n Good:(a+b). Bad:(a++ b+).";
 	}
 	if(errMsg){
-		errMsg += "\n str = " + str;
+		errMsg += "\n Input: `" + str + "`";
 	}
 	return errMsg;
 };
@@ -233,10 +254,53 @@ Expression.prototype.getTermNames = function () {
 	}
 	return terms;
 };
-Expression.prototype.forEachTerm = function(fn){
-	fn = (typeof fn === "function") ? fn : function(){};
+/**
+ *
+ *
+ * @param {String}
+ * @returns {Object}
+ * @example
+ */
+Expression.prototype.forEachTerm = function(fn){	
+	if(typeof fn !== "function"){
+		return;
+	}
 	for( var prop in this.terms ){
 		if( this.terms.hasOwnProperty( prop ) ){
+			fn( prop, this.terms[ prop ], this.terms );
+		}
+	}
+};
+/**
+ *
+ *
+ * @param {String}
+ * @returns {Object}
+ * @example
+ */
+Expression.prototype.forEachConstant = function(fn){
+	if(typeof fn !== "function"){
+		return;
+	}
+	for( var prop in this.terms ){
+		if( this.terms.hasOwnProperty( prop ) && prop === "1" ){
+			fn( prop, this.terms[ prop ], this.terms );
+		}
+	}
+};
+/**
+ *
+ *
+ * @param {String}
+ * @returns {Object}
+ * @example
+ */
+Expression.prototype.forEachVariable = function(fn){
+	if(typeof fn !== "function"){
+		return;
+	}
+	for( var prop in this.terms ){
+		if( this.terms.hasOwnProperty( prop ) && prop !== "1" ){
 			fn( prop, this.terms[ prop ], this.terms );
 		}
 	}
@@ -257,12 +321,26 @@ Expression.prototype.toString = function(){
 	}
 	return arr.join( " " ).replace(/\s[\+\-]/g, "$& ");
 };
+/**
+ *
+ *
+ * @param {String}
+ * @returns {Object}
+ * @example
+ */
 Expression.prototype.inverse = function(){
 	this.forEachTerm(function( termName, value, terms ){
 		terms[ termName ] = -value;
 	});
 	return this;
 };
+/**
+ *
+ *
+ * @param {String}
+ * @returns {Object}
+ * @example
+ */
 Expression.prototype.addTerm = function( name, value ){
 	value += this.terms[ name ] || 0;
 	if(value){
@@ -272,6 +350,13 @@ Expression.prototype.addTerm = function( name, value ){
 	}
 	return this;
 };
+/**
+ *
+ *
+ * @param {String}
+ * @returns {Object}
+ * @example
+ */
 Expression.prototype.removeTerm = function( name ){
 	delete this.terms[ name ];
 	return this;
