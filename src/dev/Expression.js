@@ -361,3 +361,16 @@ Expression.prototype.removeTerm = function( name ){
 	delete this.terms[ name ];
 	return this;
 };
+Expression.prototype.scale = function( factor ){
+	factor = +factor;
+	this.forEachTerm( function( name, value, terms ){
+		terms[ name ] = ( factor * value );
+	});
+	return this;
+};
+Expression.prototype.hasTerm = function( name ){
+	return !!this.terms[name];
+};
+Expression.prototype.getTermValue = function( name ){
+	return this.terms[name];
+};

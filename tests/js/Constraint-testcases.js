@@ -194,47 +194,46 @@ tests.runConstraintTests = function(){
 		equal( func( "a+3<=3b"), "a + 3 <= 3b" );
 		equal( func( "-1.4e+ 4 +23.9e4 + a4 -d3 -3e+49 = 3"), "a4 - d3 - 1.4e - 3e+49 = 3" );
 	});
-	test( "test Constraint.prototype.getSides()", function(){
+	test( "test Constraint.prototype.getSwappedSides()", function(){
 		var func = function(str, side ){
-			return Constraint.parse(str).getSides(side);
+			return Constraint.parse(str).getSwappedSides(side);
 		};
-		var checkLeft = function(str){
+		var checkSwapped = function(str){
 			var obj = Constraint.parse(str),
-				sideObj = func(str, "right");
+				sideObj = func(str, true);
 				
-			equal( sideObj.a.toString(), obj.leftSide.toString(), "checkLeft(): " + str + ", leftSide should be side.a" );
-			equal( sideObj.b.toString(), obj.rightSide.toString(), "checkLeft(): " + str + ", rightSide should be side.b" );
+			equal( obj.leftSide.toString(), sideObj.b.toString(), "checkSwapped(): " + str + ", leftSide(swapped side) should be side.b" );
+			equal( obj.rightSide.toString(), sideObj.a.toString(), "checkSwapped(): " + str + ", rightSide(swapped side) should be side.a" );
 		};
-		var checkRight = function(str){
+		var checkNotSwapped = function(str){
 			var obj = Constraint.parse(str),
-				sideObj = func(str, "right");
+				sideObj = func(str);
 			
-			equal( sideObj.a.toString(), obj.rightSide.toString(), "checkRight(): " + str + ", rightSide should be side.a" );
-			equal( sideObj.b.toString(), obj.leftSide.toString(), "checkRight(): " + str + ", leftSide should be side.b" );
+			equal( obj.leftSide.toString(), sideObj.a.toString(), "checkNotSwapped(): " + str + ", leftSide(same side) should be side.a" );
+			equal( obj.rightSide.toString(), sideObj.b.toString(), "checkNotSwapped(): " + str + ", rightSide(same side) should be side.b" );
 		};
 		var checkBoth = function( str ){
-			checkLeft( str );
-			checkRight( str );
+			checkSwapped( str );
+			checkNotSwapped( str );
 		};
 		checkBoth( "x = y" );
 		checkBoth( "x + 4 + 2 = y + c + 3c" );
 	});
-	test( "test Constraint.prototype.switchSides()", function(){
-		var func = function(str, side ){
+	test( "test Constraint.switchSides()", function(){
+		var func = function(str, doSwap ){
 			var obj = Constraint.parse(str),
-				sides = obj.getSides(side);
-				
-			return obj.switchSides( sides, sides.a.forEachConstant );
+				sides = obj.getSwappedSides(doSwap);
+
+			Constraint.switchSides( sides.a, sides.b, sides.a.forEachTerm );
+			return obj;
 		};
-		var checkBoth = function( str ){
-			var obj = func( str, "left" ),
-				expect = Constraint.parse(str);
-				
-			equal( expect.leftSide.toString(), obj.rightSide.toString(), "the original left and swapped right sides should match." );
-			equal( expect.rightSide.toString(), obj.leftSide.toString(), "the original right and swapped left sides should match."  );
-		};
-		checkBoth( "x = y" );
-		checkBoth( "x + 4 + 2 = y + c + 3c" );
+		var result = func( "x = y" );
+		equal( "0", result.leftSide.toString() );
+		equal( "-x + y", result.rightSide.toString() );
+		
+		var result = func( "x + 4 + 2 = y + c + 3c" );
+		equal( "0", result.leftSide.toString() );
+		equal( "4c - x + y - 6", result.rightSide.toString() );
 	});
 	test( "test Constraint.prototype.moveTypeToOneSide() with different comparisons", function(){
 		var func = function( str, varsSide, constantsSide ){
@@ -264,9 +263,9 @@ tests.runConstraintTests = function(){
 			return Constraint.parse(str).moveTypeToOneSide(varsSide, constantsSide).toString();
 		};
 		var str = "a + b + d <= 30 + a + 5b + 2 - c";
-		equal( func( str, "left", null ), "-4b + c <= 32" );
+		equal( func( str, "left", null ), "-4b + c + d <= 32" );
 		equal( func( str, "right", null ), "0 <= 4b - c - d + 32" );
-		equal( func( str, "left", "right" ), "-4b + c <= 32" );
+		equal( func( str, "left", "right" ), "-4b + c + d <= 32" );
 		
 		equal( func( str, null, "right" ), "a + b + d <= a + 5b - c + 32" );
 		equal( func( str, null, "left" ), "a + b + d - 32 <= a + 5b - c" );
@@ -277,7 +276,7 @@ tests.runConstraintTests = function(){
 			return Constraint.parse(str).normalize().toString();
 		};
 		equal( func( "a - 10 <= 20" ), "a <= 30" );
-		equal( func( "-1 + a < 21" ), "a <= 22 - e" );
+		equal( func( "-1 + a < 21" ), "a <= 21.999999" );
 		equal( func( "a + b - 10 >= 0" ), "a + b >= 10" );
 	});
 };

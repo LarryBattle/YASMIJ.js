@@ -24,7 +24,7 @@ var Constraint = function () {
 };
 /**
  * Used to convert strict inequalities to non-strict.
-*/
+ */
 Constraint.EPSILON = 1e-6;
 /**
  * Checks to see if an object equals the current instance of Constraint.
@@ -88,7 +88,15 @@ Constraint.checkInput = function (str) {
 		throw new Error(errMsg);
 	}
 };
-
+/**
+* For all the term types in sideA, move them over to sideB using the provided function.
+*/
+Constraint.switchSides = function (sideA, sideB, forEachTermFunc) {
+	forEachTermFunc.call(sideA, function (name, value) {
+		sideB.addTerm(name, -value);
+		sideA.removeTerm(name);
+	});
+};
 /**
  * Returns an array of variables without the coefficients.
  *
@@ -154,13 +162,10 @@ Constraint.prototype.toString = function () {
  * @see Constraint.prototype.switchSides
  * @example
  */
-Constraint.prototype.getSides = function (side) {
-	if (!/left|right/.test(side)) {		
-		return;
-	}
+Constraint.prototype.getSwappedSides = function (doSwap) {
 	return {
-		a : ((!/left/.test(side)) ? this.leftSide : this.rightSide),
-		b : (/left/.test(side) ? this.leftSide : this.rightSide)
+		a : (!doSwap ? this.leftSide : this.rightSide),
+		b : (doSwap ? this.leftSide : this.rightSide)
 	};
 };
 /**
@@ -170,16 +175,17 @@ Constraint.prototype.getSides = function (side) {
  * @returns {Object}
  * @example
  */
-Constraint.prototype.switchSides = function (sides, forEachTermFunc) {
-	if ( !sides || typeof sides !== "object" || typeof func !== "function") {
-		return this;
-	}
-	forEachTermFunc(function (name, value, terms) {
-		sides.b.addTerm(name, -value);
-		sides.a.removeTerm(name);
-	});
-	return this;
-};
+// Constraint.prototype.switchSides = function (sides, forEachTermFunc) {
+	// if (!sides || typeof sides !== "object" || typeof func !== "function") {
+		// return this;
+	// }
+	// forEachTermFunc(function (name, value, terms) {
+		// sides.b.addTerm(name, -value);
+		// sides.a.removeTerm(name);
+	// });
+	// return this;
+// };
+
 /**
  *
  *
@@ -188,13 +194,16 @@ Constraint.prototype.switchSides = function (sides, forEachTermFunc) {
  * @example
  */
 Constraint.prototype.moveTypeToOneSide = function (varSide, numSide) {
-	var varSides = this.getSides(varSide),
-	numSides = this.getSides(numSide);
-	if (varSides) {
-		this.switchSides(varSides, varSides.a.forEachVariable);
+	var varSides,
+		numSides;
+		
+	if (/left|right/.test(varSide)) {
+		varSides = this.getSwappedSides( /left/.test(varSide) );
+		Constraint.switchSides(varSides.a, varSides.b, varSides.a.forEachVariable);
 	}
-	if (numSides) {
-		this.switchSides(numSides, numSides.a.forEachConstant);
+	if (/left|right/.test(numSide)) {
+		numSides = this.getSwappedSides(/left/.test(numSide));
+		Constraint.switchSides(numSides.a, numSides.b, numSides.a.forEachConstant);
 	}
 	return this;
 };
@@ -237,20 +246,20 @@ Constraint.prototype.negateComparison = function () {
  * @returns {Object}
  * @example
  */
-Constraint.prototype.removeStrictInEquality = function(){
-	var eps;	
-	if( this.comparison == "<" || this.comparison == ">" ){
+Constraint.prototype.removeStrictInEquality = function () {
+	var eps;
+	if (this.comparison == "<" || this.comparison == ">") {
 		this.comparison += "=";
-		eps = Constraint.EPSILON * ( this.comparison == ">" ? 1 : -1 );
-		this.rightSide.addTerm( "1", eps );
+		eps = Constraint.EPSILON * (this.comparison == ">" ? 1 : -1);
+		this.rightSide.addTerm("1", eps);
 	}
 	return this;
 };
-/** 
-* Places the constants on the right and the variables on the left hand side.
-*/
-Constraint.prototype.normalize = function () {	
-	return this.moveTypeToOneSide("left", "right").removeStrictInEquality();	
+/**
+ * Places the constants on the right and the variables on the left hand side.
+ */
+Constraint.prototype.normalize = function () {
+	return this.moveTypeToOneSide("left", "right").removeStrictInEquality();
 };
 /**
  *
@@ -265,3 +274,28 @@ Constraint.prototype.getStandardMaxForm = function () {
 	else if (this.comparison == ">=") {}
 	return this;
 };
+Constraint.prototype.scale = function ( factor ) {
+	this.leftSide.scale( factor );
+	this.rightSide.scale( factor );
+	return this;
+};
+Constraint.prototype.varSwitchSide = function ( name, moveTo ) {
+	if( !/left|right/.test(moveTo) ){
+		return this;
+	}
+	name = ( isNaN( name ) ) ? name : "1";
+	var sideA = ( "left" === moveTo ) ? this.rightSide : this.leftSide,
+		sideB = ( "left" !== moveTo ) ? this.rightSide : this.leftSide;
+		
+	if( sideA.hasTerm( name ) ){
+		sideB.addTerm( name, -sideA.getTermValue( name ) );
+		sideA.removeTerm( name );
+	}
+	return this;
+};
+
+
+
+
+
+
