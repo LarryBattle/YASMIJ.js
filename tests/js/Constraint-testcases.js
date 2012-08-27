@@ -277,6 +277,7 @@ tests.runConstraintTests = function(){
 		};
 		equal( func( "a - 10 <= 20" ), "a <= 30" );
 		equal( func( "-1 + a < 21" ), "a <= 21.999999" );
+		equal( func( "-1 + a > 21" ), "a >= 22.000001" );
 		equal( func( "a + b - 10 >= 0" ), "a + b >= 10" );
 	});
 };

@@ -19,6 +19,7 @@ var Constraint = function () {
 	this.comparison = "";
 	this.leftSide = {};
 	this.rightSide = {};
+	this.slackValue = 0;
 	this.terms = {};
 	return this;
 };
@@ -250,7 +251,7 @@ Constraint.prototype.removeStrictInEquality = function () {
 	var eps;
 	if (this.comparison == "<" || this.comparison == ">") {
 		this.comparison += "=";
-		eps = Constraint.EPSILON * (this.comparison == ">" ? 1 : -1);
+		eps = Constraint.EPSILON * ( />/.test( this.comparison ) ? 1 : -1);
 		this.rightSide.addTerm("1", eps);
 	}
 	return this;
@@ -268,10 +269,23 @@ Constraint.prototype.normalize = function () {
  * @returns {Object}
  * @example
  */
+Constraint.prototype.addSurplus = function(){
+	this.slackValue = -1;
+	this.leftSide.addTerm( "surplus", -1 );
+};
+Constraint.prototype.addSlack = function(){
+	this.slackValue = 1;
+	this.leftSide.addTerm( "slack", 1 );
+};
 Constraint.prototype.getStandardMaxForm = function () {
 	this.normalize();
-	if (this.comparison == "<=") {}
-	else if (this.comparison == ">=") {}
+	if (this.comparison == "<=") {
+		this.addSlack();
+	}
+	else if (this.comparison == ">=") {
+		this.addSurplus();
+	}
+	this.comparison = "=";
 	return this;
 };
 Constraint.prototype.scale = function ( factor ) {
