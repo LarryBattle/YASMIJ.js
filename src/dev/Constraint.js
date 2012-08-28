@@ -176,24 +176,6 @@ Constraint.prototype.getSwappedSides = function (doSwap) {
  * @returns {Object}
  * @example
  */
-// Constraint.prototype.switchSides = function (sides, forEachTermFunc) {
-	// if (!sides || typeof sides !== "object" || typeof func !== "function") {
-		// return this;
-	// }
-	// forEachTermFunc(function (name, value, terms) {
-		// sides.b.addTerm(name, -value);
-		// sides.a.removeTerm(name);
-	// });
-	// return this;
-// };
-
-/**
- *
- *
- * @param {String}
- * @returns {Object}
- * @example
- */
 Constraint.prototype.moveTypeToOneSide = function (varSide, numSide) {
 	var varSides,
 		numSides;
@@ -216,19 +198,8 @@ Constraint.prototype.moveTypeToOneSide = function (varSide, numSide) {
  * @example
  */
 Constraint.prototype.inverse = function () {
-	this.leftSide.inverse();
-	this.rightSide.inverse();
-	return this;
-};
-/**
- *
- *
- * @param {String}
- * @returns {Object}
- * @example
- */
-Constraint.prototype.negateComparison = function () {
 	var oppositeCompare = {
+		"=" : "=",
 		">=" : "<",
 		">" : "<=",
 		"<=" : ">",
@@ -236,7 +207,8 @@ Constraint.prototype.negateComparison = function () {
 	};
 	if (oppositeCompare[this.comparison]) {
 		this.comparison = oppositeCompare[this.comparison];
-		this.inverse();
+		this.leftSide.inverse();
+		this.rightSide.inverse();
 	}
 	return this;
 };
@@ -247,12 +219,12 @@ Constraint.prototype.negateComparison = function () {
  * @returns {Object}
  * @example
  */
-Constraint.prototype.removeStrictInEquality = function () {
+Constraint.prototype.removeStrictInequality = function () {
 	var eps;
-	if (this.comparison == "<" || this.comparison == ">") {
-		this.comparison += "=";
-		eps = Constraint.EPSILON * ( />/.test( this.comparison ) ? 1 : -1);
+	if ( /^[<>]$/.test( this.comparison ) ){
+		eps = Constraint.EPSILON * ( ">" === this.comparison ? 1 : -1);
 		this.rightSide.addTerm("1", eps);
+		this.comparison += "=";
 	}
 	return this;
 };
@@ -260,7 +232,11 @@ Constraint.prototype.removeStrictInEquality = function () {
  * Places the constants on the right and the variables on the left hand side.
  */
 Constraint.prototype.normalize = function () {
-	return this.moveTypeToOneSide("left", "right").removeStrictInEquality();
+	this.moveTypeToOneSide("left", "right");
+	if( this.rightSide.getTermValue( "1" ) < 0 ){
+		this.inverse();
+	}
+	return this.removeStrictInequality();
 };
 /**
  *

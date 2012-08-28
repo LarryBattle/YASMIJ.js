@@ -220,6 +220,7 @@ tests.runConstraintTests = function(){
 		checkBoth( "x + 4 + 2 = y + c + 3c" );
 	});
 	test( "test Constraint.switchSides()", function(){
+		var result;
 		var func = function(str, doSwap ){
 			var obj = Constraint.parse(str),
 				sides = obj.getSwappedSides(doSwap);
@@ -227,11 +228,11 @@ tests.runConstraintTests = function(){
 			Constraint.switchSides( sides.a, sides.b, sides.a.forEachTerm );
 			return obj;
 		};
-		var result = func( "x = y" );
+		result = func( "x = y" );
 		equal( "0", result.leftSide.toString() );
 		equal( "-x + y", result.rightSide.toString() );
 		
-		var result = func( "x + 4 + 2 = y + c + 3c" );
+		result = func( "x + 4 + 2 = y + c + 3c" );
 		equal( "0", result.leftSide.toString() );
 		equal( "4c - x + y - 6", result.rightSide.toString() );
 	});
@@ -271,6 +272,23 @@ tests.runConstraintTests = function(){
 		equal( func( str, null, "left" ), "a + b + d - 32 <= a + 5b - c" );
 		equal( func( str, "right", "left" ), "-32 <= 4b - c - d" );
 	});
+	test( "test Constraint.prototype.inverse()", function(){
+		var func = function(str){
+			return Constraint.parse(str).inverse().toString();
+		};
+		equal( func( "x < 2" ), "-x >= -2");
+		equal( func( "a + b < 2 - 40c" ), "-a - b >= 40c - 2");
+		equal( func( "-a <= -2" ), "a > 2");
+		equal( func( "5a >= 2b" ), "-5a < -2b");
+		equal( func( "4a + b = 2" ), "-4a - b = -2");
+	});
+	test( "test Constraint.prototype.removeStrictInequality()", function(){
+		var func = function(str){
+			return Constraint.parse(str).removeStrictInequality().toString();
+		};
+		equal( func("x > 0"), "x >= 0.000001" );
+		equal( func("x < 0"), "x <= -0.000001" );
+	});
 	test( "test Constraint.prototype.normalize()", function(){
 		var func = function( str ){
 			return Constraint.parse(str).normalize().toString();
@@ -279,6 +297,17 @@ tests.runConstraintTests = function(){
 		equal( func( "-1 + a < 21" ), "a <= 21.999999" );
 		equal( func( "-1 + a > 21" ), "a >= 22.000001" );
 		equal( func( "a + b - 10 >= 0" ), "a + b >= 10" );
+	});
+	test( "test Constraint.prototype.getStandardMaxForm()", function(){
+		var func = function(str){
+			return Constraint.parse(str).getStandardMaxForm().toString();
+		};
+		equal( func( "x = 1" ), "x = 1" );
+		equal( func( "x = -1" ), "-x = 1" );
+		equal( func( "x >= 1" ), "-surplus + x = 1" );
+		equal( func( "x <= 1" ), "slack + x = 1" );
+		equal( func( "a + 3b < 20" ), "a + 3b + slack = 19.999999" );
+		equal( func( "a - 2b - c + 20 < 4 + 4c" ), "-a + 2b + 5c - surplus = 16" );
 	});
 };
 
