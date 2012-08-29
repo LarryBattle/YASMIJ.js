@@ -20,6 +20,7 @@ Version Roadmap:
 * 0.1 - Complete the Expression Class (Done)
 * 0.1.5  - Complete the Constraint Class (Done)
 * 0.2 - Complete the Input Class (Done)
+* 0.2.5 - Complete the Matrix Class (In Progress)
 * 0.3 - Complete the Tableau Class (In Progress)
 * 0.4 - Complete the Output Class
 * 0.5 - Complete the Simplex and YASMIJ Classes

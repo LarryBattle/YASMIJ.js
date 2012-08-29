@@ -6,4 +6,5 @@ var runAllTests = function(){
 	tests.runExpressionTests();
 	tests.runConstraintTests();
 	tests.runInputTests();
+	tests.runMatrixTests();
 };
