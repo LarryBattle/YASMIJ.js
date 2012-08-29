@@ -247,7 +247,8 @@ Constraint.prototype.normalize = function () {
  */
 Constraint.prototype.addSurplus = function(){
 	this.slackValue = -1;
-	this.leftSide.addTerm( "surplus", -1 );
+	//this.leftSide.addTerm( "surplus", -1 );
+	this.leftSide.addTerm( "slack", -1 );
 };
 Constraint.prototype.addSlack = function(){
 	this.slackValue = 1;
