@@ -374,3 +374,11 @@ Expression.prototype.hasTerm = function( name ){
 Expression.prototype.getTermValue = function( name ){
 	return this.terms[name];
 };
+Expression.prototype.getCoeffients = function(){
+	var arr = [];
+	var names = this.getTermNames();
+	for( var i = 0, len = names.length; i < len; i++ ){
+		arr.push(  +( this.terms[ names[ i ] ] || names[ i ] ) );
+	}
+	return arr;
+};
