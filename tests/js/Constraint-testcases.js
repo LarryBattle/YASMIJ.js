@@ -304,10 +304,10 @@ tests.runConstraintTests = function(){
 		};
 		equal( func( "x = 1" ), "x = 1" );
 		equal( func( "x = -1" ), "-x = 1" );
-		equal( func( "x >= 1" ), "-surplus + x = 1" );
+		equal( func( "x >= 1" ), "-slack + x = 1" );
 		equal( func( "x <= 1" ), "slack + x = 1" );
 		equal( func( "a + 3b < 20" ), "a + 3b + slack = 19.999999" );
-		equal( func( "a - 2b - c + 20 < 4 + 4c" ), "-a + 2b + 5c - surplus = 16" );
+		equal( func( "a - 2b - c + 20 < 4 + 4c" ), "-a + 2b + 5c - slack = 16" );
 	});
 };
 

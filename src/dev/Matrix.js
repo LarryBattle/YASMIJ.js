@@ -35,13 +35,7 @@ Matrix.scaleRow = function(scale, row){
 	return row;
 };
 Matrix.addRows = function(rowA, rowB){
-	rowA = (Matrix.isArray(rowA)) ? rowA.concat() : [];
-	rowB = (Matrix.isArray(rowB)) ? rowB.concat() : [];
-	var len = Math.max( rowA.length, rowB.length );
-	for(var i = 0; i < len; i++ ){
-		rowA[i] = (rowA[i]||0) + (rowB[i]||0);
-	}
-	return rowA;
+	return Matrix.scaleAndAddRows(1, rowA, 1, rowB );
 };
 Matrix.scaleAndAddRows = function( scaleA, rowA, scaleB, rowB){
 	rowA = (Matrix.isArray(rowA)) ? rowA.concat() : [];

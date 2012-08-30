@@ -12,17 +12,24 @@ var Tableau = function(){
 	this.limit = 1e4;
 	this.state = null;
 };
-Tableau.prototype.checkForError = function(){
-	if( !(this.input instanceof Input) ){
-		return "Must pass an instance from the Input class.";
+Tableau.getErrorMessage = function( input ){
+	var errMsg = "";
+	if( !(input instanceof Input) ){
+		errMsg = "Must pass an instance of the Input class.";
+	}
+	return errMsg;
+};
+Tableau.checkForError = function( input ){
+	var errMsg = Tableau.getErrorMessage( input );
+	if( errMsg ){
+		throw new Error( errMsg );
 	}
 };
 Tableau.parse = function( input ){
 	var obj = new Tableau();
-	obj.input = input;
-	obj.checkForError();
-	obj.input.convertToStandardForm();
-	obj.setMatrixFromInput();
+	Tableau.checkForError( input );
+	obj.input = input.convertToStandardForm();
+	//obj.setMatrixFromInput();
 	obj.state = "created";
 	return obj;
 };
@@ -38,7 +45,10 @@ Tableau.prototype.getRow = function( names, constraintI ){
 	return row;
 };
 Tableau.prototype.toString = function(){
-	return this.matrix.toString();
+	if( this.matrix ){
+		return this.matrix.toString();
+	}
+	return "Matrix is empty.";
 };
 
 

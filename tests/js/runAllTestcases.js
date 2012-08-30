@@ -7,4 +7,5 @@ var runAllTests = function(){
 	tests.runConstraintTests();
 	tests.runInputTests();
 	tests.runMatrixTests();
+	tests.runTableauTests();
 };
