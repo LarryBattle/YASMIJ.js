@@ -19,7 +19,7 @@ var Constraint = function () {
 	this.comparison = "";
 	this.leftSide = {};
 	this.rightSide = {};
-	this.slackValue = 0;
+	this.slack = null;
 	this.terms = {};
 	return this;
 };
@@ -53,6 +53,7 @@ Constraint.hasManyCompares = function (str) {
  * @example Constraint.hasIncompleteBinaryOperator( "a + b +" ) == true;
  */
 Constraint.hasIncompleteBinaryOperator = function (str) {
+	str = str.replace( /\s{2,}/g, "" );
 	var noSpaceStr = ("" + str).replace(/\s/g, ""),
 	hasNoOperatorBetweenValues = /[^+\-><=]\s+[^+\-><=]/.test(("" + str)),
 	RE_noLeftAndRightTerms = /[+\-][><=+\-]|[><=+\-]$/;
@@ -117,6 +118,7 @@ Constraint.prototype.getTermNames = function () {
  * @example
  */
 Constraint.parseToObject = function (str) {
+	str = str.replace( /([><])(\s+)(=)/g, "$1$3" );
 	Constraint.checkInput(str);
 	var RE_comparison = /[><]=?|=/;
 	var arr = ("" + str).split(RE_comparison);
@@ -245,22 +247,32 @@ Constraint.prototype.normalize = function () {
  * @returns {Object}
  * @example
  */
-Constraint.prototype.addSurplus = function(){
-	this.slackValue = -1;
-	//this.leftSide.addTerm( "surplus", -1 );
-	this.leftSide.addTerm( "slack", -1 );
+Constraint.prototype.addSlack = function(val){
+	this.slack = { 
+		name: "slack", 
+		value: val 
+	};
+	this.leftSide.addTerm( "slack", val );
+	return this;
 };
-Constraint.prototype.addSlack = function(){
-	this.slackValue = 1;
-	this.leftSide.addTerm( "slack", 1 );
+Constraint.prototype.updateSlack = function( name, val){
+	var oldName = (this.slack || {} ).name;
+	val = (!val && val !== 0) ? this.leftSide.getTermValue( oldName ) : val;
+	this.slack = { 
+		"name": name || oldName, 
+		"value": val 
+	};
+	this.leftSide.removeTerm( oldName );
+	this.leftSide.addTerm( name||"slack", val );
+	return this;
 };
-Constraint.prototype.getStandardMaxForm = function () {
+Constraint.prototype.convertToStandardMaxForm = function () {
 	this.normalize();
 	if (this.comparison == "<=") {
-		this.addSlack();
+		this.addSlack(1);
 	}
 	else if (this.comparison == ">=") {
-		this.addSurplus();
+		this.addSlack(-1);
 	}
 	this.comparison = "=";
 	return this;

@@ -43,7 +43,7 @@ tests.runMatrixTests = function(){
 		var arr = [];
 		func( [[1],[2],[3]], function(i,row){ 
 			arr.push( row[0] ); 
-		})
+		});
 		deepEqual( arr, [1,2,3] );
 	});
 	test( "test Matrix.prototype.getColumn()", function(){
@@ -74,5 +74,14 @@ tests.runMatrixTests = function(){
 		};
 		deepEqual( func([-2,-1,0,1,2], 0), [0,-2] );
 		deepEqual( func([2,1,-3], 0), [2,-3] );
+	});
+	test("test Matrix.prototype.toString", function(){
+		ok(0, "need testcase");
+	});
+	test("test Matrix.prototype.getSize", function(){
+		ok(0, "need testcase");
+	});
+	test("test Matrix.prototype.scaleRow", function(){
+		ok(0, "need testcase");
 	});
 };

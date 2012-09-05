@@ -60,6 +60,8 @@ tests.runConstraintTests = function(){
 		equal( func( "a >= b" ), false );
 		equal( func( "a = 1" ), false );
 		equal( func( "a - b + 1 > c + 1e34" ), false );
+		equal( func( "x     <= 1" ), false );
+		equal( func( "x <   = 1" ), false );
 	});
 	test( "test Constraint.hasIncompleteBinaryOperator() with invalid expressions.", function(){
 		var func = Constraint.hasIncompleteBinaryOperator;
@@ -298,9 +300,9 @@ tests.runConstraintTests = function(){
 		equal( func( "-1 + a > 21" ), "a >= 22.000001" );
 		equal( func( "a + b - 10 >= 0" ), "a + b >= 10" );
 	});
-	test( "test Constraint.prototype.getStandardMaxForm()", function(){
+	test( "test Constraint.prototype.convertToStandardMaxForm()", function(){
 		var func = function(str){
-			return Constraint.parse(str).getStandardMaxForm().toString();
+			return Constraint.parse(str).convertToStandardMaxForm().toString();
 		};
 		equal( func( "x = 1" ), "x = 1" );
 		equal( func( "x = -1" ), "-x = 1" );
