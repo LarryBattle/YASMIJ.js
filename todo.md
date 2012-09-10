@@ -1,4 +1,4 @@
-// Main code:<br/>
+## Main code:
 @todo Wrap code in the YASMIJ namespace.<br/>
 @todo Convert constants in the objective function to variables with constraints.<br/>
 @todo finish table class<br/>
@@ -7,7 +7,7 @@
 @todo finish yasmij class<br/>
 
 
-// Build Script:<br/>
+## Build Script:
 @todo: Create build script.<br/>
   required features
   - compress all files into YASMIJ.js
@@ -16,8 +16,8 @@
   - validate the compressed go for yasmij.js (if possible)
   - generate documentation using YUIDOCS.js
 
-// Documentation:<br/>
+## Documentation:
 @todo: Add documentation to all scripts.<br/>
 
-// Others:<br/>
+## Others:
 @todo: Create demo page.
