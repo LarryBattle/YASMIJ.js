@@ -11,9 +11,9 @@ tests.runMatrixTests = function(){
 		var func = function(obj){
 			return Matrix.parse(obj).toString();
 		};
-		equal( func(1), "1" );
-		equal( func([1,2,3]), "1, 2, 3" );
-		equal( func([[1,2,3],[1,2,3]]), "1, 2, 3\n1, 2, 3" );
+		equal( func(1), "[1]" );
+		equal( func([1,2,3]), "[1,2,3]" );
+		equal( func([[1,2,3],[1,2,3]]), "[[1,2,3],[1,2,3]]" );
 	});
 	test( "test Matrix.isArray()", function(){
 		var func = Matrix.isArray;
@@ -27,8 +27,8 @@ tests.runMatrixTests = function(){
 		var func = function( obj, rowObj ){
 			return Matrix.parse(obj).addRow(rowObj).toString();
 		};
-		equal( func( 1, 2 ), "1\n2" );
-		equal( func( [1,2], [1,2] ), "1, 2\n1, 2" );
+		equal( func( 1, 2 ), "[[1],[2]]" );
+		equal( func( [1,2], [1,2] ), "[[1,2],[1,2]]" );
 	});
 	test( "test Matrix.prototype.getRow()", function(){
 		var func = function( obj, i ){
@@ -75,13 +75,53 @@ tests.runMatrixTests = function(){
 		deepEqual( func([-2,-1,0,1,2], 0), [0,-2] );
 		deepEqual( func([2,1,-3], 0), [2,-3] );
 	});
-	test("test Matrix.prototype.toString", function(){
-		ok(0, "need testcase");
+	test("test Matrix.prototype.toString()", function(){
+		var func = function(obj){
+			return Matrix.parse(obj).toString();
+		};
+		equal( func([]), "[]");
+		equal( func([1,2,3]), "[1,2,3]");
+		equal( func([[1,2,3]]), "[1,2,3]");
+		equal( func([
+			[1,2,3],
+			[1,2,3],
+			[1,2,3]
+		]), "[[1,2,3],[1,2,3],[1,2,3]]");
 	});
-	test("test Matrix.prototype.getSize", function(){
-		ok(0, "need testcase");
+	test("test Matrix.prototype.getSize()", function(){
+		var func = function(obj){
+			return Matrix.parse(obj).getSize();
+		};
+		deepEqual(func(),[0,0]);
+		deepEqual(func([]),[0,0]);
+		deepEqual(func([1]),[1,1]);
+		deepEqual(func([[1,2],[1,2]]),[2,2]);
+		deepEqual(func([[1],[2]]),[1,2]);
 	});
-	test("test Matrix.prototype.scaleRow", function(){
-		ok(0, "need testcase");
+	test("test Matrix.prototype.scaleRow()", function(){
+		var func = function(obj, factor, rowI){
+			return Matrix.parse(obj).scaleRow(factor, rowI ).toString();
+		};	
+		equal( func([1,2,3], 2, 0), "[2,4,6]");
+		equal( func([[1],[2],[3]], 2, 2), "[[1],[2],[6]]");
+	});
+	test( "test Matrix.getMaxArray()", function(){
+		var func = Matrix.getMaxArray;
+		equal( func(), null );
+		deepEqual( func( [[]] ), [0,0] );
+		deepEqual( func( [[],[]] ), [0,0] );
+		deepEqual( func( [[1],[]] ), [0,1] );
+		deepEqual( func( [[1],[1,2]] ), [1,2] );
+		deepEqual( func( [[1],[1,2],[1,2,3]] ), [2,3] );
+	});
+	test("test Matrix.prototype.addToRow()", function(){
+		var func = function( arr, iRow, els ){
+			return Matrix.parse(arr).addToRow( iRow, els ).array;
+		};
+		deepEqual(func([], 0, [1,2,3]), [[1,2,3]] );
+		deepEqual(func([], 1, [1,2,3]), [[1,2,3]] );
+		deepEqual(func([[1],[2]], 0, [2,3,4] ), [[1,2,3,4],[2]]);
 	});
 };
+
+

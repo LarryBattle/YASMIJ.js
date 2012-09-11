@@ -15,12 +15,14 @@ Matrix.isArray = function( obj ){
 	return Object.prototype.toString.call(obj) === "[object Array]";
 };
 Matrix.parse = function( input ){
-	var obj = new Matrix();
-	if( Matrix.isArray( input ) && Matrix.isArray( input[0] )){
-		obj.array = input;
-	}else{
-		input = Matrix.isArray( input ) ? input : [ input ];
-		obj.addRow( input );
+	var obj = new Matrix(), isArray = Matrix.isArray( input );
+	if( input !== undefined && !( isArray && !input.length) ){	
+		if( isArray && Matrix.isArray( input[0] )){
+			obj.array = input;
+		}else{
+			input = isArray ? input : [ input ];
+			obj.addRow( input );
+		}
 	}
 	return obj;
 };
@@ -47,10 +49,8 @@ Matrix.scaleAndAddRows = function( scaleA, rowA, scaleB, rowB){
 	return rowA;
 };
 Matrix.prototype.addRow = function(arr){
-	arr = (typeof arr !== "object") ? [ arr ] : arr;
+	arr = Matrix.isArray(arr) ? arr : [arr];
 	this.array.push( arr );
-	this.columns = Math.max( arr.length, this.columns );
-	this.rows += 1;
 	return this;
 };
 Matrix.prototype.getElement = function( i, j ){
@@ -97,15 +97,23 @@ Matrix.prototype.getMinElementInRow = function( rowI ){
 Matrix.prototype.toString = function( input ){
 	var str = "";
 	this.forEachRow( function( i, row ){
-		if(0 < i){
-			str += "\n";
+		if(i){
+			str += ",";
 		}
-		str += row.join(', ');
+		str += "[" + row.toString() + "]";
 	});
+	if(this.array.length != 1 ){
+		str = "[" + str + "]";
+	}
 	return str;
 };
 Matrix.prototype.getSize = function(){
-	return [ this.columns, this.rows ];
+	var columns = 0, rows = this.array.length, i = rows, x;
+	while( i-- ){
+		x = this.array[i].length;
+		columns = columns < x ? x : columns;
+	}
+	return [ columns, rows ];
 };
 Matrix.prototype.scaleRow = function(scaleA, rowI ){
 	var row = this.array[ rowI ] || [];
@@ -114,7 +122,28 @@ Matrix.prototype.scaleRow = function(scaleA, rowI ){
 	}
 	return this;
 };
-
+Matrix.prototype.addToRow = function(iRow, els){
+	if( this.array[iRow] ){
+		this.array[iRow] = (this.array[iRow] || []).concat(els);
+	}else{
+		this.addRow(els);
+	}
+	return this;
+};
+Matrix.getMaxArray = function(arrays){
+	var index = 0, max = 0;
+	if( !Matrix.isArray( arrays ) || !Matrix.isArray( arrays[0] ) ){
+		return null;
+	}
+	var i = arrays.length;
+	while( i-- ){
+		if( max < arrays[i].length ){
+			index = i;
+			max = arrays[i].length;
+		}
+	}
+	return [ index, max ];
+};
 
 
 

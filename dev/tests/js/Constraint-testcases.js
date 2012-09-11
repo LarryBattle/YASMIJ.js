@@ -179,6 +179,13 @@ tests.runConstraintTests = function(){
 		deepEqual( func( "a" ), ["a"] );
 		deepEqual( func( "2x1 + x2 + x3 <= 14" ), ["x1","x2","x3", "14"] );
 	});
+	test("test Constraint.getTermNames(true) to execlude numbers", function(){
+		var func = function( str ){
+			return Constraint.parse( str ).getTermNames(true);
+		};
+		deepEqual( func( "a" ), ["a"] );
+		deepEqual( func( "2x1 + x2 + x3 <= 14" ), ["x1","x2","x3"] );
+	});
 	test("test Constraint.parse()", function(){
 		var func = function(str){
 				return Constraint.parse(str);

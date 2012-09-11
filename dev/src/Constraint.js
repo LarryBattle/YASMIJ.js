@@ -106,8 +106,8 @@ Constraint.switchSides = function (sideA, sideB, forEachTermFunc) {
  * @returns {Array}
  * @example Constraint.parse("a = cats + 30").getTermNames(); // returns ["a", "cats", "30" ]
  */
-Constraint.prototype.getTermNames = function () {
-	var arr = [].concat(this.leftSide.getTermNames(), this.rightSide.getTermNames());
+Constraint.prototype.getTermNames = function (excludeNumbers) {
+	var arr = [].concat(this.leftSide.getTermNames( excludeNumbers ), this.rightSide.getTermNames( excludeNumbers ) );
 	return mixin.getUniqueArray(arr);
 };
 /**
