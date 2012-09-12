@@ -1,8 +1,8 @@
 {
 	"name" : "YASMIJ",
 	"description" : "Yet another simplex method library for javascript",
-	"version" : "0.2.1.5",
-	"lastModified" : "September 10, 2012",
+	"version" : "0.2.1.6",
+	"lastModified" : "September 11, 2012",
 	"author" : "Larry Battle <http://bateru.com/news/contact-me>",
 	"homepage" : "https://github.com/LarryBattle/YASMIJ.js/",
 	"license" : {

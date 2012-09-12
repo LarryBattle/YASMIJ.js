@@ -351,4 +351,12 @@ tests.runExpressionTests = function(){
 		deepEqual( func("a + b + slack + 10", true ), [1,1,1] );
 		deepEqual( func("a + b + slack + 10", true, true ), [1,1] );
 	});
+	test( "test Expression.prototype.createRowOfValues()", function(){
+		var func = function(str, termNames){
+			return Expression.parse(str).createRowOfValues( termNames );
+		};
+		deepEqual( func("a + b + 5", ["a"]), [1] );
+		deepEqual( func("a + b + 5", ["b", "a"]), [1, 1] );
+		deepEqual( func("a + b + 5", ["f", "a", "b", "1" ]), [0, 1, 1, 5] );
+	});
 };

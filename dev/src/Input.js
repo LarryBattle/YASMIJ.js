@@ -60,11 +60,9 @@ Input.prototype.addNumbersToSlacks = function () {
 };
 Input.prototype.getTermNames = function (onlyVariables) {
 	var vars = [],
-	i = this.constraints.length,
-	c;
+	i = this.constraints.length;
 	while (i--) {
-		c = this.constraints[i];
-		vars = vars.concat(c.getTermNames(onlyVariables));
+		vars = vars.concat(this.constraints[i].getTermNames(onlyVariables));
 	}
 	return mixin.getUniqueArray(vars).sort();
 };

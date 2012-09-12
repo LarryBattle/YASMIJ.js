@@ -296,7 +296,18 @@ Constraint.prototype.varSwitchSide = function ( name, moveTo ) {
 	}
 	return this;
 };
-
+Constraint.prototype.createRowOfValues = function( termNames ){
+	var arr = new Array( termNames.length ), val;
+	var i = arr.length;
+	while(i--){
+		val = this.leftSide.getTermValue( termNames[i] );
+		if( val === undefined ){
+			val = this.rightSide.getTermValue( termNames[i] );
+		}
+		arr[i] = val || 0;
+	}
+	return arr;
+};
 
 
 

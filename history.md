@@ -1,5 +1,7 @@
 Project: Yasmij.js
 
+# Version: 0.2.2
+
 # Version: 0.2.1.5
 - Added: Build javascript at `dev/jakefile.js`
 - Added: `history.md` to keep track of the release notes.

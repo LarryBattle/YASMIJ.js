@@ -76,14 +76,20 @@ tests.runInputTests = function(){
 		equal( x.toString(), expected );
 	});
 	test( "test Input.prototype.getTermNames()", function(){
-		var func = function(str, eqs){
-			return Input.parse( "maximize", str, eqs).getTermNames().join(", ");
+		var func = function(str, eqs, onlyVariables){
+			return Input.parse( "maximize", str, eqs).getTermNames(onlyVariables).join(", ");
 		};
 		equal( func( "x1 + 2x2 - x3", [
 			"2x1+x2+x3 <= 14",
 			"4x1+2x2+3x3<=28",
 			"2x1+5x2+5x3<=30"
 		]), ["x1", "x2", "x3", "14", "28", "30" ].sort().join( ", " ) );
+		
+		equal( func( "x1 + 2x2 - x3", [
+			"2x1+x2+x3 <= 14",
+			"4x1+2x2+3x3<=28",
+			"2x1+5x2+5x3<=30"
+		], true), ["x1", "x2", "x3" ].sort().join( ", " ) );
 	});
 	test( "test Input.parse", function(){
 		var x = Input.parse( "maximize", "x1 + 2x2 - x3", [

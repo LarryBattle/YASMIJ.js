@@ -382,3 +382,10 @@ Expression.prototype.getCoeffients = function( excludeNumbers, excludeSlack ){
 	}
 	return arr;
 };
+Expression.prototype.createRowOfValues = function( termNames ){
+	var arr = [], i = termNames.length;
+	while( i-- ){
+		arr[i] = this.terms[ termNames[i] ] || 0;
+	}
+	return arr;
+};

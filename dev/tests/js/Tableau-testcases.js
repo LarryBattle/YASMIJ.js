@@ -18,10 +18,25 @@ tests.runTableauTests = function(){
 		ok( !func( inputObj ) );
 	});
 	test( "test Tableau.parse()", function(){
-		var inputObj = Input.parse( "maximize", "a + b - 10", ["a<34", "b <= 4", "a + b > 2"] );
+		var inputObj = Input.parse( "maximize", "a + b", ["a<34", "b <= 4", "a + b > 2"] );
 		var func = function( inputObj ){
-			return Tableau.parse( inputObj ).matrix.toString();
+			return Tableau.parse( inputObj ).toString();
 		};
-		equal( func( inputObj ), "[[1,0],[1,0],[1,1]]" );
+			
+		var result = "[a,b,slack1,slack2,slack3,Constant][[1,0,1,0,0,33.999999],[0,1,0,1,0,4],[1,1,0,0,-1,2.000001],[-1,-1,0,0,0,0]]";
+		equal( func( inputObj ), result );
+		
+		inputObj = Input.parse( "maximize", "8x1 + 10x2 + 7x3", ["x1 + 3x2 + 2x3 <= 10", "x1 + 5x2 + x3 <= 8"] );
+		result = "[slack1,slack2,x1,x2,x3,Constant][[1,0,1,3,2,10],[0,1,1,5,1,8],[0,0,-8,-10,-7,0]]";
+		equal( func( inputObj ), result );
+	});
+	test( "test Tableau.prototype.getPivotPoint()", function(){
+		var func = function(inputObj){
+			return Tableau.parse(inputObj).getPivotPoint();
+		};
+		var inputObj = Input.parse( "maximize", "8a + 10b + 7c", ["a + 3b + 2c <= 10", "a + 5b + c <= 8"] );
+		var point = func(inputObj);
+		equal( point.row, 2 );
+		equal( point.column, 1 );
 	});
 };

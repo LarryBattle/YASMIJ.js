@@ -48,6 +48,16 @@ Matrix.scaleAndAddRows = function( scaleA, rowA, scaleB, rowB){
 	}
 	return rowA;
 };
+Matrix.inverseArray = function( arr ){
+	if( !Matrix.isArray( arr ) ){
+		return arr;
+	}
+	var i = arr.length;
+	while( i-- ){
+		arr[i] = -arr[i];
+	}
+	return arr;
+};
 Matrix.prototype.addRow = function(arr){
 	arr = Matrix.isArray(arr) ? arr : [arr];
 	this.array.push( arr );
@@ -93,6 +103,25 @@ Matrix.prototype.getMinElementInRow = function( rowI ){
 		}
 	}
 	return arr;
+};
+Matrix.prototype.getMostNegIndexFromLastRow = function(){
+	var result = this.getMinElementInRow( this.array.length - 1 );
+	return result[1] < 0 ? result[0] : -1;
+};
+Matrix.prototype.getRowIndexWithPosMinColumnRatio = function( colI ){
+	var rowI = -1, i = this.array.length, val, minVal = Infinity, arr;
+	if( colI < 0 || !( colI < i ) ){
+		return rowI;
+	}
+	while( i-- ){
+		arr = this.array[i];
+		val = arr[ arr.length - 1 ] / arr[colI];
+		if( 0 <= val && val < minVal ){
+			rowI = i;
+			minVal = val;
+		}
+	}
+	return rowI;
 };
 Matrix.prototype.toString = function( input ){
 	var str = "";

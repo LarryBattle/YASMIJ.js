@@ -34,45 +34,45 @@ Tableau.parse = function( input ){
 	//obj.state = "created";
 	return obj;
 };
-Tableau.prototype.addConstraintsLeftSideToMatrix = function(){
-	var thatMatrix = this.matrix;
-	this.input.forEachConstraint(function(i, constraint){
-		thatMatrix.addRow( constraint.leftSide.getCoeffients(true, true) );
-	});
+Tableau.prototype.addConstraintsToMatrix = function( termNames ){
+	var constraints = this.input.constraints;
+	for( var i = 0, len = constraints.length; i < len; i++ ){
+		this.matrix.addRow( constraints[i].createRowOfValues( termNames ) );
+	}
 };
-Tableau.prototype.addConstraintsSlacksToMatrix = function(){
-};
-Tableau.prototype.addConstraintsRightSideToMatrix = function(){
-	var thatMatrix = this.matrix;
-	this.input.forEachConstraint(function(i, constraint){
-		thatMatrix.addRow( constraint.rightSide.getCoeffients() );
-	});
+Tableau.prototype.addZToMatrix = function( termNames ){
+	var row = this.input.z.createRowOfValues( termNames );
+	this.matrix.addRow( Matrix.inverseArray( row ) );
 };
 Tableau.prototype.setMatrixFromInput = function(){
 	this.matrix = new Matrix();
 	this.colNames = this.input.getTermNames(true);
-	this.addConstraintsLeftSideToMatrix();
-	this.addConstraintsSlacksToMatrix();
-	//this.addConstraintsRightSideToMatrix();
+	var termNames = this.colNames.concat("1");
+	
+	this.addConstraintsToMatrix( termNames );
+	this.addZToMatrix( termNames );
 };
 Tableau.prototype.getRow = function( names, constraintI ){
 	var row;
 	return row;
 };
 Tableau.prototype.toString = function(){
+	var result = "";
 	if( this.matrix ){
-		return this.matrix.toString();
+		result += "[" + this.colNames.concat("Constant").toString() + "]";
+		result += this.matrix.toString();
 	}
-	return "Matrix is empty.";
+	return result;
 };
-
-
-
-/* test 
-var x = Input( "maximize", "a + b - 10", ["a<34", "b <= 4", "a + b > 2"] );
-var y = Tableau.parse(x);
-*/
-
+Tableau.prototype.solve = function(){
+	var point = this.getPivotPoint();
+};
+Tableau.prototype.getPivotPoint = function(){
+	var point = {};
+	point.column = this.matrix.getMostNegIndexFromLastRow();
+	point.row = this.matrix.getRowIndexWithPosMinColumnRatio( point.column );
+	return point;
+};
 
 
 
