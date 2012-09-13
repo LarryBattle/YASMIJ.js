@@ -163,6 +163,8 @@ tests.runMatrixTests = function(){
 		equal(func([1,4], 0), 4);
 		equal(func([[1,4],[0,1]], 0), 4);
 		equal(func([[1,4],[1,1]], 0), 0);
+		equal(func([[1,-1],[1,1],[1,0]], 0), 0);
+		equal(func([[1,-1],[1,1],[1,0]], 1), 0);
 	});
 	test( "test Matrix.prototype.getLastElementOnLastRow()", function(){
 		var func = function( arr ){

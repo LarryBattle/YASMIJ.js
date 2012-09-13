@@ -192,18 +192,17 @@ Matrix.prototype.pivot = function( rowI, colI ){
 	return this;
 };
 Matrix.prototype.getUnitValueForColumn = function( colI ){
-	var rowI = -1, val = 0;
+	var nonZeroValues = 0, val = 0;
 	
 	this.forEachRow(function(i, row, rows){
-		if( row[colI] === 1 ){
-			if( -1 < rowI ){
-				val = 0;
-			}else{
-				rowI = i;
-				val = row[row.length -1];
-			}
+		if (row[colI] === 1) {
+			val = row[row.length - 1];
+		}
+		if( row[ colI ] ){
+			nonZeroValues++;		
 		}
 	});
+	val = ( nonZeroValues === 1 ) ? val : 0; 
 	return val;
 };
 Matrix.prototype.getLastElementOnLastRow = function(){
