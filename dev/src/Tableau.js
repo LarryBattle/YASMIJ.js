@@ -11,6 +11,7 @@ var Tableau = function(){
 	this.colNames = null;
 	this.matrix = null;
 	this.limit = 1e4;
+	this.cycles = 0;
 	//this.state = null;
 };
 Tableau.getErrorMessage = function( input ){
@@ -33,6 +34,18 @@ Tableau.parse = function( input ){
 	obj.setMatrixFromInput();
 	//obj.state = "created";
 	return obj;
+};
+Tableau.getPivotPoint = function( matrix ){
+	if( !(matrix instanceof Matrix ) ){
+		return null;
+	}
+	var point = {};
+	point.column = matrix.getMostNegIndexFromLastRow();
+	point.row = matrix.getRowIndexWithPosMinColumnRatio( point.column );
+	if( point.column < 0 || point.row < 0 ){
+		return null;
+	}
+	return point;
 };
 Tableau.prototype.addConstraintsToMatrix = function( termNames ){
 	var constraints = this.input.constraints;
@@ -65,15 +78,24 @@ Tableau.prototype.toString = function(){
 	return result;
 };
 Tableau.prototype.solve = function(){
-	var point = this.getPivotPoint();
+	var getPoint = Tableau.getPivotPoint,
+		point = getPoint( this.matrix ),
+		limit = this.limit;
+		
+	while( point && limit-- ){
+		this.matrix.pivot( point.row, point.column );	
+		point = getPoint( this.matrix );
+		this.cycles++;
+	}
 };
-Tableau.prototype.getPivotPoint = function(){
-	var point = {};
-	point.column = this.matrix.getMostNegIndexFromLastRow();
-	point.row = this.matrix.getRowIndexWithPosMinColumnRatio( point.column );
-	return point;
+Tableau.prototype.getOutput = function(){
+	var obj = {}, names = this.colNames.concat();
+	for(var i = 0, len = names.length; i < len; i++ ){
+		obj[ names[i] ] = this.matrix.getUnitValueForColumn( i );
+	}
+	obj.z = this.matrix.getLastElementOnLastRow();
+	return obj;
 };
-
 
 
 

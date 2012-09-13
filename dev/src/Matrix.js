@@ -93,10 +93,13 @@ Matrix.prototype.forEachRow = function(fn){
 	}
 	return this;
 };
-Matrix.prototype.getMinElementInRow = function( rowI ){
-	var row = this.array[rowI] || [];
-	var arr = [ 0, row[0] ];
-	for( var i = 0, len = row.length; i < len; i++ ){
+Matrix.prototype.getMinElementInRow = function( rowI, excludeLastElement ){
+	var row = (this.array[rowI] || []),
+		arr = [ 0, row[0] ], 
+		i = 0, 
+		len = (excludeLastElement ? row.length - 1 : row.length);
+	
+	for( ; i < len; i++ ){
 		if( row[ i ] < arr[1] ){
 			arr[0] = i;
 			arr[1] = row[i];
@@ -105,15 +108,15 @@ Matrix.prototype.getMinElementInRow = function( rowI ){
 	return arr;
 };
 Matrix.prototype.getMostNegIndexFromLastRow = function(){
-	var result = this.getMinElementInRow( this.array.length - 1 );
+	var result = this.getMinElementInRow( this.array.length - 1, true );
 	return result[1] < 0 ? result[0] : -1;
 };
 Matrix.prototype.getRowIndexWithPosMinColumnRatio = function( colI ){
-	var rowI = -1, i = this.array.length, val, minVal = Infinity, arr;
-	if( colI < 0 || !( colI < i ) ){
+	var rowI = -1, minVal = Infinity, i = 0, len = this.array.length - 1, val, arr;
+	if( colI < 0 || len <= colI ){
 		return rowI;
 	}
-	while( i-- ){
+	for(; i < len; i++ ){
 		arr = this.array[i];
 		val = arr[ arr.length - 1 ] / arr[colI];
 		if( 0 <= val && val < minVal ){
@@ -173,6 +176,37 @@ Matrix.getMaxArray = function(arrays){
 	}
 	return [ index, max ];
 };
-
-
-
+Matrix.prototype.pivot = function( rowI, colI ){
+	var i = this.array.length, val, pRow = this.array[ rowI ];
+	if( !pRow ){
+		return this;
+	}
+	this.scaleRow( (1/this.getElement( rowI, colI )), rowI );
+	
+	while( i-- ){
+		if( i !== rowI ){
+			val = this.getElement( i, colI );
+			this.array[ i ] = Matrix.scaleAndAddRows( -val, pRow, 1, this.array[ i ] );
+		}
+	}
+	return this;
+};
+Matrix.prototype.getUnitValueForColumn = function( colI ){
+	var rowI = -1, val = 0;
+	
+	this.forEachRow(function(i, row, rows){
+		if( row[colI] === 1 ){
+			if( -1 < rowI ){
+				val = 0;
+			}else{
+				rowI = i;
+				val = row[row.length -1];
+			}
+		}
+	});
+	return val;
+};
+Matrix.prototype.getLastElementOnLastRow = function(){
+	var row = this.array[this.array.length - 1];
+	return row[ row.length - 1];
+};

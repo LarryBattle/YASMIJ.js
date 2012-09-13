@@ -133,17 +133,46 @@ tests.runMatrixTests = function(){
 			return Matrix.parse(arr).getMostNegIndexFromLastRow();
 		};
 		equal( func([1,2,3]), -1 );
-		equal( func([1,2,-3]), 2 );
+		equal( func([1,2,-3, -4]), 2 );
 		equal( func([[1,2,3],[1,-3,-1]]), 1 );
+		equal( func([[1,2,3],[1,-3,-1,-9]]), 1 );
 	});
 	test( "test Matrix.prototype.getRowIndexWithPosMinColumnRatio()", function(){
 		var func = function(arr, colI){
 			return Matrix.parse(arr).getRowIndexWithPosMinColumnRatio(colI);
 		};
 		equal( func([[-2,1],[-1,2]], 0), -1 );
-		equal( func([[2,1],[1,2]], 0), 0 );
-		equal( func([[1,1],[1,2],[1,0.1]], 0), 2 );
+		equal( func([[1,1],[2,1],[3,2]], 0), 1 );
+		equal( func([[1,1],[1,2],[1,0.1]], 0), 0 );
+	});
+	test( "test Matrix.prototype.pivot()", function(){
+		var func = function( arr, pRow, pCol ){
+			return Matrix.parse(arr).pivot(pRow, pCol).toString();
+		};
+		equal( func( [], 0, 0 ), "[]" );
+		equal( func( [1,2], 0, 0 ), "[1,2]" );
+		equal( func( [[1,2],[3,4]], 0, 0 ), "[[1,2],[0,-2]]" );
+		equal( func( [[1,2],[2,4]], 0, 0 ), "[[1,2],[0,0]]" );
+		equal( func( [[1,2],[2,4]], 1, 1 ), "[[0,0],[0.5,1]]" );
+	});
+	test( "test Matrix.prototype.getUnitValueForColumn()", function(){
+		var func = function(arr, colI){
+			return Matrix.parse(arr).getUnitValueForColumn(colI);
+		};
+		equal(func([2,4], 0), 0);
+		equal(func([1,4], 0), 4);
+		equal(func([[1,4],[0,1]], 0), 4);
+		equal(func([[1,4],[1,1]], 0), 0);
+	});
+	test( "test Matrix.prototype.getLastElementOnLastRow()", function(){
+		var func = function( arr ){
+			return Matrix.parse( arr ).getLastElementOnLastRow();
+		};
+		equal( func( [1] ), 1 );
+		equal( func( [1,2,3,4] ), 4 );
+		equal( func( [[1,2,3],[4,5,6]] ), 6 );
 	});
 };
+
 
 

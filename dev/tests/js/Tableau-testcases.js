@@ -31,12 +31,14 @@ tests.runTableauTests = function(){
 		equal( func( inputObj ), result );
 	});
 	test( "test Tableau.prototype.getPivotPoint()", function(){
-		var func = function(inputObj){
-			return Tableau.parse(inputObj).getPivotPoint();
+		var func = function(arr){
+			return Tableau.getPivotPoint(Matrix.parse( arr ));
 		};
-		var inputObj = Input.parse( "maximize", "8a + 10b + 7c", ["a + 3b + 2c <= 10", "a + 5b + c <= 8"] );
-		var point = func(inputObj);
-		equal( point.row, 2 );
-		equal( point.column, 1 );
+		equal( func(""), null);
+		equal( func([1,2,3]), null);
+		equal( func([[1,2,3],[1,2,3]]), null);
+		equal( func([[1,2,-3],[1,2,3]]), null);
+		deepEqual( func([[1,2,3],[-1,2,3]]), {row:0, column:0});
+		deepEqual( func( [[1,3,2,10],[1,5,1,8], [-8, -10, -7, 0]] ), {row:1, column:1});
 	});
 };
