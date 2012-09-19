@@ -113,7 +113,7 @@ Matrix.prototype.getMostNegIndexFromLastRow = function(){
 };
 Matrix.prototype.getRowIndexWithPosMinColumnRatio = function( colI ){
 	var rowI = -1, minVal = Infinity, i = 0, len = this.array.length - 1, val, arr;
-	if( colI < 0 || len <= colI ){
+	if( colI < 0 || this.array[0].length <= colI ){
 		return rowI;
 	}
 	for(; i < len; i++ ){
