@@ -8,6 +8,8 @@
 @todo Input Class
 - Add a property for the original input 
 - Change the type when the type is converted for minimization
+- Add check for problem type.
+- Standad Min = all constraints >=, Stanadard max = all constraints <=, Non-standard min != standard min
 
 
 ## Build Script:
