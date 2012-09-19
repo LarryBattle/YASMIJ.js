@@ -5,6 +5,9 @@
 @todo finish matrix class<br/>
 @todo finish simplex class<br/>
 @todo finish yasmij class<br/>
+@todo Input Class
+- Add a property for the original input 
+- Change the type when the type is converted for minimization
 
 
 ## Build Script:
