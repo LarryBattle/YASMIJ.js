@@ -22,7 +22,7 @@ Version Roadmap:
 * 0.2 - Complete the Input Class (Done)
 * 0.2.5 - Complete the Matrix Class (In Progress)
 * 0.3 - Complete the Tableau Class (In Progress)
-* 0.4 - Complete the Output Class
+* 0.4 - Complete the Output Class (In Progress)
 * 0.5 - Complete the Simplex and YASMIJ Classes
 * 0.6 - Get Feedback
 
