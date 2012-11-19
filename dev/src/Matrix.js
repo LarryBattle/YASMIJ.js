@@ -86,9 +86,14 @@ Matrix.prototype.get = function( row, col ){
 	}
 };
 Matrix.prototype.forEachRow = function(fn){
+	var newRow;
 	if( typeof fn === "function"){
 		for( var i = 0, len = this.array.length; i < len; i++){
-			fn( i, this.array[i], this.array );
+			newRow = fn( i, this.array[i], this.array );
+			if(newRow){
+				this.array[i] = newRow;
+				newRow = null;
+			}
 		}
 	}
 	return this;
