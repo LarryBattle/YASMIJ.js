@@ -39,13 +39,13 @@ Output.prototype.convertToRatio = function(){
 	if(!Ratio){
 		throw new Error( "Ratio.js is required." );
 	}
-	a.matrix.forEachRow(function(i, row, rows){
+	this.matrix.forEachRow(function(j, row, rows){
 		for(var i = 0, len = row.length; i < len; i++){
 			row[i] = Ratio.parse( row[i] ).reduce().toLocaleString();
 		}
 	});
-	for( v in a.result ){
-		a.result[v] = Ratio(a.result[v]).reduce().toLocaleString();
+	for( var name in this.result ){
+		this.result[name] = Ratio(this.result[name]).reduce().toLocaleString();
 	}
 	return this;
 };
