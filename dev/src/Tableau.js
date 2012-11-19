@@ -87,6 +87,7 @@ Tableau.prototype.solve = function(){
 		point = getPoint( this.matrix );
 		this.cycles++;
 	}
+	return this;
 };
 Tableau.prototype.getOutput = function(){
 	var obj = {}, names = this.colNames.concat();
@@ -94,7 +95,7 @@ Tableau.prototype.getOutput = function(){
 		obj[ names[i] ] = this.matrix.getUnitValueForColumn( i );
 	}
 	obj.z = this.matrix.getLastElementOnLastRow();
-	return obj;
+	return Output.parse(obj,this.matrix);
 };
 
 
