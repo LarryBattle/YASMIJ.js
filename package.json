@@ -1,14 +1,11 @@
 {
 	"name" : "YASMIJ",
 	"description" : "Yet another simplex method library for javascript",
-	"version" : "0.2.1.8",
-	"lastModified" : "September 19, 2012",
+	"version" : "0.2.3",
+	"lastModified" : "Nov 19, 2012",
 	"author" : "Larry Battle <http://bateru.com/news/contact-me>",
 	"homepage" : "https://github.com/LarryBattle/YASMIJ.js/",
-	"license" : {
-		"overview" : "MIT and GPL 3.0",
-		"full" : "MIT <http://www.opensource.org/licenses/mit-license> and GPL 3.0 <http://opensource.org/licenses/GPL-3.0>"
-	},
+	"license" : "MIT",
 	"main" : "./src/yasmij.js",
 	"keywords" : ["Simplex method", "LPP", "Linear Algebra", "Operation Research", "numbers", "Math"],
 	"repository" : {
