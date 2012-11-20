@@ -5,10 +5,10 @@
 */
 
 tests.runInputTests = function(){
-	module( "Input Class" );
-	test( "test Input.prototype.addNumbersToSlacks", function(){
+	module( "YASMIJ.Input Class" );
+	test( "test YASMIJ.Input.prototype.addNumbersToSlacks", function(){
 		var func = function(str, eqs){
-			return Input.parse( "maximize", str, eqs).convertToStandardForm();
+			return YASMIJ.Input.parse( "maximize", str, eqs).convertToStandardForm();
 		};
 		var x = func( "x1 + 2x2 - x3", [
 			"a < 14",
@@ -18,9 +18,9 @@ tests.runInputTests = function(){
 		equal( /slack1/.test(c), true );
 		equal( /slack2/.test(c), true );
 	});
-	test( "test Input.prototype.getZTermNotInAnyOfTheConstraints", function(){
+	test( "test YASMIJ.Input.prototype.getZTermNotInAnyOfTheConstraints", function(){
 		var func = function(str, eqs){
-			return Input.parse( "maximize", str, eqs).getZTermNotInAnyOfTheConstraints();
+			return YASMIJ.Input.parse( "maximize", str, eqs).getZTermNotInAnyOfTheConstraints();
 		};
 		equal( func( "a", [ "a < 1", "b < 3"] ), "");
 		equal( func( "c + d", [ "c < 1", "d < 1"] ), "");
@@ -28,32 +28,32 @@ tests.runInputTests = function(){
 		equal( func( "a", [ "b < 3"] ), "a");
 		equal( func( "c + d", [ "c < 1" ] ), "d");
 	});
-	test( "test Input.prototype.checkConstraints", function(){
+	test( "test YASMIJ.Input.prototype.checkConstraints", function(){
 		var func = function(str, eqs){
-			return Input.parse( "maximize", str, eqs).checkConstraints();
+			return YASMIJ.Input.parse( "maximize", str, eqs).checkConstraints();
 		};
 		ok( func( "a", [ "a < 1", "b < 3"] ) );
 		ok( func( "c + d", [ "d < 1"] ));
 		
 	});
-	test( "test Input.prototype.convertConstraintsToMaxForm", function(){
+	test( "test YASMIJ.Input.prototype.convertConstraintsToMaxForm", function(){
 		
 		var func = function(str){
 			var obj = {
-				constraints: [ Constraint.parse(str) ]
+				constraints: [ YASMIJ.Constraint.parse(str) ]
 			};
-			Input.prototype.convertConstraintsToMaxForm.call(obj);
+			YASMIJ.Input.prototype.convertConstraintsToMaxForm.call(obj);
 			return obj.constraints[0].toString();
 		};
 		var testThis = function(str){
-			var x = Constraint.parse(str).convertToStandardMaxForm().toString();
+			var x = YASMIJ.Constraint.parse(str).convertToStandardMaxForm().toString();
 			equal( func( str ), x );
 		};
 		testThis( "a + b < 4" );
 	});
-	test( "test Input.prototype.convertToStandardForm", function(){
+	test( "test YASMIJ.Input.prototype.convertToStandardForm", function(){
 		var func = function(str, eqs){
-			return Input.parse( "maximize", str, eqs);
+			return YASMIJ.Input.parse( "maximize", str, eqs);
 		};
 		var testThis = function(str, eqs){
 			var x = func( str, eqs );
@@ -63,8 +63,8 @@ tests.runInputTests = function(){
 		};
 		testThis( "a + b", ["a + b < 1"] );
 	});
-	test( "test Input.prototype.toString()", function(){
-		var x = Input.parse( "maximize", "x1 + 2x2 - x3", [
+	test( "test YASMIJ.Input.prototype.toString()", function(){
+		var x = YASMIJ.Input.parse( "maximize", "x1 + 2x2 - x3", [
 			"2x1+x2+x3 <= 14",
 			"4x1+2x2+3x3<=28",
 			"2x1+5x2+5x3<=30"
@@ -75,9 +75,9 @@ tests.runInputTests = function(){
 		].join( ", " );
 		equal( x.toString(), expected );
 	});
-	test( "test Input.prototype.getTermNames()", function(){
+	test( "test YASMIJ.Input.prototype.getTermNames()", function(){
 		var func = function(str, eqs, onlyVariables){
-			return Input.parse( "maximize", str, eqs).getTermNames(onlyVariables).join(", ");
+			return YASMIJ.Input.parse( "maximize", str, eqs).getTermNames(onlyVariables).join(", ");
 		};
 		equal( func( "x1 + 2x2 - x3", [
 			"2x1+x2+x3 <= 14",
@@ -91,8 +91,8 @@ tests.runInputTests = function(){
 			"2x1+5x2+5x3<=30"
 		], true), ["x1", "x2", "x3" ].sort().join( ", " ) );
 	});
-	test( "test Input.parse", function(){
-		var x = Input.parse( "maximize", "x1 + 2x2 - x3", [
+	test( "test YASMIJ.Input.parse", function(){
+		var x = YASMIJ.Input.parse( "maximize", "x1 + 2x2 - x3", [
 			"2x1+x2+x3 <= 14",
 			"4x1+2x2+3x3<=28",
 			"2x1+5x2+5x3<=30"

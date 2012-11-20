@@ -9,7 +9,7 @@ tests.runConstraintTests = function(){
 		var result = func( str ),
 			errMsg = "`" + str + "` failed to match object." ;
 			
-		if( mixin.areObjectsSame( result, expect ) ){
+		if( YASMIJ.areObjectsSame( result, expect ) ){
 			ok( true );
 		}else{
 			if( JSON.stringify ){
@@ -19,9 +19,9 @@ tests.runConstraintTests = function(){
 			}
 		}
 	};
-	module( "Constraint Class: Checking input" );
-	test( "test Constraint.hasManyCompares() with 1 compare", function(){
-		var func = Constraint.hasManyCompares;
+	module( "YASMIJ.Constraint Class: Checking input" );
+	test( "test YASMIJ.Constraint.hasManyCompares() with 1 compare", function(){
+		var func = YASMIJ.Constraint.hasManyCompares;
 		equal( func( "a < b" ), false );
 		equal( func( "a > b" ) , false );
 		equal( func( "a = b" ) , false );
@@ -32,8 +32,8 @@ tests.runConstraintTests = function(){
 		equal( func( "a = < b" ), true );
 		equal( func( "a => b" ), true );
 	});
-	test( "test Constraint.hasManyCompares() with many compares", function(){
-		var func = Constraint.hasManyCompares;
+	test( "test YASMIJ.Constraint.hasManyCompares() with many compares", function(){
+		var func = YASMIJ.Constraint.hasManyCompares;
 		equal( func( "a << b" ), true );
 		
 		equal( func( "a < < b" ), true );
@@ -50,8 +50,8 @@ tests.runConstraintTests = function(){
 		
 		equal( func( "a < b < c" ), true );
 	});
-	test( "test Constraint.hasIncompleteBinaryOperator() with valid expressions.", function(){
-		var func = Constraint.hasIncompleteBinaryOperator;
+	test( "test YASMIJ.Constraint.hasIncompleteBinaryOperator() with valid expressions.", function(){
+		var func = YASMIJ.Constraint.hasIncompleteBinaryOperator;
 
 		equal( func( "+a - b" ), false );
 		equal( func( "a + b" ), false );
@@ -63,8 +63,8 @@ tests.runConstraintTests = function(){
 		equal( func( "x     <= 1" ), false );
 		equal( func( "x <   = 1" ), false );
 	});
-	test( "test Constraint.hasIncompleteBinaryOperator() with invalid expressions.", function(){
-		var func = Constraint.hasIncompleteBinaryOperator;
+	test( "test YASMIJ.Constraint.hasIncompleteBinaryOperator() with invalid expressions.", function(){
+		var func = YASMIJ.Constraint.hasIncompleteBinaryOperator;
 		
 		equal( func( "a b" ), true );
 		equal( func( "a b > c" ), true );
@@ -75,15 +75,15 @@ tests.runConstraintTests = function(){
 		equal( func( "a+ b -= c" ), true );
 		equal( func( "a+ b += c" ), true );
 	});
-	test( "test that Constraint.getErrorMessage() ", function(){
-		var func = Constraint.getErrorMessage;
+	test( "test that YASMIJ.Constraint.getErrorMessage() ", function(){
+		var func = YASMIJ.Constraint.getErrorMessage;
 		ok( !func( "a+b" ) );
 		ok( func( "a b" ) );
 		ok( func( "a * b" ) );
 		ok( func( "a + b+" ) );
 	});
-	test("test Constraint.getErrorMessage() with valid input.", function(){
-		var func = Constraint.getErrorMessage,
+	test("test YASMIJ.Constraint.getErrorMessage() with valid input.", function(){
+		var func = YASMIJ.Constraint.getErrorMessage,
 			x;
 			
 		equal( func( "a < c" ), x );
@@ -100,12 +100,12 @@ tests.runConstraintTests = function(){
 		
 		equal( func( "13 = 13" ), x );
 	});
-	test("test Constraint.checkInput() will throw an error when Constraint.getErrorMessage returns a message.", function(){
-		var func = Constraint.checkInput,
+	test("test YASMIJ.Constraint.checkInput() will throw an error when YASMIJ.Constraint.getErrorMessage returns a message.", function(){
+		var func = YASMIJ.Constraint.checkInput,
 			args = "error",
-			oldFunc = Constraint.getErrorMessage;
+			oldFunc = YASMIJ.Constraint.getErrorMessage;
 			
-		Constraint.getErrorMessage = function(){
+		YASMIJ.Constraint.getErrorMessage = function(){
 			return args;
 		};
 		
@@ -118,10 +118,10 @@ tests.runConstraintTests = function(){
 		}
 		catch(e){
 		}
-		Constraint.getErrorMessage = oldFunc;
+		YASMIJ.Constraint.getErrorMessage = oldFunc;
 	});
-	test("test Constraint.parseToObject() with valid expressions", function(){
-		var func = Constraint.parseToObject,
+	test("test YASMIJ.Constraint.parseToObject() with valid expressions", function(){
+		var func = YASMIJ.Constraint.parseToObject,
 			x = func("10x1 -2x2 - 10");
 			
 		var y = {
@@ -142,8 +142,8 @@ tests.runConstraintTests = function(){
 		deepEqual( x.lhs.terms, y.lhs.terms );
 		deepEqual( x.comparison, y.comparison );
 	});
-	test("test Constraint.parseToObject() with different compares", function(){
-		var func = Constraint.parseToObject;
+	test("test YASMIJ.Constraint.parseToObject() with different compares", function(){
+		var func = YASMIJ.Constraint.parseToObject;
 
 
 		checkIfSame( func, "2a + 3b <= 30", {
@@ -172,23 +172,23 @@ tests.runConstraintTests = function(){
 			comparison:"="
 		});
 	});
-	test("test Constraint.getTermNames()", function(){
+	test("test YASMIJ.Constraint.getTermNames()", function(){
 		var func = function( str ){
-			return Constraint.parse( str ).getTermNames();
+			return YASMIJ.Constraint.parse( str ).getTermNames();
 		};
 		deepEqual( func( "a" ), ["a"] );
 		deepEqual( func( "2x1 + x2 + x3 <= 14" ), ["x1","x2","x3", "14"] );
 	});
-	test("test Constraint.getTermNames(true) to execlude numbers", function(){
+	test("test YASMIJ.Constraint.getTermNames(true) to execlude numbers", function(){
 		var func = function( str ){
-			return Constraint.parse( str ).getTermNames(true);
+			return YASMIJ.Constraint.parse( str ).getTermNames(true);
 		};
 		deepEqual( func( "a" ), ["a"] );
 		deepEqual( func( "2x1 + x2 + x3 <= 14" ), ["x1","x2","x3"] );
 	});
-	test("test Constraint.parse()", function(){
+	test("test YASMIJ.Constraint.parse()", function(){
 		var func = function(str){
-				return Constraint.parse(str);
+				return YASMIJ.Constraint.parse(str);
 			},
 			x = func( "2x1 + x2 + x3 <= 14" );
 			
@@ -196,26 +196,26 @@ tests.runConstraintTests = function(){
 		deepEqual( x.rightSide.toString(), "14" );
 		deepEqual( x.comparison.toString(), "<=" );
 	});
-	test("test Constraint.prototype.toString()", function(){
+	test("test YASMIJ.Constraint.prototype.toString()", function(){
 		var func = function( str ){
-			return Constraint.parse( str ).toString();
+			return YASMIJ.Constraint.parse( str ).toString();
 		};
 		equal( func( "a+3<=3b"), "a + 3 <= 3b" );
 		equal( func( "-1.4e+ 4 +23.9e4 + a4 -d3 -3e+49 = 3"), "a4 - d3 - 1.4e - 3e+49 = 3" );
 	});
-	test( "test Constraint.prototype.getSwappedSides()", function(){
+	test( "test YASMIJ.Constraint.prototype.getSwappedSides()", function(){
 		var func = function(str, side ){
-			return Constraint.parse(str).getSwappedSides(side);
+			return YASMIJ.Constraint.parse(str).getSwappedSides(side);
 		};
 		var checkSwapped = function(str){
-			var obj = Constraint.parse(str),
+			var obj = YASMIJ.Constraint.parse(str),
 				sideObj = func(str, true);
 				
 			equal( obj.leftSide.toString(), sideObj.b.toString(), "checkSwapped(): " + str + ", leftSide(swapped side) should be side.b" );
 			equal( obj.rightSide.toString(), sideObj.a.toString(), "checkSwapped(): " + str + ", rightSide(swapped side) should be side.a" );
 		};
 		var checkNotSwapped = function(str){
-			var obj = Constraint.parse(str),
+			var obj = YASMIJ.Constraint.parse(str),
 				sideObj = func(str);
 			
 			equal( obj.leftSide.toString(), sideObj.a.toString(), "checkNotSwapped(): " + str + ", leftSide(same side) should be side.a" );
@@ -228,13 +228,13 @@ tests.runConstraintTests = function(){
 		checkBoth( "x = y" );
 		checkBoth( "x + 4 + 2 = y + c + 3c" );
 	});
-	test( "test Constraint.switchSides()", function(){
+	test( "test YASMIJ.Constraint.switchSides()", function(){
 		var result;
 		var func = function(str, doSwap ){
-			var obj = Constraint.parse(str),
+			var obj = YASMIJ.Constraint.parse(str),
 				sides = obj.getSwappedSides(doSwap);
 
-			Constraint.switchSides( sides.a, sides.b, sides.a.forEachTerm );
+			YASMIJ.Constraint.switchSides( sides.a, sides.b, sides.a.forEachTerm );
 			return obj;
 		};
 		result = func( "x = y" );
@@ -245,9 +245,9 @@ tests.runConstraintTests = function(){
 		equal( "0", result.leftSide.toString() );
 		equal( "4c - x + y - 6", result.rightSide.toString() );
 	});
-	test( "test Constraint.prototype.moveTypeToOneSide() with different comparisons", function(){
+	test( "test YASMIJ.Constraint.prototype.moveTypeToOneSide() with different comparisons", function(){
 		var func = function( str, varsSide, constantsSide ){
-			return Constraint.parse(str).moveTypeToOneSide(varsSide, constantsSide).toString();
+			return YASMIJ.Constraint.parse(str).moveTypeToOneSide(varsSide, constantsSide).toString();
 		};
 		equal( func( "a = 30", "right", "left" ), "-30 = -a" );
 		equal( func( "a >= 30", "right", "left" ), "-30 >= -a" );
@@ -255,9 +255,9 @@ tests.runConstraintTests = function(){
 		equal( func( "a < 30", "right", "left" ), "-30 < -a" );
 		equal( func( "a <= 30", "right", "left" ), "-30 <= -a" );
 	});
-	test( "test Constraint.prototype.moveTypeToOneSide() with two terms", function(){		
+	test( "test YASMIJ.Constraint.prototype.moveTypeToOneSide() with two terms", function(){		
 		var func = function( str, varsSide, constantsSide ){
-			return Constraint.parse(str).moveTypeToOneSide(varsSide, constantsSide).toString();
+			return YASMIJ.Constraint.parse(str).moveTypeToOneSide(varsSide, constantsSide).toString();
 		};
 		var str = "a <= 30";
 		equal( func( str, "left", null ), "a <= 30" );
@@ -268,9 +268,9 @@ tests.runConstraintTests = function(){
 		equal( func( str, null, "left" ), "a - 30 <= 0" );
 		equal( func( str, "right", "left" ), "-30 <= -a" );
 	});
-	test( "test Constraint.prototype.moveTypeToOneSide() with 3+ terms", function(){
+	test( "test YASMIJ.Constraint.prototype.moveTypeToOneSide() with 3+ terms", function(){
 		var func = function( str, varsSide, constantsSide ){
-			return Constraint.parse(str).moveTypeToOneSide(varsSide, constantsSide).toString();
+			return YASMIJ.Constraint.parse(str).moveTypeToOneSide(varsSide, constantsSide).toString();
 		};
 		var str = "a + b + d <= 30 + a + 5b + 2 - c";
 		equal( func( str, "left", null ), "-4b + c + d <= 32" );
@@ -281,9 +281,9 @@ tests.runConstraintTests = function(){
 		equal( func( str, null, "left" ), "a + b + d - 32 <= a + 5b - c" );
 		equal( func( str, "right", "left" ), "-32 <= 4b - c - d" );
 	});
-	test( "test Constraint.prototype.inverse()", function(){
+	test( "test YASMIJ.Constraint.prototype.inverse()", function(){
 		var func = function(str){
-			return Constraint.parse(str).inverse().toString();
+			return YASMIJ.Constraint.parse(str).inverse().toString();
 		};
 		equal( func( "x < 2" ), "-x >= -2");
 		equal( func( "a + b < 2 - 40c" ), "-a - b >= 40c - 2");
@@ -291,25 +291,25 @@ tests.runConstraintTests = function(){
 		equal( func( "5a >= 2b" ), "-5a < -2b");
 		equal( func( "4a + b = 2" ), "-4a - b = -2");
 	});
-	test( "test Constraint.prototype.removeStrictInequality()", function(){
+	test( "test YASMIJ.Constraint.prototype.removeStrictInequality()", function(){
 		var func = function(str){
-			return Constraint.parse(str).removeStrictInequality().toString();
+			return YASMIJ.Constraint.parse(str).removeStrictInequality().toString();
 		};
 		equal( func("x > 0"), "x >= 0.000001" );
 		equal( func("x < 0"), "x <= -0.000001" );
 	});
-	test( "test Constraint.prototype.normalize()", function(){
+	test( "test YASMIJ.Constraint.prototype.normalize()", function(){
 		var func = function( str ){
-			return Constraint.parse(str).normalize().toString();
+			return YASMIJ.Constraint.parse(str).normalize().toString();
 		};
 		equal( func( "a - 10 <= 20" ), "a <= 30" );
 		equal( func( "-1 + a < 21" ), "a <= 21.999999" );
 		equal( func( "-1 + a > 21" ), "a >= 22.000001" );
 		equal( func( "a + b - 10 >= 0" ), "a + b >= 10" );
 	});
-	test( "test Constraint.prototype.convertToStandardMaxForm()", function(){
+	test( "test YASMIJ.Constraint.prototype.convertToStandardMaxForm()", function(){
 		var func = function(str){
-			return Constraint.parse(str).convertToStandardMaxForm().toString();
+			return YASMIJ.Constraint.parse(str).convertToStandardMaxForm().toString();
 		};
 		equal( func( "x = 1" ), "x = 1" );
 		equal( func( "x = -1" ), "-x = 1" );
@@ -318,9 +318,9 @@ tests.runConstraintTests = function(){
 		equal( func( "a + 3b < 20" ), "a + 3b + slack = 19.999999" );
 		equal( func( "a - 2b - c + 20 < 4 + 4c" ), "-a + 2b + 5c - slack = 16" );
 	});
-	test( "test Constraint.prototype.createRowOfValues", function(){
+	test( "test YASMIJ.Constraint.prototype.createRowOfValues", function(){
 		var func = function( str, arr ){
-			return Constraint.parse(str).createRowOfValues( arr );
+			return YASMIJ.Constraint.parse(str).createRowOfValues( arr );
 		};
 		deepEqual( func("5a + 6b = 2", ["a", "b"]), [5, 6] );
 		deepEqual( func("5a + 6b = 2", ["b", "a"]), [6, 5] );

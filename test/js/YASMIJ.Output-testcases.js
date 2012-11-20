@@ -6,7 +6,7 @@
 */
  
 tests.runOutputTests = function(){
-	module( "Output Class" );
+	module( "YASMIJ.Output Class" );
 	test( "test Output Class", function(){
 		ok(1);
 	});

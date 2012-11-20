@@ -19,7 +19,7 @@ tests.runSimplexTests = function(){
 			"4x1 + 2x2 + 3x3 <= 28",
 			"2x1 + 5x2 + 5x3 <= 30"
 		];
-		var problem = new Simplex();
+		var problem = new YASMIJ.Simplex();
 		problem.setInput( input );
 		
 		equal( problem.input.raw.z, input.z );

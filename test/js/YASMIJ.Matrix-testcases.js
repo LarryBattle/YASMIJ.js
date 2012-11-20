@@ -6,45 +6,45 @@
 */
 
 tests.runMatrixTests = function(){
-	module( "Matrix Class" );
-	test( "test Matrix.inverseArray()", function(){
+	module( "YASMIJ.Matrix Class" );
+	test( "test YASMIJ.Matrix.inverseArray()", function(){
 		var func = function(arr){
-			return Matrix.inverseArray(arr);
+			return YASMIJ.Matrix.inverseArray(arr);
 		};
 		deepEqual( func([1,2,3]), [-1,-2,-3]);
 	});
-	test( "test Matrix.parse()", function(){
+	test( "test YASMIJ.Matrix.parse()", function(){
 		var func = function(obj){
-			return Matrix.parse(obj).toString();
+			return YASMIJ.Matrix.parse(obj).toString();
 		};
 		equal( func(1), "[1]" );
 		equal( func([1,2,3]), "[1,2,3]" );
 		equal( func([[1,2,3],[1,2,3]]), "[[1,2,3],[1,2,3]]" );
 	});
-	test( "test Matrix.isArray()", function(){
-		var func = Matrix.isArray;
+	test( "test YASMIJ.Matrix.isArray()", function(){
+		var func = YASMIJ.Matrix.isArray;
 		equal( func([]), true );
 		equal( func([[]]), true );
 		equal( func({}), false );
 		equal( func(Math), false );
 		equal( func(false), false );
 	});
-	test( "test Matrix.prototype.addRow()", function(){
+	test( "test YASMIJ.Matrix.prototype.addRow()", function(){
 		var func = function( obj, rowObj ){
-			return Matrix.parse(obj).addRow(rowObj).toString();
+			return YASMIJ.Matrix.parse(obj).addRow(rowObj).toString();
 		};
 		equal( func( 1, 2 ), "[[1],[2]]" );
 		equal( func( [1,2], [1,2] ), "[[1,2],[1,2]]" );
 	});
-	test( "test Matrix.prototype.getRow()", function(){
+	test( "test YASMIJ.Matrix.prototype.getRow()", function(){
 		var func = function( obj, i ){
-			return Matrix.parse( obj ).getRow(i);
+			return YASMIJ.Matrix.parse( obj ).getRow(i);
 		};
 		deepEqual(func([[1],[2]], 1), [2] );
 	});
-	test( "test Matrix.prototype.forEachRow()", function(){
+	test( "test YASMIJ.Matrix.prototype.forEachRow()", function(){
 		var func = function( obj, fn ){
-			return Matrix.parse( obj ).forEachRow(fn);
+			return YASMIJ.Matrix.parse( obj ).forEachRow(fn);
 		};
 		var arr = [];
 		func( [[1],[2],[3]], function(i,row){ 
@@ -52,38 +52,38 @@ tests.runMatrixTests = function(){
 		});
 		deepEqual( arr, [1,2,3] );
 	});
-	test( "test Matrix.prototype.getColumn()", function(){
+	test( "test YASMIJ.Matrix.prototype.getColumn()", function(){
 		var func = function( obj, j ){
-			return Matrix.parse( obj ).getColumn( j );
+			return YASMIJ.Matrix.parse( obj ).getColumn( j );
 		};
 		deepEqual( func( [[1,2],[3,4]], 0 ), [1,3] );
 	});
-	test( "test Matrix.prototype.getElement()", function(){
+	test( "test YASMIJ.Matrix.prototype.getElement()", function(){
 		var func = function( obj, i, j ){
-			return Matrix.parse( obj ).getElement(i, j);
+			return YASMIJ.Matrix.parse( obj ).getElement(i, j);
 		};
 		equal( func( [[1,2],[3,4]], 0, 0 ), 1 );
 		equal( func( [[1,2],[3,4]], 0, 1 ), 2 );
 		equal( func( [[1,2],[3,4]], 1, 1 ), 4 );
 	});
-	test( "test Matrix.prototype.get()", function(){
+	test( "test YASMIJ.Matrix.prototype.get()", function(){
 		var func = function( obj, i, j ){
-			return Matrix.parse( obj ).get( i, j );
+			return YASMIJ.Matrix.parse( obj ).get( i, j );
 		};
 		equal( func( [[1,2],[3,4]], 1, 1), 4 );
 		deepEqual( func( [[1,2],[3,4]], 1 ), [3,4] );
 		deepEqual( func( [[1,2],[3,4]], null, 1 ), [2,4] );
 	});
-	test( "test Matrix.prototype.getMinElementInRow()", function(){
+	test( "test YASMIJ.Matrix.prototype.getMinElementInRow()", function(){
 		var func = function(obj, i){
-			return Matrix.parse(obj).getMinElementInRow( i );
+			return YASMIJ.Matrix.parse(obj).getMinElementInRow( i );
 		};
 		deepEqual( func([-2,-1,0,1,2], 0), [0,-2] );
 		deepEqual( func([2,1,-3], 0), [2,-3] );
 	});
-	test("test Matrix.prototype.toString()", function(){
+	test("test YASMIJ.Matrix.prototype.toString()", function(){
 		var func = function(obj){
-			return Matrix.parse(obj).toString();
+			return YASMIJ.Matrix.parse(obj).toString();
 		};
 		equal( func([]), "[]");
 		equal( func([1,2,3]), "[1,2,3]");
@@ -94,9 +94,9 @@ tests.runMatrixTests = function(){
 			[1,2,3]
 		]), "[[1,2,3],[1,2,3],[1,2,3]]");
 	});
-	test("test Matrix.prototype.getSize()", function(){
+	test("test YASMIJ.Matrix.prototype.getSize()", function(){
 		var func = function(obj){
-			return Matrix.parse(obj).getSize();
+			return YASMIJ.Matrix.parse(obj).getSize();
 		};
 		deepEqual(func(),[0,0]);
 		deepEqual(func([]),[0,0]);
@@ -104,15 +104,15 @@ tests.runMatrixTests = function(){
 		deepEqual(func([[1,2],[1,2]]),[2,2]);
 		deepEqual(func([[1],[2]]),[1,2]);
 	});
-	test("test Matrix.prototype.scaleRow()", function(){
+	test("test YASMIJ.Matrix.prototype.scaleRow()", function(){
 		var func = function(obj, factor, rowI){
-			return Matrix.parse(obj).scaleRow(factor, rowI ).toString();
+			return YASMIJ.Matrix.parse(obj).scaleRow(factor, rowI ).toString();
 		};	
 		equal( func([1,2,3], 2, 0), "[2,4,6]");
 		equal( func([[1],[2],[3]], 2, 2), "[[1],[2],[6]]");
 	});
-	test( "test Matrix.getMaxArray()", function(){
-		var func = Matrix.getMaxArray;
+	test( "test YASMIJ.Matrix.getMaxArray()", function(){
+		var func = YASMIJ.Matrix.getMaxArray;
 		equal( func(), null );
 		deepEqual( func( [[]] ), [0,0] );
 		deepEqual( func( [[],[]] ), [0,0] );
@@ -120,35 +120,35 @@ tests.runMatrixTests = function(){
 		deepEqual( func( [[1],[1,2]] ), [1,2] );
 		deepEqual( func( [[1],[1,2],[1,2,3]] ), [2,3] );
 	});
-	test("test Matrix.prototype.addToRow()", function(){
+	test("test YASMIJ.Matrix.prototype.addToRow()", function(){
 		var func = function( arr, iRow, els ){
-			return Matrix.parse(arr).addToRow( iRow, els ).array;
+			return YASMIJ.Matrix.parse(arr).addToRow( iRow, els ).array;
 		};
 		deepEqual(func([], 0, [1,2,3]), [[1,2,3]] );
 		deepEqual(func([], 1, [1,2,3]), [[1,2,3]] );
 		deepEqual(func([[1],[2]], 0, [2,3,4] ), [[1,2,3,4],[2]]);
 	});
-	test( "test Matrix.prototype.getMostNegIndexFromLastRow()", function(){
+	test( "test YASMIJ.Matrix.prototype.getMostNegIndexFromLastRow()", function(){
 		var func = function(arr){
-			return Matrix.parse(arr).getMostNegIndexFromLastRow();
+			return YASMIJ.Matrix.parse(arr).getMostNegIndexFromLastRow();
 		};
 		equal( func([1,2,3]), -1 );
 		equal( func([1,2,-3, -4]), 2 );
 		equal( func([[1,2,3],[1,-3,-1]]), 1 );
 		equal( func([[1,2,3],[1,-3,-1,-9]]), 1 );
 	});
-	test( "test Matrix.prototype.getRowIndexWithPosMinColumnRatio()", function(){
+	test( "test YASMIJ.Matrix.prototype.getRowIndexWithPosMinColumnRatio()", function(){
 		var func = function(arr, colI){
-			return Matrix.parse(arr).getRowIndexWithPosMinColumnRatio(colI);
+			return YASMIJ.Matrix.parse(arr).getRowIndexWithPosMinColumnRatio(colI);
 		};
 		equal( func([[-2,1],[-1,2]], 0), -1 );
 		equal( func([[1,1],[2,1],[3,2]], 0), 1 );
 		equal( func([[1,1],[1,2],[1,0.1]], 0), 0 );
 		equal( func([[1,0,1,1,4],[0,1,2,1,5],[0,0,-3,-4,0]], 3), 0 );
 	});
-	test( "test Matrix.prototype.pivot()", function(){
+	test( "test YASMIJ.Matrix.prototype.pivot()", function(){
 		var func = function( arr, pRow, pCol ){
-			return Matrix.parse(arr).pivot(pRow, pCol).toString();
+			return YASMIJ.Matrix.parse(arr).pivot(pRow, pCol).toString();
 		};
 		equal( func( [], 0, 0 ), "[]" );
 		equal( func( [1,2], 0, 0 ), "[1,2]" );
@@ -156,9 +156,9 @@ tests.runMatrixTests = function(){
 		equal( func( [[1,2],[2,4]], 0, 0 ), "[[1,2],[0,0]]" );
 		equal( func( [[1,2],[2,4]], 1, 1 ), "[[0,0],[0.5,1]]" );
 	});
-	test( "test Matrix.prototype.getUnitValueForColumn()", function(){
+	test( "test YASMIJ.Matrix.prototype.getUnitValueForColumn()", function(){
 		var func = function(arr, colI){
-			return Matrix.parse(arr).getUnitValueForColumn(colI);
+			return YASMIJ.Matrix.parse(arr).getUnitValueForColumn(colI);
 		};
 		equal(func([2,4], 0), 0);
 		equal(func([1,4], 0), 4);
@@ -167,9 +167,9 @@ tests.runMatrixTests = function(){
 		equal(func([[1,-1],[1,1],[1,0]], 0), 0);
 		equal(func([[1,-1],[1,1],[1,0]], 1), 0);
 	});
-	test( "test Matrix.prototype.getLastElementOnLastRow()", function(){
+	test( "test YASMIJ.Matrix.prototype.getLastElementOnLastRow()", function(){
 		var func = function( arr ){
-			return Matrix.parse( arr ).getLastElementOnLastRow();
+			return YASMIJ.Matrix.parse( arr ).getLastElementOnLastRow();
 		};
 		equal( func( [1] ), 1 );
 		equal( func( [1,2,3,4] ), 4 );

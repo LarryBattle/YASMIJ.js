@@ -5,17 +5,17 @@
 * @date 07/08/2012
 */
 tests.runExpressionTests = function(){
-	module( "Expression Class: Checking input" );
-	test( "test Expression.hasComparison() with 1 compare", function(){
-		var func = Expression.hasComparison;
+	module( "YASMIJ.Expression Class: Checking input" );
+	test( "test YASMIJ.Expression.hasComparison() with 1 compare", function(){
+		var func = YASMIJ.Expression.hasComparison;
 		equal( func( "a < b" ), true );
 		equal( func( "a > b" ) , true );
 		equal( func( "a = b" ) , true );
 		equal( func( "a => b" ), true );
 		equal( func( "a << b" ), true );
 	});
-	test( "test Expression.hasExcludedOperations() with valid expressions.", function(){
-		var func = Expression.hasExcludedOperations;
+	test( "test YASMIJ.Expression.hasExcludedOperations() with valid YASMIJ.Expressions.", function(){
+		var func = YASMIJ.Expression.hasExcludedOperations;
 		
 		equal( func( "" ), false );
 		equal( func( "-a" ), false );
@@ -23,15 +23,15 @@ tests.runExpressionTests = function(){
 		equal( func( "+a - b" ), false );
 		equal( func( "a + b" ), false );
 	});
-	test( "test Expression.hasExcludedOperations() with invalid expressions.", function(){
-		var func = Expression.hasExcludedOperations;
+	test( "test YASMIJ.Expression.hasExcludedOperations() with invalid YASMIJ.Expressions.", function(){
+		var func = YASMIJ.Expression.hasExcludedOperations;
 		
 		equal( func( "a * b" ), true );
 		equal( func( "a / b + c" ), true );
 		equal( func( "a % b" ), true );
 	});
-	test( "test Expression.hasIncompleteBinaryOperator() with valid expressions.", function(){
-		var func = Expression.hasIncompleteBinaryOperator;
+	test( "test YASMIJ.Expression.hasIncompleteBinaryOperator() with valid YASMIJ.Expressions.", function(){
+		var func = YASMIJ.Expression.hasIncompleteBinaryOperator;
 		
 		equal( func( "" ), false );
 		equal( func( "-1" ), false );
@@ -45,8 +45,8 @@ tests.runExpressionTests = function(){
 		equal( func( "+a - b" ), false );
 		equal( func( "a + b" ), false );
 	});
-	test( "test Expression.hasIncompleteBinaryOperator() with invalid expressions.", function(){
-		var func = Expression.hasIncompleteBinaryOperator;
+	test( "test YASMIJ.Expression.hasIncompleteBinaryOperator() with invalid YASMIJ.Expressions.", function(){
+		var func = YASMIJ.Expression.hasIncompleteBinaryOperator;
 		
 		equal( func( "a b" ), true );
 		equal( func( "a b-" ), true );
@@ -54,16 +54,16 @@ tests.runExpressionTests = function(){
 		equal( func( "++a b" ), true );
 		equal( func( "+a+" ), true );
 	});
-	test( "test that Expression.getErrorMessage() ", function(){	
-		var func = Expression.getErrorMessage;
+	test( "test that YASMIJ.Expression.getErrorMessage() ", function(){	
+		var func = YASMIJ.Expression.getErrorMessage;
 		ok( !func( "a+b" ) );
 		ok( func( "a b" ) );
 		ok( func( "a * b" ) );
 		ok( func( "a + b+" ) );
 	});
-	module( "Expression Class: input conversion" );
-	test( "test Expression.extractComponentsFromVariable() with positive terms", function(){
-		var func = Expression.extractComponentsFromVariable;
+	module( "YASMIJ.Expression Class: input conversion" );
+	test( "test YASMIJ.Expression.extractComponentsFromVariable() with positive terms", function(){
+		var func = YASMIJ.Expression.extractComponentsFromVariable;
 		
 		deepEqual( func(""), [0, "1" ] );
 		deepEqual( func("0"), [0, "1"] );
@@ -82,8 +82,8 @@ tests.runExpressionTests = function(){
 		
 		deepEqual( func("1.23e+32var"), [1.23e32, "var"] );
 	});
-	test( "test Expression.extractComponentsFromVariable() with negative terms", function(){
-		var func = Expression.extractComponentsFromVariable;
+	test( "test YASMIJ.Expression.extractComponentsFromVariable() with negative terms", function(){
+		var func = YASMIJ.Expression.extractComponentsFromVariable;
 		
 		deepEqual( func("-0"), [0, "1"] );
 		deepEqual( func("-1"), [-1, "1"] );
@@ -99,8 +99,8 @@ tests.runExpressionTests = function(){
 		
 		deepEqual( func("-1.23e+32var"), [-1.23e32, "var"] );
 	});
-	test( "test Expression.extractComponentsFromVariable() with positive 'e' terms", function(){
-		var func = Expression.extractComponentsFromVariable;
+	test( "test YASMIJ.Expression.extractComponentsFromVariable() with positive 'e' terms", function(){
+		var func = YASMIJ.Expression.extractComponentsFromVariable;
 		
 		deepEqual( func("e"), [1, "e"] );
 		deepEqual( func("1e"), [1, "e"] );
@@ -112,8 +112,8 @@ tests.runExpressionTests = function(){
 		
 		deepEqual( func("1.23e+32e"), [1.23e32, "e"] );
 	});	
-	test( "test Expression.extractComponentsFromVariable() with negative 'e' terms", function(){
-		var func = Expression.extractComponentsFromVariable;
+	test( "test YASMIJ.Expression.extractComponentsFromVariable() with negative 'e' terms", function(){
+		var func = YASMIJ.Expression.extractComponentsFromVariable;
 		
 		deepEqual( func("-e"), [-1, "e"] );
 		deepEqual( func("-1e"), [-1, "e"] );
@@ -125,8 +125,8 @@ tests.runExpressionTests = function(){
 		
 		deepEqual( func("-1.23e+32e"), [-1.23e32, "e"] );
 	});
-	test( "test Expression.splitStrByTerms() with positive terms", function(){
-		var func = Expression.splitStrByTerms;
+	test( "test YASMIJ.Expression.splitStrByTerms() with positive terms", function(){
+		var func = YASMIJ.Expression.splitStrByTerms;
 		
 		deepEqual( func("a"), ["a"] );
 		deepEqual( func("+a + b + c"), ["a","b", "c"] );
@@ -134,8 +134,8 @@ tests.runExpressionTests = function(){
 		deepEqual( func("3e3a + 1e+34b + 2.3e+30c + 1.3e+23d"), ["3e3a", "1e+34b", "2.3e+30c", "1.3e+23d"] );
 		deepEqual( func("3e-3a + 1e-34b + 2.3e-30c + 1.3e-23d"), ["3e-3a", "1e-34b", "2.3e-30c", "1.3e-23d"] );
 	});
-	test( "test Expression.splitStrByTerms() with negative terms", function(){
-		var func = Expression.splitStrByTerms;
+	test( "test YASMIJ.Expression.splitStrByTerms() with negative terms", function(){
+		var func = YASMIJ.Expression.splitStrByTerms;
 		
 		deepEqual( func("-a"), ["-a"] );
 		deepEqual( func("-a - b -c"), ["-a","-b", "-c"] );
@@ -143,29 +143,29 @@ tests.runExpressionTests = function(){
 		deepEqual( func("-3e3a -1e+34b -2.3e+30c -1.3e+23d"), ["-3e3a", "-1e+34b", "-2.3e+30c", "-1.3e+23d"] );
 		deepEqual( func("-3e-3a -1e-34b -2.3e-30c -1.3e-23d"), ["-3e-3a", "-1e-34b", "-2.3e-30c", "-1.3e-23d"] );
 	});
-	test( "test Expression.splitStrByTerms() with numbers", function(){
-		var func = Expression.splitStrByTerms;
+	test( "test YASMIJ.Expression.splitStrByTerms() with numbers", function(){
+		var func = YASMIJ.Expression.splitStrByTerms;
 		
 		deepEqual( func("-a + b -c +d"), ["-a","b","-c","d"] );
 	});
-	test( "test Expression.convertExpressionToObject() with valid input", function(){
-		var func = Expression.convertExpressionToObject;
+	test( "test YASMIJ.Expression.convertExpressionToObject() with valid input", function(){
+		var func = YASMIJ.Expression.convertExpressionToObject;
 		
 		deepEqual( func( "a + 20b + 10" ), {"1":10,"b":20,"a":1} );
 		deepEqual( func( "a + b -c + 4e" ), {"e":4,"c":-1,"b":1,"a":1} );
 		deepEqual( func( "-a - 1b -20c - 1.23e43d -1e-13e" ), { "e":-1e-13, "d":-1.23e+43,"c":-20,"b":-1,"a":-1} );
 		deepEqual( func( "+a + 1b +20c + 1.23e43d +1e-13e" ), { "e":1e-13, "d":1.23e+43,"c":20,"b":1,"a":1} );
 	});
-	test( "test Expression.convertExpressionToObject() for single number", function(){
-		var func = Expression.convertExpressionToObject;
+	test( "test YASMIJ.Expression.convertExpressionToObject() for single number", function(){
+		var func = YASMIJ.Expression.convertExpressionToObject;
 		deepEqual(func( "" ), {1:0} );
 		deepEqual(func( "1" ), {1:1} );
 		deepEqual(func( "-20" ), {1:-20} );
 		deepEqual(func( "-423.12345" ), {1:-423.12345} );
 		deepEqual(func( "-1.23e-34" ), {1:-1.23e-34} );
 	});
-	test( "test Expression.convertExpressionToObject() for single variables", function(){
-		var func = Expression.convertExpressionToObject;
+	test( "test YASMIJ.Expression.convertExpressionToObject() for single variables", function(){
+		var func = YASMIJ.Expression.convertExpressionToObject;
 		deepEqual(func( "0x" ), {1:0} );
 		
 		deepEqual(func( "x" ), {x:1} );
@@ -180,8 +180,8 @@ tests.runExpressionTests = function(){
 		deepEqual(func( "-1.23e-34x" ), {x:-1.23e-34} );
 	});
 	
-	test( "test Expression.convertExpressionToObject() for numbers and variables", function(){
-		var func = Expression.convertExpressionToObject;
+	test( "test YASMIJ.Expression.convertExpressionToObject() for numbers and variables", function(){
+		var func = YASMIJ.Expression.convertExpressionToObject;
 		deepEqual(func( "1 + x" ), {x:1, 1:1} );
 		deepEqual(func( "x + 1" ), {x:1, 1:1} );
 		deepEqual(func( "-x - 1" ), {x:-1, 1:-1} );
@@ -189,16 +189,16 @@ tests.runExpressionTests = function(){
 		deepEqual(func( "-20.2x + 2.4y +10e30" ), {x:-20.2, y:2.4, 1:10e30} );
 		deepEqual(func( "-20e34x + 23 - 4 - 4x + 1" ), {x:-2e+35, 1:20} );
 	});	
-	test( "test Expression.encodeE", function(){
-		var func = Expression.encodeE;		
+	test( "test YASMIJ.Expression.encodeE", function(){
+		var func = YASMIJ.Expression.encodeE;		
 		equal( func("-1e+4-1.1e+4"), "-1e_plus_4-1.1e_plus_4" );
 		equal( func("1e-4+1.1e-4"), "1e_sub_4+1.1e_sub_4" );
 		
 		equal( func("1e -4+1.1e-4"), "1e -4+1.1e_sub_4" );
 		equal( func("1e-4+ 1.1e-4"), "1e_sub_4+ 1.1e_sub_4" );
 	});
-	test( "test Expression.addSpaceBetweenTerms() with terms without spaces", function(){
-		var func = Expression.addSpaceBetweenTerms;
+	test( "test YASMIJ.Expression.addSpaceBetweenTerms() with terms without spaces", function(){
+		var func = YASMIJ.Expression.addSpaceBetweenTerms;
 		
 		equal( func( "1" ), "1" );
 		equal( func( "1-a" ), "1 - a" );
@@ -208,8 +208,8 @@ tests.runExpressionTests = function(){
 		equal( func( "-1e-4+e4+a4-d3" ), "- 1e-4 + e4 + a4 - d3" );
 		equal( func( "-1.4e+4+23.9e4+a4-d3-3e+49" ), "- 1.4e+4 + 23.9e4 + a4 - d3 - 3e+49" );
 	});
-	test( "test Expression.addSpaceBetweenTerms() with terms with spaces", function(){
-		var func = Expression.addSpaceBetweenTerms;
+	test( "test YASMIJ.Expression.addSpaceBetweenTerms() with terms with spaces", function(){
+		var func = YASMIJ.Expression.addSpaceBetweenTerms;
 		
 		equal( func( " 1 " ), "1" );
 		equal( func( " 1 - a " ), "1 - a" );
@@ -220,8 +220,8 @@ tests.runExpressionTests = function(){
 		equal( func( " - 1e-4   + e4+a4-d3" ), "- 1e-4 + e4 + a4 - d3" );
 		equal( func( "-1.4e+ 4 +23.9e4+a4 -d3    -3e+49" ), "- 1.4e + 4 + 23.9e4 + a4 - d3 - 3e+49" );
 	});
-	test("test Expression.getErrorMessage() with invalid input", function(){
-		var func = Expression.getErrorMessage;		
+	test("test YASMIJ.Expression.getErrorMessage() with invalid input", function(){
+		var func = YASMIJ.Expression.getErrorMessage;		
 		
 		ok(func("a < b < c"), "Error because there can only be one comparison.");
 		ok(func("a == b"), "Error because == is not supported.");
@@ -229,34 +229,34 @@ tests.runExpressionTests = function(){
 		
 		ok(func("a <= b * -1"), "Error because * is not supported.");
 	});
-	test("test Expression.parse() with valid expressions", function(){
+	test("test YASMIJ.Expression.parse() with valid YASMIJ.Expressions", function(){
 		var func = function(str){
-			return Expression.parse(str).terms;
+			return YASMIJ.Expression.parse(str).terms;
 		};
 		deepEqual( func( "10x1 -2x2 - 10" ), {"x1":10,"x2":-2, "1":-10} );
 	});
-	test("test the Expression constructor", function(){
-		var a = new Expression();
+	test("test the YASMIJ.Expression constructor", function(){
+		var a = new YASMIJ.Expression();
 		ok(a.terms);
 	});
-	test("test Expression.prototype.getTermNames()", function(){
+	test("test YASMIJ.Expression.prototype.getTermNames()", function(){
 		var func = function(str){
-			return Expression.parse(str).getTermNames();
+			return YASMIJ.Expression.parse(str).getTermNames();
 		};
 		deepEqual( func( "10e-4x1" ), ["x1"] );
 		deepEqual( func( "10x1 -2x2 - 10" ), [ "x1", "x2", "-10"] );
 		deepEqual( func( "a + b -c - 10" ), ["a", "b", "c", "-10"] );
 	});
-	test("test Expression.prototype.getTermNames(true) to exclude numbers", function(){
+	test("test YASMIJ.Expression.prototype.getTermNames(true) to exclude numbers", function(){
 		var func = function(str){
-			return Expression.parse(str).getTermNames(true);
+			return YASMIJ.Expression.parse(str).getTermNames(true);
 		};
 		deepEqual( func( "10e-4x1" ), ["x1"] );
 		deepEqual( func( "10x1 -2x2 - 10" ), [ "x1", "x2"] );
 		deepEqual( func( "a + b -c - 10" ), ["a", "b", "c"] );
 	});
-	test( "test Expression.termAtIndex() with variables", function(){
-		var func = Expression.termAtIndex;
+	test( "test YASMIJ.Expression.termAtIndex() with variables", function(){
+		var func = YASMIJ.Expression.termAtIndex;
 		equal( func( 0, "a", 1 ), "a" );
 		equal( func( 0, "a", 3 ), "3a" );
 		equal( func( 2, "a", 1 ), "+a" );
@@ -268,34 +268,34 @@ tests.runExpressionTests = function(){
 		equal( func( 2, "a", -2 ), "-2a" );
 		equal( func( 4, "a", -40 ), "-40a" );
 	});
-	test( "test Expression.termAtIndex() with constants", function(){
-		var func = Expression.termAtIndex;
+	test( "test YASMIJ.Expression.termAtIndex() with constants", function(){
+		var func = YASMIJ.Expression.termAtIndex;
 		equal( func( 0, 10 ), "10" );
 		equal( func( 0, -10 ), "-10" );
 		equal( func( 2, 10 ), "+10" );
 		equal( func( 4, -10 ), "-10" );
 	});
-	test( "test Expression.prototype.toString()", function(){
+	test( "test YASMIJ.Expression.prototype.toString()", function(){
 		var func = function(str){
-			return Expression.parse(str).toString();
+			return YASMIJ.Expression.parse(str).toString();
 		};
 		equal( func( "-a + 10" ), "-a + 10" );
 		equal( func( "a + 10" ), "a + 10" );
 		equal( func( "a -b + 10" ), "a - b + 10" );
 		equal( func( "4c + c4" ), "4c + c4" );
 	});
-	test( "test Expression.prototype.inverse()", function(){
+	test( "test YASMIJ.Expression.prototype.inverse()", function(){
 		var func = function(str){
-			return Expression.parse(str).inverse().toString();
+			return YASMIJ.Expression.parse(str).inverse().toString();
 		};
 		equal( func( "-a + 10" ), "a - 10" );
 		equal( func( "a + 10" ), "-a - 10" );
 		equal( func( "a -b + 10" ), "-a + b - 10" );
 		equal( func( "4c + c4" ), "-4c - c4" );
 	});
-	test( "test Expression.prototype.addTerm()", function(){
+	test( "test YASMIJ.Expression.prototype.addTerm()", function(){
 		var func = function( str, name, value ){
-			return Expression.parse(str).addTerm(name, value).toString();
+			return YASMIJ.Expression.parse(str).addTerm(name, value).toString();
 		};
 		equal( func( "a", "a", 1 ), "2a" );
 		equal( func( "a", "a", -1 ), "0" );
@@ -305,17 +305,17 @@ tests.runExpressionTests = function(){
 		equal( func( "a", "b", 4 ), "a + 4b" );
 		equal( func( "a + b", "b", -4 ), "a - 3b" );
 	});
-	test( "test Expression.prototype.removeTerm()", function(){
+	test( "test YASMIJ.Expression.prototype.removeTerm()", function(){
 		var func = function( str, name ){
-			return Expression.parse(str).removeTerm(name).toString();
+			return YASMIJ.Expression.parse(str).removeTerm(name).toString();
 		};
 		equal( func( "a - 1", "a" ), "-1" );
 		equal( func( "a - 1", 1 ), "a" );
 		equal( func( "a - 1", "b" ), "a - 1" );
 	});
-	test( "test Expression.prototype.forEachTerm", function(){
+	test( "test YASMIJ.Expression.prototype.forEachTerm", function(){
 		var func = function(str, fn){
-			return Expression.parse(str).forEachTerm(fn);
+			return YASMIJ.Expression.parse(str).forEachTerm(fn);
 		};
 		var arr = []; 
 		func("a + 10 - c", function(name){
@@ -323,9 +323,9 @@ tests.runExpressionTests = function(){
 		});		
 		equal( 3, arr.length );
 	});
-	test( "test Expression.prototype.forEachVariable", function(){
+	test( "test YASMIJ.Expression.prototype.forEachVariable", function(){
 		var func = function(str, fn){
-			return Expression.parse(str).forEachVariable(fn);
+			return YASMIJ.Expression.parse(str).forEachVariable(fn);
 		};
 		var arr = []; 
 		func("a + 10 - c", function(name){
@@ -333,9 +333,9 @@ tests.runExpressionTests = function(){
 		});		
 		equal( 2, arr.length );
 	});
-	test( "test Expression.prototype.forEachConstant", function(){
+	test( "test YASMIJ.Expression.prototype.forEachConstant", function(){
 		var func = function(str, fn){
-			return Expression.parse(str).forEachConstant(fn);
+			return YASMIJ.Expression.parse(str).forEachConstant(fn);
 		};
 		var arr = []; 
 		func("a + 10 - c", function(name){
@@ -343,17 +343,17 @@ tests.runExpressionTests = function(){
 		});		
 		equal( 1, arr.length );
 	});
-	test( "test Expression.prototype.getCoeffients()", function(){
+	test( "test YASMIJ.Expression.prototype.getCoeffients()", function(){
 		var func = function( str, excludeNumbers, excludeSlack ){
-			return Expression.parse(str).getCoeffients(excludeNumbers, excludeSlack);
+			return YASMIJ.Expression.parse(str).getCoeffients(excludeNumbers, excludeSlack);
 		};
 		deepEqual( func("a + b + slack + 10" ), [1,1,1,10] );
 		deepEqual( func("a + b + slack + 10", true ), [1,1,1] );
 		deepEqual( func("a + b + slack + 10", true, true ), [1,1] );
 	});
-	test( "test Expression.prototype.createRowOfValues()", function(){
+	test( "test YASMIJ.Expression.prototype.createRowOfValues()", function(){
 		var func = function(str, termNames){
-			return Expression.parse(str).createRowOfValues( termNames );
+			return YASMIJ.Expression.parse(str).createRowOfValues( termNames );
 		};
 		deepEqual( func("a + b + 5", ["a"]), [1] );
 		deepEqual( func("a + b + 5", ["b", "a"]), [1, 1] );

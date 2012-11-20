@@ -1,26 +1,35 @@
 /*
-* @project {{=it.name}}
+* @project YASMIJ.js, "Yet another simplex method implementation in Javascript"
 * @author Larry Battle
-* @license {{=it.license.overview}}
-*/
-/**
-* Expands the string object to support trimming of a the trim.
-*
-* @returns {String}
-* @example "  x  ".trim() == "x";
+* @license MIT License <http://www.opensource.org/licenses/mit-license>
+* @date 07/02/2012
 */
 String.prototype.trim = String.prototype.trim || function(){
 	return (this||"").replace(/^\s+|\s+$/g, "");
 };
-var mixin = {};
-/**
- *
- *
- * @param {String}
- * @returns {Object}
- * @example
- */
-mixin.getUniqueArray = function( arr ){
+var YASMIJ = {
+	// Constraint,
+	// Expression,
+	// Input,
+	// Matrix,
+	// Output,
+	// Simplex,
+	// Tabluea
+};
+
+//MIXIN
+
+// Output.prototype.convertToRatio = function(){
+	// if(!Ratio){
+		// throw new Error( "Ratio.js is required." );
+	// }
+	// for( var name in this.result ){
+		// this.result[name] = Ratio(this.result[name]).reduce().toLocaleString();
+	// }
+	// return this;
+// };
+
+YASMIJ.getUniqueArray = function( arr ){
 	var result = [], hash = {};
 	if( typeof arr !== "object" || !arr.length ){
 		return result;
@@ -33,14 +42,7 @@ mixin.getUniqueArray = function( arr ){
 	}
 	return result;
 };
-/**
- *
- *
- * @param {String}
- * @returns {Object}
- * @example
- */
-mixin.areObjectsSame = function(obj1, obj2){
+YASMIJ.areObjectsSame = function(obj1, obj2){
 	var a, b;
 	if( obj1 === obj2 ){
 		return true;
@@ -58,7 +60,7 @@ mixin.areObjectsSame = function(obj1, obj2){
 			if( typeof a !== typeof b){
 				return false;
 			}
-			if( !mixin.areObjectsSame( a, b )){
+			if( !YASMIJ.areObjectsSame( a, b )){
 				return false;
 			}
 		}else{

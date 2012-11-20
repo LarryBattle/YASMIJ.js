@@ -1,8 +1,11 @@
 Project: Yasmij.js
 
-# Version: 0.2.2
+## __Version: 0.2.4__ (Nov 16, 2012)
+- Added LICENSE
+- Change file structure to Node.js the de-facto standard.
+- Wrapped everything inside a singleton called `YASMIJ`
 
-# Version: 0.2.1.5
+## __Version: 0.2.1.5__
 - Added: Build javascript at `dev/jakefile.js`
 - Added: `history.md` to keep track of the release notes.
 
@@ -11,5 +14,5 @@ Project: Yasmij.js
 
 - Removed: `jQuery.1.7.2-min.js`
 
-# Version:  < 0.2.1.4 
+##__Version: < 0.2.1.4__
 - Undocumented changes.
