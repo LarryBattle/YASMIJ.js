@@ -25,9 +25,23 @@ It is used to solve optimization by using of artifical variables and/or branch a
 			"2x1 + 5x2 + 5x3 <= 30"
 		]
 	};
-	YASMIJ.solve( input );
+	var output = YASMIJ.solve( input );
 	
 <b>Output</b><br/>
+
+	JSON.stringify(output, null, 2)
+	// returns 
+	"{
+	  "result": {
+		"slack1": 0,
+		"slack2": 0,
+		"slack3": 0,
+		"x1": 5,
+		"x2": 4,
+		"x3": 0,
+		"z": 13
+	  }
+	}"
 
 ## Version Roadmap:
 
