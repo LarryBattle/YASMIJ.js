@@ -6,13 +6,13 @@ It is used to solve optimization by using of artifical variables and/or branch a
 
 ## Example:
 
-Objective: Maximize `5x1 + 3x2 + x3`
+	Maximize 5x1 + 3x2 + x3
 
-Subject to <br/>
-`5x1 + 3x2 + 6x3 = 15`<br/>
-`x1 + x2 + x3 = 6`<br/>
-<br/>
-where 0 <= `x1`,`x2`, `x3`<br/>
+	Subject to 
+	5x1 + 3x2 + 6x3 = 15
+	x1 + x2 + x3 = 6
+
+	where 0 <= x1, x2, x3
 
 <b>Input</b><br/>
 
