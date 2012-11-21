@@ -7,27 +7,7 @@
 String.prototype.trim = String.prototype.trim || function(){
 	return (this||"").replace(/^\s+|\s+$/g, "");
 };
-var YASMIJ = {
-	// Constraint,
-	// Expression,
-	// Input,
-	// Matrix,
-	// Output,
-	// Simplex,
-	// Tabluea
-};
-
-//MIXIN
-
-// Output.prototype.convertToRatio = function(){
-	// if(!Ratio){
-		// throw new Error( "Ratio.js is required." );
-	// }
-	// for( var name in this.result ){
-		// this.result[name] = Ratio(this.result[name]).reduce().toLocaleString();
-	// }
-	// return this;
-// };
+var YASMIJ = {};
 
 YASMIJ.getUniqueArray = function( arr ){
 	var result = [], hash = {};
@@ -71,3 +51,14 @@ YASMIJ.areObjectsSame = function(obj1, obj2){
 	}
 	return true;
 };
+
+YASMIJ.solve = function( input ){
+	if(typeof input !== "object" ){
+		throw new Error( "An object must be passed to YASMIJ.solve()" );
+	}
+	return YASMIJ.Tableau.parse( 
+			YASMIJ.Input.parse( input.type, input.objective, input.constraints )
+		).solve().getOutput();
+};
+
+
