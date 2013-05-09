@@ -51,11 +51,22 @@ YASMIJ.areObjectsSame = function(obj1, obj2){
 	}
 	return true;
 };
-
-YASMIJ.solve = function( input ){
+YASMIJ.getErrors = function(obj){
 	if(typeof input !== "object" ){
-		throw new Error( "An object must be passed to YASMIJ.solve()" );
+		return "An object must be passed to YASMIJ.solve()";
 	}
+	if(!obj.type || !obj.objective || !obj.constraints ){
+		return "The object must have the properties `type`, `objective` and `constraints`."
+	}
+};
+YASMIJ.checkForErrors = function(obj){
+	var errMsg = YASMIJ.getErrors(obj);
+	if(errMsg){
+		throw new Error(errMsg);
+	}
+};
+YASMIJ.solve = function( input ){
+	YASMIJ.checkForErrors( input );
 	return YASMIJ.Tableau.parse( 
 			YASMIJ.Input.parse( input.type, input.objective, input.constraints )
 		).solve().getOutput();

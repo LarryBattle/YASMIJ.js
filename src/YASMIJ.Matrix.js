@@ -4,7 +4,7 @@
 * @license MIT License <http://www.opensource.org/licenses/mit-license>
 * @date 07/02/2012
 */
-YASMIJ.Matrix = (function(){
+(function(root){
 	"use strict";
 	// Matrix Class
 	var Matrix = function(){
@@ -99,11 +99,17 @@ YASMIJ.Matrix = (function(){
 		}
 		return this;
 	};
+	/**
+	 * Returns the mininum value in a row.
+	 * @param{Number} rowI - index of the row
+	 * @param{Boolean} excludeLastElement - exclude the last element in each row
+	 * @return{Array} - Array[ "index of min value", "min value" ]
+	 */
 	Matrix.prototype.getMinElementInRow = function( rowI, excludeLastElement ){
 		var row = (this.array[rowI] || []),
 			arr = [ 0, row[0] ], 
 			i = 0, 
-			len = (excludeLastElement ? row.length - 1 : row.length);
+			len = row.length + (excludeLastElement ? -1 : 0);
 		
 		for( ; i < len; i++ ){
 			if( row[ i ] < arr[1] ){
@@ -132,7 +138,7 @@ YASMIJ.Matrix = (function(){
 		}
 		return rowI;
 	};
-	Matrix.prototype.toString = function( input ){
+	Matrix.prototype.toString = function(){
 		var str = "";
 		this.forEachRow( function( i, row ){
 			if(i){
@@ -145,6 +151,10 @@ YASMIJ.Matrix = (function(){
 		}
 		return str;
 	};
+	/**
+	 * Returns the size of the matrix
+	 * @return{Array} [columns, rows]
+	 */
 	Matrix.prototype.getSize = function(){
 		var columns = 0, rows = this.array.length, i = rows, x;
 		while( i-- ){
@@ -168,6 +178,10 @@ YASMIJ.Matrix = (function(){
 		}
 		return this;
 	};
+	/**
+	 * Returns the longest row
+	 * @return{Array} [index, max length]
+	 */
 	Matrix.getMaxArray = function(arrays){
 		var index = 0, max = 0;
 		if( !Matrix.isArray( arrays ) || !Matrix.isArray( arrays[0] ) ){
@@ -200,7 +214,7 @@ YASMIJ.Matrix = (function(){
 	Matrix.prototype.getUnitValueForColumn = function( colI ){
 		var nonZeroValues = 0, val = 0;
 		
-		this.forEachRow(function(i, row, rows){
+		this.forEachRow(function(i, row){
 			if (row[colI] === 1) {
 				val = row[row.length - 1];
 			}
@@ -215,5 +229,5 @@ YASMIJ.Matrix = (function(){
 		var row = this.array[this.array.length - 1];
 		return row[ row.length - 1];
 	};
-	return Matrix;
-}());
+	root.Matrix = Matrix;
+}(YASMIJ));

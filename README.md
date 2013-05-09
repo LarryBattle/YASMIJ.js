@@ -1,8 +1,38 @@
-# YASMIJ.js - Yet Another Simplex Method Library for Javascript.
+# YASMIJ.js 
 
-The purpose of this project is to provide a simple Simplex Method library for Javascript.
-The simplex method is a popular algorithm for linear programming.
-It is used to solve optimization by using of artifical variables and/or branch and bound.
+## Purpose:
+YASMIJ stands for `Yet Another Simplex Method Library for Javascript`.<br/>
+The purpose of this project is to provide a simple Simplex Method library for Javascript.<br/>
+The simplex method is a popular algorithm for linear programming.<br/>
+It is used to solve optimization by using of artifical variables and/or branch and bound.<br/>
+
+<b>Note</b>: <br/>
+Yasmij.js is a small side project that I work on in my spare time.<br/>
+Please feel free to contribute.
+
+## Version
+0.2.5
+
+## Dependencies
+None
+
+## Installation
+Just include `lib\yasmij.js`
+
+## Environment
+Run the test cases to determine support.<br/>
+In general, yasmij.js should be supported in Javascript ES5 environments.<br/>
+Ex. Chrome 10+, Firefox 12+, IE9+ and Node.js<br/>
+<br/>
+
+## Documentation 
+Refer to the `docs` folder
+
+## Change Log
+Refer to `history.md`
+
+## Issues / Help
+Please raise a ticket for help.
 
 ## Example:
 
@@ -45,6 +75,9 @@ It is used to solve optimization by using of artifical variables and/or branch a
 	}"
 
 ## TODO
-- Add support for Minimization
+- Add support for Minimization (Standard and Non-standard)
 - Add support for unbounded variables.
 - Add documentation.
+- Add Demo
+- Add template
+- Add build script

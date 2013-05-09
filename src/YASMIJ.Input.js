@@ -4,7 +4,7 @@
  * @license {{=it.license.overview}}
  * @date 07/02/2012
  */
-YASMIJ.Input = (function(){
+(function(root){
 	var Input = function () {
 		this.z = null;
 		this.type = null;
@@ -126,5 +126,5 @@ YASMIJ.Input = (function(){
 		this.isStandardMode = true;
 		return this;
 	};
-	return Input;
-}());
+	root.Input = Input;
+}(YASMIJ));

@@ -296,9 +296,14 @@ YASMIJ.Constraint = (function(){
 		}
 		return this;
 	};
+	/**
+	 * Returns an list of coeffients of terms.
+	 * @return{Array} - Array of numbers
+	 */
 	Constraint.prototype.createRowOfValues = function( termNames ){
 		var arr = new Array( termNames.length ), val;
 		var i = arr.length;
+		// Note: a term should only be on one side after normilized.
 		while(i--){
 			val = this.leftSide.getTermValue( termNames[i] );
 			if( val === undefined ){

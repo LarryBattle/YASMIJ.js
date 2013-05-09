@@ -4,8 +4,7 @@
 * @license MIT License <http://www.opensource.org/licenses/mit-license>
 * @date 07/02/2012
 */
-
-YASMIJ.Tableau = (function(){
+(function(root){
 	// Tableau Class
 	var Tableau = function(){
 		this.input = null;
@@ -16,11 +15,9 @@ YASMIJ.Tableau = (function(){
 		//this.state = null;
 	};
 	Tableau.getErrorMessage = function( input ){
-		var errMsg = "";
 		if( !(input instanceof YASMIJ.Input) ){
-			errMsg = "Must pass an instance of the Input class.";
+			return "Must pass an instance of the Input class.";
 		}
-		return errMsg;
 	};
 	Tableau.checkForError = function( input ){
 		var errMsg = Tableau.getErrorMessage( input );
@@ -53,6 +50,9 @@ YASMIJ.Tableau = (function(){
 			this.matrix.addRow( constraints[i].createRowOfValues( termNames ) );
 		}
 	};
+	/**
+	 * Appends the objective function to the end of the matrix.
+	 */
 	Tableau.prototype.addZToMatrix = function( termNames ){
 		var row = this.input.z.createRowOfValues( termNames );
 		this.matrix.addRow( YASMIJ.Matrix.inverseArray( row ) );
@@ -93,8 +93,8 @@ YASMIJ.Tableau = (function(){
 		obj.z = this.matrix.getLastElementOnLastRow();
 		return YASMIJ.Output.parse(obj,this.matrix);
 	};
-	return Tableau;
-}());
+	root.Tableau = Tableau;
+}(YASMIJ));
 
 
 

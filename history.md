@@ -1,4 +1,10 @@
-Project: Yasmij.js
+# Release notes for YASMIJ.js
+
+## __Version: 0.2.5__ (May 9, 2013)
+- Updated README.md
+- Renamed a few files
+- Added a place holder for the documentation.
+- Added a dev branch
 
 ## __Version: 0.2.4__ (Nov 16, 2012)
 - Added LICENSE

@@ -4,7 +4,7 @@
 * @license MIT License <http://www.opensource.org/licenses/mit-license>
 * @date 07/02/2012
 */
-YASMIJ.Simplex = (function(){
+(function(root){
 	"use strict";
 	// Simplex Class
 	var Simplex = function(){
@@ -18,5 +18,5 @@ YASMIJ.Simplex = (function(){
 	Simplex.prototype.setInput = function( obj ){
 		this.input.parse( obj );
 	};
-	return Simplex;
-}());
+	root.Simplex = Simplex;
+}(YASMIJ));
