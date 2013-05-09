@@ -74,10 +74,16 @@ Please raise a ticket for help.
 	  }
 	}"
 
-## TODO
-- Add support for Minimization (Standard and Non-standard)
+
+## Roadmap
+### Version 0.3: 
+- Add support for Minimization (Standard and Non-standard)<br/>
+- Add documentation.<br/>
+- Add Demo<br/>
+- Add template<br/>
+- Add build script<br/>
+
+### Version 0.4:
 - Add support for unbounded variables.
-- Add documentation.
-- Add Demo
-- Add template
-- Add build script
+
+<br/>
