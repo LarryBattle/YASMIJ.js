@@ -3,7 +3,6 @@
 * Type `jake` to run the build.
 *
 * @author Larry Battle
-* @date Sept 10, 2012
 * @requires jake.js, yuidoc.js, uglify.js, node.js
 */
 
@@ -11,11 +10,10 @@ var fs = require('fs'),
 	basePath = "../",
 	projectInfo = require( basePath + "package.json" ),
 	paths = {
-		devFolder : basePath + "dev/src/",
 		docs : basePath + "docs",
-		min : basePath + "src/yasmij.min.js",
-		src : basePath + "src",
-		uncompressed : basePath + "src/yasmij.js"
+		min : basePath + "lib/yasmij.min.js",
+		srcDir : basePath + "src/",
+		uncompressed : basePath + "lib/yasmij.js"
 	};
 
 var getUpdatedVersionSource = function(str, version){
@@ -31,20 +29,25 @@ var getMinimizedCode = function(orig_code){
 	ast = ug.pro.ast_squeeze(ast); 
 	return ug.pro.gen_code(ast);
 };
+
 desc( "Default task" );
 task( "default", function(){
 	console.log( "Starting build." );
 	jake.Task.combineFilesToOne.invoke();
-	jake.Task.updateVersion.invoke();
-	jake.Task.makeDoc.invoke();
-	jake.Task.compress.invoke();
+	// jake.Task.updateVersion.invoke();
+	// jake.Task.makeDoc.invoke();
+	// jake.Task.compress.invoke();
 	console.log( "All task complete." );
 });
+
 desc( "Will combine all the seperate dev files into one file at " + paths.uncompressed );
 task( "combineFilesToOne", function(){
-	console.log( "Creating %s by combining all javascript files from %s into one", paths.uncompressed, paths.devFolder );
+	console.log( 
+		"Combining js files from `%s` to `%s`", paths.srcDir, paths.uncompressed );
+	jake.exec( "cd " + paths.srcDir + " && cat " +  + "*.js > " + paths.uncompressed );
 });
-desc( "Updated version information in Ratio.js" );
+
+desc( "Updated version information in yasmij.js" );
 task("updateVersion", function(){
 	console.log( "\nUpdating version number in %s", paths.uncompressed );
 
@@ -60,7 +63,7 @@ task( "makeDoc", function(){
 	jake.exec( "yuidoc " + paths.src + " -o " + paths.docs );
 });
 
-desc("Using uglify.js to minimize Ratio.js to Ratio.min.js.");
+desc("Using uglify.js to minimize yasmij.js to yasmij.min.js.");
 task("compress", function(){
 	console.log( "\nCompressing %s to %s", paths.uncompressed, paths.min );
 	jake.exec( "uglifyjs " + paths.uncompressed + " > " + paths.min );
