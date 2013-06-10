@@ -1,3 +1,32 @@
+FAIL!
+func getMainFile() (?, Error){
+	
+}
+func getSourceDirectory() (?, Error){
+	
+}
+func appendFile(fileDesc, fileSource *?) (, Error){
+	
+}
+func combineFiles(){
+	// create main file in destination directory
+	mainFile, err := getMainFile()
+	check(err)
+	// navigate to the source directory.
+	dir, err := getSourceDirectory()
+	check(err)
+	// for each javascript file
+	dir.forEachFile(func (file ?){
+		// append the content of the file to main file	
+		appendFile(mainFile, file)
+	})
+	
+	// Done.
+}
+
+
+End of Fail
+
 package main
 
 import (
