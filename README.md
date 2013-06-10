@@ -28,6 +28,8 @@ Ex. Chrome 10+, Firefox 12+, IE9+ and Node.js<br/>
 ## Documentation 
 Refer to the `docs` folder
 
+Please read the test cases to understand how everything works.
+
 ## Change Log
 Refer to `history.md`
 
