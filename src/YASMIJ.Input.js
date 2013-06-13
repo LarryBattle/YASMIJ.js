@@ -1,211 +1,200 @@
 /*
-* @project {{=it.name}}
-* @author Larry Battle
-* @license {{=it.license.overview}}
-*/
-
-tests.runInputTests = function(){
-	module( "YASMIJ.Input Class" );
-	test( "test YASMIJ.Input.prototype.addNumbersToSlacks", function(){
-		var func = function(str, eqs){
-			return YASMIJ.Input.parse( "maximize", str, eqs).convertToStandardForm();
-		};
-		var x = func( "x1 + 2x2 - x3", [
-			"a < 14",
-			"a + b <=28"
-		]);
-		var c = x.constraints.join( ", " );
-		equal( /slack1/.test(c), true );
-		equal( /slack2/.test(c), true );
-	});
-	test( "test YASMIJ.Input.prototype.getZTermNotInAnyOfTheConstraints", function(){
-		var func = function(str, eqs){
-			return YASMIJ.Input.parse( "maximize", str, eqs).getZTermNotInAnyOfTheConstraints();
-		};
-		equal( func( "a", [ "a < 1", "b < 3"] ), "");
-		equal( func( "c + d", [ "c < 1", "d < 1"] ), "");
+ * @project {{=it.name}}
+ * @author Larry Battle
+ * @license {{=it.license.overview}}
+ * @date 07/02/2012
+ */
+(function(root){
+	var Input = function () {
+		this.z = null;
+		this.type = null;
+		this.terms = null;
+		this.constraints = null;
+		this.isStandardMode = false;
+	};
+	// Holds constants
+	Input.parse = function (type, z, constraints) {
+		Input.checkForInputError(type, z, constraints);
+		var obj = new Input();
+		obj.type = type;
+		obj.z = YASMIJ.Expression.parse(z);
+		obj.constraints = YASMIJ.Input.getArrOfConstraints(constraints);
+		obj.setTermNames();
+		obj.checkConstraints();
+		return obj;
+	};
+	Input.getArrOfConstraints = function (arr) {
+		arr = (YASMIJ.Matrix.isArray(arr)) ? arr : [arr];
+		var constraints = [],
+		i = arr.length;
+		while (i--) {
+			constraints[i] = YASMIJ.Constraint.parse(arr[i]);
+		}
+		return constraints;
+	};
+	Input.getErrors = function (type, z, constraints) {
+		var errMsgs = [];
+		if (typeof z !== "string") {
+			errMsgs.push("z must be a string.");
+		}
+		if (type !== "maximize" && type !== "minimize") {
+			errMsgs.push("`maximize` and `minimize` are the only types that is currently supported.");
+		}
+		if (!YASMIJ.Matrix.isArray(constraints) || !constraints.length) {
+			errMsgs.push("Constraints must be an array with at least one element.");
+		}
+		return errMsgs;
+	};
+	/**
+	* Returns the problem type.
+	* @note this function assume all the constraints have 
+	* variables on the left and constants on the right.
+	* @return {String}
+	*/
+	Input.prototype.computeType = function(){
+		var hasLessThan = this.doAnyConstrainsHaveRelation( /<=?/ );
+		var hasGreaterThan = this.doAnyConstrainsHaveRelation( />=?/ );		
 		
-		equal( func( "a", [ "b < 3"] ), "a");
-		equal( func( "c + d", [ "c < 1" ] ), "d");
-	});
-	test( "test YASMIJ.Input.prototype.checkConstraints", function(){
-		var func = function(str, eqs){
-			return YASMIJ.Input.parse( "maximize", str, eqs).checkConstraints();
-		};
-		ok( func( "a", [ "a < 1", "b < 3"] ) );
-		ok( func( "c + d", [ "d < 1"] ));
+		if( /max/.test( this.type ) ){
+			return hasGreaterThan ? YASMIJ.CONST.NONSTANDARD_MAX : YASMIJ.CONST.STANDARD_MAX;
+		}
+		if( /min/.test( this.type ) ){
+			return hasLessThan ? YASMIJ.CONST.NONSTANDARD_MIN : YASMIJ.CONST.STANDARD_MIN;
+		}
+	};
+	/**
+	* Checks if any constraints the same comparison.
+	* @param {String|RegExp} comparison
+	* @return {Boolean}
+	*/
+	Input.prototype.doAnyConstrainsHaveRelation = function(comparison){
+		comparison = new RegExp(comparison);
+		return this.anyConstraints(function(i, constraint){
+			return comparison.test(constraint.comparison);
+		});
+	};
+	/**
+	* Checks if all constraints the same comparison.
+	* @param {String|RegExp} comparison
+	* @return {Boolean}
+	*/
+	Input.prototype.doAllConstrainsHaveRelation = function(comparison){
+		comparison = new RegExp(comparison);
+		return this.allConstraints(function(i, constraint){
+			return comparison.test(constraint.comparison);
+		});
+	};
+	/**
+	* Checks if the callback returns a truthy value for any constraints.
+	* @param {Function} fn - callback
+	* @return {Boolean}
+	*/
+	Input.prototype.anyConstraints = function (fn) {
+		for (var i = 0, len = this.constraints.length; i < len; i++) {
+			if( fn(i, this.constraints[i], this.constraints) ){
+				return true;
+			}
+		}
+		return false;
+	};
+	/**
+	* Checks if the callback returns a truthy value for all constraints.
+	* @param {Function} fn - callback
+	* @return {Boolean}
+	*/
+	Input.prototype.allConstraints = function (fn) {
+		var result = true;
+		for (var i = 0, len = this.constraints.length; i < len; i++) {
+			result = result && !!fn(i, this.constraints[i], this.constraints);
+		}
+		return result;
+	};
+	/**
+	* Iterates over a the constraints, executing the callback for each element.
+	* @param {Function} fn - callback
+	* @return {Boolean}
+	*/
+	Input.prototype.forEachConstraint = function (fn) {
+		for (var i = 0, len = this.constraints.length; i < len; i++) {
+			fn(i, this.constraints[i], this.constraints);
+		}
+	};
+	Input.prototype.addNumbersToSlacks = function () {
+		var c = this.constraints,
+		slackI = 1;
+		for (var i = 0, len = c.length; i < len; i++) {
+			if (c[i].slack) {
+				c[i].updateSlack("slack" + slackI);
+				slackI++;
+			}
+		}
+	};
+	Input.prototype.getTermNames = function (onlyVariables) {
+		var vars = [],
+		i = this.constraints.length;
+		while (i--) {
+			vars = vars.concat(this.constraints[i].getTermNames(onlyVariables));
+		}
+		return YASMIJ.getUniqueArray(vars).sort();
+	};
+	Input.prototype.setTermNames = function () {
+		this.terms = this.getTermNames();
+	};
+	Input.prototype.getZTermNotInAnyOfTheConstraints = function () {
+		var varMissing = "",
+		terms = this.z.getTermNames(),
+		term,
+		i = 0,
+		iLen = terms.length;
 		
-	});
-	test( "test YASMIJ.Input.prototype.convertConstraintsToMaxForm", function(){
-		
-		var func = function(str){
-			var obj = {
-				constraints: [ YASMIJ.Constraint.parse(str) ]
-			};
-			YASMIJ.Input.prototype.convertConstraintsToMaxForm.call(obj);
-			return obj.constraints[0].toString();
-		};
-		var testThis = function(str){
-			var x = YASMIJ.Constraint.parse(str).convertToStandardMaxForm().toString();
-			equal( func( str ), x );
-		};
-		testThis( "a + b < 4" );
-	});
-	test( "test YASMIJ.Input.prototype.convertToStandardForm", function(){
-		var func = function(str, eqs){
-			return YASMIJ.Input.parse( "maximize", str, eqs);
-		};
-		var testThis = function(str, eqs){
-			var x = func( str, eqs );
-			equal( x.isStandardMode, false );
-			x.convertToStandardForm();
-			equal( x.isStandardMode, true );
-		};
-		testThis( "a + b", ["a + b < 1"] );
-	});
-	test( "test YASMIJ.Input.prototype.toString()", function(){
-		var x = YASMIJ.Input.parse( "maximize", "x1 + 2x2 - x3", [
-			"2x1+x2+x3 <= 14",
-			"4x1+2x2+3x3<=28",
-			"2x1+5x2+5x3<=30"
-		]);
-		var expected = [ 
-			"maximize z = x1 + 2x2 - x3",
-			"where 2x1 + x2 + x3 <= 14, 4x1 + 2x2 + 3x3 <= 28, 2x1 + 5x2 + 5x3 <= 30"
-		].join( ", " );
-		equal( x.toString(), expected );
-	});
-	test( "test YASMIJ.Input.prototype.getTermNames()", function(){
-		var func = function(str, eqs, onlyVariables){
-			return YASMIJ.Input.parse( "maximize", str, eqs).getTermNames(onlyVariables).join(", ");
-		};
-		equal( func( "x1 + 2x2 - x3", [
-			"2x1+x2+x3 <= 14",
-			"4x1+2x2+3x3<=28",
-			"2x1+5x2+5x3<=30"
-		]), ["x1", "x2", "x3", "14", "28", "30" ].sort().join( ", " ) );
-		
-		equal( func( "x1 + 2x2 - x3", [
-			"2x1+x2+x3 <= 14",
-			"4x1+2x2+3x3<=28",
-			"2x1+5x2+5x3<=30"
-		], true), ["x1", "x2", "x3" ].sort().join( ", " ) );
-	});
-	test( "test YASMIJ.Input.parse", function(){
-		var x = YASMIJ.Input.parse( "maximize", "x1 + 2x2 - x3", [
-			"2x1+x2+x3 <= 14",
-			"4x1+2x2+3x3<=28",
-			"2x1+5x2+5x3<=30"
-		]);
-		equal( x.type, "maximize" );
-		equal( x.z.toString(), "x1 + 2x2 - x3" );
-		equal( x.constraints.length, 3 );
-		deepEqual( x.terms.join(", "), "14, 28, 30, x1, x2, x3" );
-	});
-	test( "test YASMIJ.Input.prototype.doAnyConstrainsHaveRelation()", function(){
-		var fn = function(arr, comparison){
-			var x = YASMIJ.Input.parse("maximize", "x1 + 2x2 - x3", arr);
-			return x.doAnyConstrainsHaveRelation( comparison );
-		};
-		equal( fn([
-			"a < 14",
-			"a + b < 28"
-		], /^<$/ ), true );
-		equal( fn([
-			"a > 14",
-			"a + b > 28"
-		], /^>$/ ), true );
-		equal( fn([
-			"a > 14",
-			"a + b >= 28"
-		], /^>=$/ ), true );
-		
-		equal( fn([
-			"a < 14",
-			"a + b <= 28"
-		], /^>$/ ), false );
-		equal( fn([
-			"a > 14",
-			"a + b >= 28"
-		], /^<=$/ ), false );
-	});
-	test( "test YASMIJ.Input.prototype.doAllConstrainsHaveRelation()", function(){
-		var fn = function(arr, comparison){
-			var x = YASMIJ.Input.parse("maximize", "x1 + 2x2 - x3", arr);
-			return x.doAllConstrainsHaveRelation( comparison );
-		};
-		equal( fn([
-			"a < 14",
-			"a + b < 28"
-		], /^<$/ ), true );
-		equal( fn([
-			"a < 14",
-			"a + b <= 28"
-		], /^<$/ ), false );
-		
-		equal( fn([
-			"a > 14",
-			"a + b > 28"
-		], /^>$/ ), true );
-		equal( fn([
-			"a > 14",
-			"a + b >= 28"
-		], /^>$/ ), false );
-	});
-	test( "test YASMIJ.Input.prototype.computeType() with (non)standard max", function(){
-		var t = YASMIJ.CONST;
-		var fn = function(type, arr){
-			var x = YASMIJ.Input.parse(type, "x1 + 2x2 - x3", arr);
-			return x.computeType();
-		};
-		equal( fn("maximize",[
-			"a <= 14",
-			"a + b <= 28"
-		]), t.STANDARD_MAX );
-		equal( fn("maximize",[
-			"a <= 14",
-			"a + b < 28"
-		]), t.STANDARD_MAX );
-		equal( fn("maximize",[
-			"a < 14",
-			"a + b < 28"
-		]), t.STANDARD_MAX );
-		
-		equal( fn("maximize",[
-			"a > 14",
-			"a + b < 28"
-		]), t.NONSTANDARD_MAX );
-		equal( fn("maximize",[
-			"a <= 14",
-			"a + b > 28"
-		]), t.NONSTANDARD_MAX );
-	});
-	test( "test YASMIJ.Input.prototype.computeType() with (non)standard min", function(){
-		var t = YASMIJ.CONST;
-		var fn = function(type, arr){
-			var x = YASMIJ.Input.parse(type, "x1 + 2x2 - x3", arr);
-			return x.computeType();
-		};
-		equal( fn("minimize",[
-			"a >= 14",
-			"a + b >= 28"
-		]), t.STANDARD_MIN );
-		equal( fn("minimize",[
-			"a >= 14",
-			"a + b > 28"
-		]), t.STANDARD_MIN );
-		equal( fn("minimize",[
-			"a > 14",
-			"a + b > 28"
-		]), t.STANDARD_MIN );
-		
-		equal( fn("minimize",[
-			"a > 14",
-			"a + b < 28"
-		]), t.NONSTANDARD_MIN );
-		equal( fn("minimize",[
-			"a <= 14",
-			"a + b > 28"
-		]), t.NONSTANDARD_MIN );
-	});
-};
+		for (; !varMissing && i < iLen; i++) {
+			term = terms[i];
+			for (var j = 0, jLen = this.constraints.length; j < jLen; j++) {
+				if (this.constraints[j].leftSide.terms[term]) {
+					break;
+				}
+			}
+			if (j === jLen) {
+				varMissing = term;
+			}
+		}
+		return varMissing;
+	};
+	Input.prototype.checkConstraints = function () {
+		var errMsg = [],
+		missingZVar = this.getZTermNotInAnyOfTheConstraints();
+		if (missingZVar) {
+			errMsg.push("`" + missingZVar + "`, from the objective function, should appear least once in a constraint.");
+		}
+		return errMsg;
+	};
+	Input.checkForInputError = function (type, z, constraints) {
+		var arr = Input.getErrors(type, z, constraints);
+		if (arr && arr.length) {
+			throw new Error("Input Error: " + arr.join('\n'));
+		}
+	};
+	Input.prototype.toString = function () {
+		return [this.type + " z = " + this.z, "where " + this.constraints.join(", ")].join(", ");
+	};
+	Input.prototype.convertConstraintsToMaxForm = function () {
+		var c = this.constraints;
+		for (var i = 0, len = c.length; i < len; i++) {
+			c[i] = c[i].convertToStandardMaxForm();
+		}
+	};
+	Input.prototype.convertToStandardForm = function () {
+		if (this.isStandardMode) {
+			return this;
+		}
+		if (/min/.test(this.type)) {
+			this.z = this.z.inverse();
+		}
+		this.convertConstraintsToMaxForm();
+		this.addNumbersToSlacks();
+		this.setTermNames();
+		this.isStandardMode = true;
+		return this;
+	};
+	root.Input = Input;
+}(YASMIJ));
