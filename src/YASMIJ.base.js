@@ -63,6 +63,9 @@ YASMIJ.getErrors = function(obj){
 	if(!obj.type || !obj.objective || !obj.constraints ){
 		return "The object must have the properties `type`, `objective` and `constraints`."
 	}
+	if(!JSON){
+		return "JSON is required. Please update your browser or JS engine.";
+	}
 };
 YASMIJ.checkForErrors = function(obj){
 	var errMsg = YASMIJ.getErrors(obj);
