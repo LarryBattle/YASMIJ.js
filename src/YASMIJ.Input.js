@@ -13,12 +13,6 @@
 		this.isStandardMode = false;
 	};
 	// Holds constants
-	Input.TYPES = {
-		STANDARD_MAX : "standardMax",
-		STANDARD_MIN : "standardMin",
-		NONSTANDARD_MIN : "nonstandardMin",
-		NONSTANDARD_MAX : "nonstandardMax"
-	};
 	Input.parse = function (type, z, constraints) {
 		Input.checkForInputError(type, z, constraints);
 		var obj = new Input();
@@ -58,9 +52,9 @@
 	*/
 	Input.prototype.computeType = function(){
 		var type;
-		var allLessThan = this.doAllConstrainsHaveRelation("<");
-		var allGreaterThan = this.doAllConstrainsHaveRelation(">");
-		
+		var allLessThan = this.doAllConstrainsHaveRelation( /<=?/ );
+		var allGreaterThan = this.doAllConstrainsHaveRelation( />=?/ );
+		return Input.TYPES.STANDARD_MAX;
 		if( /max/.test( this.type ) ){
 			return allLessThan ? Input.TYPES.STANDARD_MAX : Input.TYPES.NONSTANDARD_MAX;
 		}
@@ -71,14 +65,13 @@
 	};
 	/**
 	* Checks if all constraints the same comparison.
-	* @param {String} comparison
+	* @param {String|RegExp} comparison
 	* @return {Boolean}
 	*/
 	Input.prototype.doAllConstrainsHaveRelation = function(comparison){
-		// @todo Find out if `comparison` should be an array. 
-		// Because aren't `<` and `<=` the same thing?
+		comparison = new RegExp(comparison);
 		return this.allConstraints(function(i, constraint){
-			return constraint.comparison === comparison;
+			return comparison.test(constraint.comparison);
 		});
 	};
 	/**

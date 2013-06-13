@@ -32,7 +32,6 @@
 		<script src="js/YASMIJ.Input-testcases.js"></script>
 		<script src="js/YASMIJ.Matrix-testcases.js"></script>
 		<script src="js/YASMIJ.Tableau-testcases.js"></script>
-		<script src="js/YASMIJ.base-testcases.js"></script>
 		<script src="js/runAllTestcases.js"></script>
 		<script type="text/javascript">
 		runAllTests();

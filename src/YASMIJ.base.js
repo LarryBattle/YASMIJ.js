@@ -8,7 +8,12 @@ String.prototype.trim = String.prototype.trim || function(){
 	return (this||"").replace(/^\s+|\s+$/g, "");
 };
 var YASMIJ = {};
-
+YASMIJ.CONST = {
+	STANDARD_MAX : "standardMax",
+	STANDARD_MIN : "standardMin",
+	NONSTANDARD_MIN : "nonstandardMin",
+	NONSTANDARD_MAX : "nonstandardMax"
+};
 YASMIJ.getUniqueArray = function( arr ){
 	var result = [], hash = {};
 	if( typeof arr !== "object" || !arr.length ){
@@ -52,7 +57,7 @@ YASMIJ.areObjectsSame = function(obj1, obj2){
 	return true;
 };
 YASMIJ.getErrors = function(obj){
-	if(typeof input !== "object" ){
+	if(typeof obj !== "object" ){
 		return "An object must be passed to YASMIJ.solve()";
 	}
 	if(!obj.type || !obj.objective || !obj.constraints ){

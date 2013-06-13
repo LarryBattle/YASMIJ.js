@@ -8,5 +8,4 @@ var runAllTests = function(){
 	tests.runInputTests();
 	tests.runMatrixTests();
 	tests.runTableauTests();
-	tests.runBaseTests();
 };

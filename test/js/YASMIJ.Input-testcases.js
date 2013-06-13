@@ -110,11 +110,11 @@ tests.runInputTests = function(){
 		equal( fn([
 			"a < 14",
 			"a + b < 28"
-		], "<" ), true );
+		], /^<$/ ), true );
 		equal( fn([
 			"a < 14",
 			"a + b <= 28"
-		], "<" ), false );
+		], /^<$/ ), false );
 		
 		equal( fn([
 			"a > 14",
