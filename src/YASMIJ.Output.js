@@ -4,16 +4,18 @@
 * @license MIT License <http://www.opensource.org/licenses/mit-license>
 * @date 07/02/2012
 */
-/*
-* @todo Use create a fuction for objectToString since JSON.stringify isn't supported by older browsers.
-*/
 // Output Class
-YASMIJ.Output = (function(){
+(function(root){
+	//
 	var Output = function(obj){
 		this.result = obj;
 		this.checkForError();
 		return this;
 	};
+	/**
+	* Checks object for errors.
+	* @return {String}
+	*/
 	Output.getErrorMessage = function(obj){
 		var errMsg;
 		if(typeof obj !== "object"){
@@ -33,5 +35,5 @@ YASMIJ.Output = (function(){
 	Output.prototype.toString = function(){
 		return JSON.stringify(this);
 	};
-	return Output;
-}());
+	YASMIJ.Output = Output;
+}(YASMIJ.Output));
