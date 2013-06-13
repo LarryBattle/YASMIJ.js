@@ -46,22 +46,32 @@
 		return errMsgs;
 	};
 	/**
-	* Returns the problem type, this function assume all the constraints have 
+	* Returns the problem type.
+	* @note this function assume all the constraints have 
 	* variables on the left and constants on the right.
 	* @return {String}
 	*/
 	Input.prototype.computeType = function(){
-		var type;
-		var allLessThan = this.doAllConstrainsHaveRelation( /<=?/ );
-		var allGreaterThan = this.doAllConstrainsHaveRelation( />=?/ );
-		return Input.TYPES.STANDARD_MAX;
+		var hasLessThan = this.doAnyConstrainsHaveRelation( /<=?/ );
+		var hasGreaterThan = this.doAnyConstrainsHaveRelation( />=?/ );		
+		
 		if( /max/.test( this.type ) ){
-			return allLessThan ? Input.TYPES.STANDARD_MAX : Input.TYPES.NONSTANDARD_MAX;
+			return hasGreaterThan ? YASMIJ.CONST.NONSTANDARD_MAX : YASMIJ.CONST.STANDARD_MAX;
 		}
 		if( /min/.test( this.type ) ){
-			return allGreaterThan ? Input.TYPES.STANDARD_MIN : Input.TYPES.NONSTANDARD_MIN;
+			return hasLessThan ? YASMIJ.CONST.NONSTANDARD_MIN : YASMIJ.CONST.STANDARD_MIN;
 		}
-		return type;
+	};
+	/**
+	* Checks if any constraints the same comparison.
+	* @param {String|RegExp} comparison
+	* @return {Boolean}
+	*/
+	Input.prototype.doAnyConstrainsHaveRelation = function(comparison){
+		comparison = new RegExp(comparison);
+		return this.anyConstraints(function(i, constraint){
+			return comparison.test(constraint.comparison);
+		});
 	};
 	/**
 	* Checks if all constraints the same comparison.
@@ -73,6 +83,19 @@
 		return this.allConstraints(function(i, constraint){
 			return comparison.test(constraint.comparison);
 		});
+	};
+	/**
+	* Checks if the callback returns a truthy value for any constraints.
+	* @param {Function} fn - callback
+	* @return {Boolean}
+	*/
+	Input.prototype.anyConstraints = function (fn) {
+		for (var i = 0, len = this.constraints.length; i < len; i++) {
+			if( fn(i, this.constraints[i], this.constraints) ){
+				return true;
+			}
+		}
+		return false;
 	};
 	/**
 	* Checks if the callback returns a truthy value for all constraints.
