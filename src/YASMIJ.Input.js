@@ -12,6 +12,13 @@
 		this.constraints = null;
 		this.isStandardMode = false;
 	};
+	// Holds constants
+	Input.TYPES = {
+		STANDARD_MAX : "standardMax",
+		STANDARD_MIN : "standardMin",
+		NONSTANDARD_MIN : "nonstandardMin",
+		NONSTANDARD_MAX : "nonstandardMax"
+	};
 	Input.parse = function (type, z, constraints) {
 		Input.checkForInputError(type, z, constraints);
 		var obj = new Input();
@@ -44,6 +51,53 @@
 		}
 		return errMsgs;
 	};
+	/**
+	* Returns the problem type, this function assume all the constraints have 
+	* variables on the left and constants on the right.
+	* @return {String}
+	*/
+	Input.prototype.computeType = function(){
+		var type;
+		var allLessThan = this.doAllConstrainsHaveRelation("<");
+		var allGreaterThan = this.doAllConstrainsHaveRelation(">");
+		
+		if( /max/.test( this.type ) ){
+			return allLessThan ? Input.TYPES.STANDARD_MAX : Input.TYPES.NONSTANDARD_MAX;
+		}
+		if( /min/.test( this.type ) ){
+			return allGreaterThan ? Input.TYPES.STANDARD_MIN : Input.TYPES.NONSTANDARD_MIN;
+		}
+		return type;
+	};
+	/**
+	* Checks if all constraints the same comparison.
+	* @param {String} comparison
+	* @return {Boolean}
+	*/
+	Input.prototype.doAllConstrainsHaveRelation = function(comparison){
+		// @todo Find out if `comparison` should be an array. 
+		// Because aren't `<` and `<=` the same thing?
+		return this.allConstraints(function(i, constraint){
+			return constraint.comparison === comparison;
+		});
+	};
+	/**
+	* Checks if the callback returns a truthy value for all constraints.
+	* @param {Function} fn - callback
+	* @return {Boolean}
+	*/
+	Input.prototype.allConstraints = function (fn) {
+		var result = true;
+		for (var i = 0, len = this.constraints.length; i < len; i++) {
+			result = result && !!fn(i, this.constraints[i], this.constraints);
+		}
+		return result;
+	};
+	/**
+	* Iterates over a the constraints, executing the callback for each element.
+	* @param {Function} fn - callback
+	* @return {Boolean}
+	*/
 	Input.prototype.forEachConstraint = function (fn) {
 		for (var i = 0, len = this.constraints.length; i < len; i++) {
 			fn(i, this.constraints[i], this.constraints);
