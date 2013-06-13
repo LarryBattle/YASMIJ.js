@@ -102,15 +102,90 @@ tests.runInputTests = function(){
 		equal( x.constraints.length, 3 );
 		deepEqual( x.terms.join(", "), "14, 28, 30, x1, x2, x3" );
 	});
-	
+	test( "test YASMIJ.Input.prototype.doAllConstrainsHaveRelation()", function(){
+		var fn = function(arr, comparison){
+			var x = YASMIJ.Input.parse("maximize", "x1 + 2x2 - x3", arr);
+			return x.doAllConstrainsHaveRelation( comparison );
+		};
+		equal( fn([
+			"a < 14",
+			"a + b < 28"
+		], "<" ), true );
+		equal( fn([
+			"a < 14",
+			"a + b <= 28"
+		], "<" ), false );
+		
+		equal( fn([
+			"a > 14",
+			"a + b > 28"
+		], ">" ), true );
+		equal( fn([
+			"a > 14",
+			"a + b >= 28"
+		], ">" ), false );
+	});
+	test( "test YASMIJ.Input.TYPES", function(){
+		var x = YASMIJ.Input.TYPES;
+		ok(x.STANDARD_MAX);
+		ok(x.STANDARD_MIN);
+		ok(x.NONSTANDARD_MAX);
+		ok(x.NONSTANDARD_MIN);
+	});
+	test( "test YASMIJ.Input.prototype.computeType() with (non)standard max", function(){
+		var t = YASMIJ.Input.TYPES;
+		var fn = function(type, arr){
+			var x = YASMIJ.Input.parse(type, "x1 + 2x2 - x3", arr);
+			return x.computeType();
+		};
+		equal( fn("maximize",[
+			"a <= 14",
+			"a + b <= 28"
+		]), t.STANDARD_MAX );
+		equal( fn("maximize",[
+			"a <= 14",
+			"a + b < 28"
+		]), t.STANDARD_MAX );
+		equal( fn("maximize",[
+			"a < 14",
+			"a + b < 28"
+		]), t.STANDARD_MIN );
+		
+		equal( fn("maximize",[
+			"a > 14",
+			"a + b < 28"
+		]), t.NONSTANDARD_MAX );
+		equal( fn("maximize",[
+			"a <= 14",
+			"a + b > 28"
+		]), t.NONSTANDARD_MAX );
+	});
+	test( "test YASMIJ.Input.prototype.computeType() with (non)standard min", function(){
+		var t = YASMIJ.Input.TYPES;
+		var fn = function(type, arr){
+			var x = YASMIJ.Input.parse(type, "x1 + 2x2 - x3", arr);
+			return x.computeType();
+		};
+		equal( fn("minimize",[
+			"a >= 14",
+			"a + b >= 28"
+		]), t.STANDARD_MIN );
+		equal( fn("minimize",[
+			"a >= 14",
+			"a + b > 28"
+		]), t.STANDARD_MIN );
+		equal( fn("minimize",[
+			"a > 14",
+			"a + b > 28"
+		]), t.STANDARD_MIN );
+		
+		equal( fn("minimize",[
+			"a > 14",
+			"a + b < 28"
+		]), t.NONSTANDARD_MIN );
+		equal( fn("minimize",[
+			"a <= 14",
+			"a + b > 28"
+		]), t.NONSTANDARD_MIN );
+	});
 };
-
-
-
-
-
-
-
-
-
-
