@@ -175,7 +175,41 @@ tests.runMatrixTests = function(){
 		equal( func( [1,2,3,4] ), 4 );
 		equal( func( [[1,2,3],[4,5,6]] ), 6 );
 	});
+	test( "test YASMIJ.Matrix.transpose()", function(){
+		var fn = function( arr ){
+			return YASMIJ.Matrix.transpose( arr );
+		};
+		deepEqual( fn(), undefined );
+		deepEqual( fn([]), [] );
+		deepEqual( fn([1,2,3]), [[1],[2],[3]] );
+		deepEqual( fn([[1],[2],[3]]), [1,2,3]  );
+		deepEqual( fn(
+			[
+				[1,2,3],
+				[4,5,6],
+				[7,8,9]
+			]),
+			[
+				[1,4,7],
+				[2,5,8],
+				[3,6,9]
+			]
+		);
+	});
 };
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 

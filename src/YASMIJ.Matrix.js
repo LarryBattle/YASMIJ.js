@@ -110,6 +110,28 @@
 		return arr;
 	};
 	/**
+	*
+	*/
+	Matrix.transpose = function(arr){
+		if( !Matrix.isArray(arr) ){
+			return;
+		}
+		if(!arr.length){
+			return arr;
+		}
+		var result = [];
+		for(var i = 0, len = arr.length; i < len; i++){
+			if(typeof arr[i] == null ){
+				continue;
+			}
+			for(var j = 0, len2 = arr[i].length; j < len2; j++){
+				result[j] = result[j] || [];
+				result[j][i] = arr[i][j];
+			}
+		}
+		return result;
+	};
+	/**
 	* Adds a new single dimensional array 
 	* @param {Array} - single dimensional array
 	* @return {Matrix} self
