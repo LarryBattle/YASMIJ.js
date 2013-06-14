@@ -17,8 +17,8 @@ tests.runMatrixTests = function(){
 		var func = function(obj){
 			return YASMIJ.Matrix.parse(obj).toString();
 		};
-		equal( func(1), "[1]" );
-		equal( func([1,2,3]), "[1,2,3]" );
+		equal( func(1), "[[1]]" );
+		equal( func([1,2,3]), "[[1,2,3]]" );
 		equal( func([[1,2,3],[1,2,3]]), "[[1,2,3],[1,2,3]]" );
 	});
 	test( "test YASMIJ.Matrix.isArray()", function(){
@@ -28,6 +28,31 @@ tests.runMatrixTests = function(){
 		equal( func({}), false );
 		equal( func(Math), false );
 		equal( func(false), false );
+	});
+	test( "test YASMIJ.Matrix.prototype.setUniformedWidth()", function(){
+		var fn = function(arr){
+			return YASMIJ.Matrix.parse(arr).setUniformedWidth().toString();
+		};
+		equal(fn([]), "[]");
+		equal(fn([[1,2]]), "[[1,2]]");
+		equal(fn([[1,2],[3,4]]), "[[1,2],[3,4]]");
+		equal(fn([[1,2],[3,4,5]]), "[[1,2,],[3,4,5]]");
+		equal(fn([[1,2],[3,4,5],[6]]), "[[1,2,],[3,4,5],[6,,]]");
+	});
+	test( "test YASMIJ.Matrix.prototype.transpose()", function(){
+		var exampleMatrix = YASMIJ.Matrix.parse([[1,2],[3,4]]);
+		var originalOrder = exampleMatrix.toString();
+		
+		notEqual(exampleMatrix.transpose(), originalOrder);
+		exampleMatrix.transpose();
+		equal(exampleMatrix.toString(), originalOrder);
+	});
+	test( "test YASMIJ.Matrix.prototype.equal()", function(){
+		var exampleMatrix = YASMIJ.Matrix.parse([[1,2],[3,4]]);
+		
+		equal( exampleMatrix.equals([[1,2],[3,4]]), false );
+		equal( exampleMatrix.equals(YASMIJ.Matrix.parse([[1,2]])), false );
+		equal( exampleMatrix.equals(exampleMatrix), true );
 	});
 	test( "test YASMIJ.Matrix.prototype.addRow()", function(){
 		var func = function( obj, rowObj ){
@@ -86,8 +111,8 @@ tests.runMatrixTests = function(){
 			return YASMIJ.Matrix.parse(obj).toString();
 		};
 		equal( func([]), "[]");
-		equal( func([1,2,3]), "[1,2,3]");
-		equal( func([[1,2,3]]), "[1,2,3]");
+		equal( func([1,2,3]), "[[1,2,3]]");
+		equal( func([[1,2,3]]), "[[1,2,3]]");
 		equal( func([
 			[1,2,3],
 			[1,2,3],
@@ -108,7 +133,7 @@ tests.runMatrixTests = function(){
 		var func = function(obj, factor, rowI){
 			return YASMIJ.Matrix.parse(obj).scaleRow(factor, rowI ).toString();
 		};	
-		equal( func([1,2,3], 2, 0), "[2,4,6]");
+		equal( func([1,2,3], 2, 0), "[[2,4,6]]");
 		equal( func([[1],[2],[3]], 2, 2), "[[1],[2],[6]]");
 	});
 	test( "test YASMIJ.Matrix.getMaxArray()", function(){
@@ -142,17 +167,54 @@ tests.runMatrixTests = function(){
 		var func = function(arr, colI){
 			return YASMIJ.Matrix.parse(arr).getRowIndexWithPosMinColumnRatio(colI);
 		};
-		equal( func([[-2,1],[-1,2]], 0), -1 );
-		equal( func([[1,1],[2,1],[3,2]], 0), 1 );
-		equal( func([[1,1],[1,2],[1,0.1]], 0), 0 );
-		equal( func([[1,0,1,1,4],[0,1,2,1,5],[0,0,-3,-4,0]], 3), 0 );
+		deepEqual( func([[-2,1],[-1,2]], 0), {
+			rowIndex : -1,
+			minValue : Infinity
+		});
+		deepEqual( func([[1,1],[2,1],[3,2]], 0), {
+			rowIndex : 1,
+			minValue : 0.5
+		});
+		deepEqual( func([[1,1],[2,1],[3,2]], 1), {
+			rowIndex : 0,
+			minValue : 1
+		});
+		deepEqual( func([[1,2,3],[2,3,4],[3,4,5]], 0), {
+			rowIndex : 2,
+			minValue : 5/3
+		});
+		deepEqual( func([[1,2,3],[2,3,4],[3,4,5]], 1), {
+			rowIndex : 2,
+			minValue : 5/4
+		});
+		deepEqual( func([[1,2,3],[2,3,4],[3,4,5]], 2), {
+			rowIndex : 0,
+			minValue : 1
+		});
+	});
+	test( "test YASMIJ.Matrix.prototype.getRowIndexWithPosMinColumnRatio() with the last row excluded", function(){
+		var fn = function(arr, colI){
+			return YASMIJ.Matrix.parse(arr).getRowIndexWithPosMinColumnRatio(colI, true);
+		};
+		deepEqual( fn([[1,2,3],[2,3,4],[3,4,5]], 0), {
+			rowIndex : 1,
+			minValue : 2
+		});
+		deepEqual( fn([[1,2,3],[2,3,4],[3,4,5]], 1), {
+			rowIndex : 1,
+			minValue : 4/3
+		});
+		deepEqual( fn([[1,2,3],[2,3,4],[3,4,5]], 2), {
+			rowIndex : 0,
+			minValue : 1
+		});
 	});
 	test( "test YASMIJ.Matrix.prototype.pivot()", function(){
 		var func = function( arr, pRow, pCol ){
 			return YASMIJ.Matrix.parse(arr).pivot(pRow, pCol).toString();
 		};
 		equal( func( [], 0, 0 ), "[]" );
-		equal( func( [1,2], 0, 0 ), "[1,2]" );
+		equal( func( [1,2], 0, 0 ), "[[1,2]]" );
 		equal( func( [[1,2],[3,4]], 0, 0 ), "[[1,2],[0,-2]]" );
 		equal( func( [[1,2],[2,4]], 0, 0 ), "[[1,2],[0,0]]" );
 		equal( func( [[1,2],[2,4]], 1, 1 ), "[[0,0],[0.5,1]]" );
