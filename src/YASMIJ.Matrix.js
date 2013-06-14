@@ -8,7 +8,12 @@
     // Matrix Class
     /**
     * Represents a matrix.
+	* The is constructed so that the last element in each row is considered the Right Hand Side(RHS).
+	* This last row is the indicator row, which holds the coefficients from the objective function.
     * @constructor YASMIJ.Matrix
+    * @example
+   var exampleMatrix = YASMIJ.Matrix.parse([[1,2],[3,4]]);
+   exampleMatrix.toString() === "[[1,2],[3,4]]";
     */
     var Matrix = function(){
         this.array = [];
@@ -18,8 +23,8 @@
     * @param {Object}
     * @return {Boolean}
     * @example
-    Matrix.isArray({}) === false;
-    Matrix.isArray([1,2]) === true;
+    YASMIJ.Matrix.isArray({}) === false;
+    YASMIJ.Matrix.isArray([1,2]) === true;
     */
     Matrix.isArray = function( obj ){
         return Object.prototype.toString.call(obj) === "[object Array]";
@@ -32,7 +37,9 @@
     YASMIJ.Matrix.parse([[1,2,3],[1,2,3]]).toString() === "[[1,2,3],[1,2,3]]";
     */
     Matrix.parse = function( input ){
-        var obj = new Matrix(), isArray = Matrix.isArray( input );
+        var obj = new Matrix(), 
+         isArray = Matrix.isArray( input );
+
         if( input !== undefined && !( isArray && !input.length) ){    
             if( isArray && Matrix.isArray( input[0] )){
                 obj.array = input;
@@ -113,22 +120,24 @@
     * Returns the transposed array of an array
     * @param {Array} arr - multi dimensional array
     * @return {Array} returns null if not supplied a multi-dimensional arrays
+    * @example
+	YASMIJ.Matrix.transpose([[1,2],[3,4]]); // returns [[1,3],[2,4]];
     */
     Matrix.transpose = function(arr){
         if( !Matrix.isArray(arr) || !arr.length || !Matrix.isArray(arr[0]) ){
             return null;
         }
         var result = [],
-			iLen = arr.length,
-			info = Matrix.getMaxArray(arr),
-			jLen = info ? info.max : 0;
-		
-		for(var i = 0; i < jLen; i++ ){
-			result[i] = [];
-			for(var j = 0; j < iLen; j++ ){
-				result[i][j] = arr[j][i];
-			}
-		}
+         iLen = arr.length,
+         info = Matrix.getMaxArray(arr),
+         jLen = info ? info.max : 0;
+      
+      for(var i = 0; i < jLen; i++ ){
+         result[i] = [];
+         for(var j = 0; j < iLen; j++ ){
+            result[i][j] = arr[j][i];
+         }
+      }
         return result;
     };
     /**
@@ -137,25 +146,59 @@
     * @return {Matrix} self
     * @chainable
     * @example
-    
+   var exampleMatrix = YASMIJ.Matrix.parse([[1,2],[3,4]]);
+   exampleMatrix.addRow([5,6]);
+   exampleMatrix.toString() === "[[1,2],[3,4],[5,6]]";
     */
     Matrix.prototype.addRow = function(arr){
         arr = Matrix.isArray(arr) ? arr : [arr];
         this.array.push( arr );
         return this;
     };
+	/**
+    * Transpose the matrix
+    * @return {Matrix} self
+	* @see YASMIJ.Matrix.transpose()
+    * @chainable
+    * @example
+   var exampleMatrix = YASMIJ.Matrix.parse([[1,2],[3,4]]);
+   exampleMatrix.transpose();
+   exampleMatrix.toString() === "[[1,3],[2,4]]";
+    */
+	Matrix.prototype.transpose = function(){
+		this.array = Matrix.transpose(this.array);
+		return this;
+	};
+	/**
+	* Checks if the current instance has the same values as other matrix.
+	* @parma {Matrix} - Instance of YASMIJ.Matrix
+	* @return {Boolean}
+	var exampleMatrix = YASMIJ.Matrix.parse([[1,2],[3,4]]);
+	exampleMatrix.equals([[1,2]]) === false;
+	exampleMatrix.equal( exampleMatrix ) === true;
+	*/
+	Matrix.prototype.equals = function(obj){
+		return obj && obj instanceof Matrix && this.toString() === obj.toString();
+	};
     /**
-    * 
-    * @param {}
-    * @return {}
+    * Returns an element specified by a row and column.
+    * @param {Number} i - row index
+   * @param {Number} j - column index
+    * @return {Object} - should be a number but can be an object.
+    * @example 
+   var exampleMatrix = YASMIJ.Matrix.parse([[1,2],[3,4]]);
+    exampleMatrix.getElement( 1, 1 ) === 4;
     */
     Matrix.prototype.getElement = function( i, j ){
         return this.array[i][j];
     };
     /**
-    * 
-    * @param {}
-    * @return {}
+    * Returns the column of an array
+    * @param {Number} j - column index
+    * @return {Array} single dimensional array
+    * @example 
+   var exampleMatrix = YASMIJ.Matrix.parse([[1,2],[3,4]]);
+   exampleMatrix.getColumn(1); // returns [2,4]
     */
     Matrix.prototype.getColumn = function( j ){
         var arr = [];
@@ -165,17 +208,26 @@
         return arr;
     };
     /**
-    * 
-    * @param {}
-    * @return {}
+    * Returns the row of an array
+    * @param {Number} i - row index
+    * @return {Array} single dimensional array
+    * @example 
+   var exampleMatrix = YASMIJ.Matrix.parse([[1,2],[3,4]]);
+   exampleMatrix.getRow(0); // returns [1,2]
     */
     Matrix.prototype.getRow = function( i ){
         return this.array[i];
     };
     /**
-    * 
-    * @param {}
-    * @return {}
+    * Returns the column, row or element of an array
+    * @param {Number} i - row index
+   * @param {Number} j - column index
+    * @return {Array|Object}
+    * @example 
+   var exampleMatrix = YASMIJ.Matrix.parse([[1,2],[3,4]]);
+   exampleMatrix.get(1,1); // returns 4
+   exampleMatrix.get(1); // returns [3,4]
+   exampleMatrix.get(null, 1); // returns [2,4]
     */
     Matrix.prototype.get = function( row, col ){
         if( !col && col !== 0 ){
@@ -187,9 +239,17 @@
         }
     };
     /**
-    * 
-    * @param {}
-    * @return {}
+    * For each row of the matrix, calls an callback.
+	* The arguments are `fn( index, row, matrix )`
+    * @param {Function} fn - callback, called on each row
+    * @return {Matrix}
+	* @chainable
+	* @example 
+	var exampleMatrix = YASMIJ.Matrix.parse([[1,2],[3,4]]);
+	exampleMatrix.forEachRow(function(i, row){
+		console.log(i);
+	});
+	// prints 0,1
     */
     Matrix.prototype.forEachRow = function(fn){
         var newRow;
@@ -206,9 +266,12 @@
     };
     /**
      * Returns the mininum value in a row.
-     * @param{Number} rowI - index of the row
-     * @param{Boolean} excludeLastElement - exclude the last element in each row
-     * @return{Array} - Array[ "index of min value", "min value" ]
+     * @param {Number} rowI - index of the row
+     * @param {Boolean} excludeLastElement - exclude the last element in each row
+     * @return {Array} - Array[ "index of min value", "min value" ]
+     * @example 
+   var exampleMatrix = YASMIJ.Matrix.parse([[1,2],[3,4]]);
+   exampleMatrix.getMinElementInRow(1); // returns [0,3]
      */
     Matrix.prototype.getMinElementInRow = function( rowI, excludeLastElement ){
         var row = (this.array[rowI] || []),
@@ -225,38 +288,69 @@
         return arr;
     };
     /**
-    * 
-    * @param {}
-    * @return {}
+    * Returns the index of the element in the last row with the greatest negativity.
+	* Note: This excludes the last element in the row. The last element in each row is reserved as "Right Hand Side".
+    * @return {Number}
+	* @example 
+	var exampleMatrix = YASMIJ.Matrix.parse([[-1,-2],[-3,-4,-5]]);
+	exampleMatrix.getMostNegIndexFromLastRow() === 1; // represents -4
     */
     Matrix.prototype.getMostNegIndexFromLastRow = function(){
         var result = this.getMinElementInRow( this.array.length - 1, true );
         return result[1] < 0 ? result[0] : -1;
     };
     /**
-    * 
-    * @param {}
-    * @return {}
+    * Returns the row index of the 
+    * @param {Number} colI - column index
+	* @param {Boolean} excludeLastRow - excludes the last row
+    * @return {Object} - {"rowIndex":Number, "minValue":Number}
+    * @example 
+   var exampleMatrix = YASMIJ.Matrix.parse([[1,2],[10,2]]);
+   exampleMatrix.getRowIndexWithPosMinColumnRatio(0); // returns `{rowIndex: 1, minValue: 0.2}`
     */
-    Matrix.prototype.getRowIndexWithPosMinColumnRatio = function( colI ){
-        var rowI = -1, minVal = Infinity, i = 0, len = this.array.length - 1, val, arr;
+    Matrix.prototype.getRowIndexWithPosMinColumnRatio = function( colI, excludeLastRow ){
+        var obj = {
+				rowIndex : -1,
+				minValue : Infinity
+			},
+			len = this.array.length + (excludeLastRow ? -1 : 0),
+			val, 
+			row;
+			
         if( colI < 0 || this.array[0].length <= colI ){
-            return rowI;
+            return null;
         }
-        for(; i < len; i++ ){
-            arr = this.array[i];
-            val = arr[ arr.length - 1 ] / arr[colI];
-            if( 0 <= val && val < minVal ){
-                rowI = i;
-                minVal = val;
+        for(var i = 0; i < len; i++ ){
+            row = this.array[i];
+            val = row[ row.length - 1 ] / row[colI];
+            if( 0 <= val && val < obj.minValue ){
+                obj.rowIndex = i;
+                obj.minValue = val;
             }
         }
-        return rowI;
+        return obj;
     };
+	/**
+    * Sets all rows to the width of the longest row
+    * @return {Matrix} - self
+	* @chainable
+    * @example 
+   var exampleMatrix = YASMIJ.Matrix.parse([[1,2],[3,4,5]]);
+   exampleMatrix.setUniformedWidth().toString() === "[[1,2,],[3,4,5]]";
+    */
+	Matrix.prototype.setUniformedWidth = function(){
+		var info = Matrix.getMaxArray(this.array);
+		for(var i = 0, len = this.array.length; i < len; i++ ){
+			this.array[i].length = info.max;
+		}
+		return this;
+	};
     /**
-    * 
-    * @param {}
-    * @return {}
+    * Returns the matrix as a string
+    * @return {String}
+    * @example 
+   var exampleMatrix = YASMIJ.Matrix.parse([[1,2],[3,4]]);
+   exampleMatrix.toString() === "[[1,2],[3,4]]";
     */
     Matrix.prototype.toString = function(){
         var str = "";
@@ -266,14 +360,15 @@
             }
             str += "[" + row.toString() + "]";
         });
-        if(this.array.length != 1 ){
-            str = "[" + str + "]";
-        }
+        str = "[" + str + "]";
         return str;
     };
     /**
      * Returns the size of the matrix
-     * @return{Array} [columns, rows]
+     * @return {Array} [columns, rows]
+     * @example 
+   var exampleMatrix = YASMIJ.Matrix.parse([[1,2],[3,4],[5,6]]);
+   exampleMatrix.getSize(); // [2,3]
      */
     Matrix.prototype.getSize = function(){
         var columns = 0, rows = this.array.length, i = rows, x;
@@ -284,9 +379,15 @@
         return [ columns, rows ];
     };
     /**
-    * 
-    * @param {}
-    * @return {}
+    * Multiplies a row by a factor.
+    * @param {Number} scaleA - factor
+	* @param {Number} rowI - row index
+    * @return {Matrix} - self
+    * @chainable
+    * @example 
+   var exampleMatrix = YASMIJ.Matrix.parse([[1,2],[3,4]]);
+   exampleMatrix.scaleRow(3, 1);
+   exampleMatrix.toString() === "[[1,2],[9,12]]";
     */
     Matrix.prototype.scaleRow = function(scaleA, rowI ){
         var row = this.array[ rowI ] || [];
@@ -296,9 +397,16 @@
         return this;
     };
     /**
-    * 
-    * @param {}
-    * @return {}
+    * Appends element(s) to the end of a row in the matrix.
+	* Or adds a new row to the matrix.
+    * @param {Number} iRow - row index
+	* @param {Array|Number} els - element or array
+    * @return {Matrix} - self
+    * @chainable
+    * @example 
+   var exampleMatrix = YASMIJ.Matrix.parse([[1,2],[3,4]]);
+   exampleMatrix.addToRow(1,5);
+   exampleMatrix.toString() === "[[1,2],[3,4,5]]";
     */
     Matrix.prototype.addToRow = function(iRow, els){
         if( this.array[iRow] ){
@@ -312,6 +420,8 @@
      * Returns the index and max length of the longest row in an array.
      * @param {Array} arrays - single or multi dimensional
      * @return {Object} {index: Number, "max": Number }
+    * @example 
+   var exampleMatrix = YASMIJ.Matrix.parse([[1,2],[3,4]]);
      */
     Matrix.getMaxArray = function(arrays){
         var obj = {
@@ -321,10 +431,10 @@
         if( !Matrix.isArray( arrays ) ){
             return null;
         }
-		if( !Matrix.isArray( arrays[0] ) ){
-			obj.max = arrays.length;
-			return obj;
-		}
+      if( !Matrix.isArray( arrays[0] ) ){
+         obj.max = arrays.length;
+         return obj;
+      }
         var i = arrays.length;
         while( i-- ){
             if( obj.max < arrays[i].length ){
@@ -335,35 +445,58 @@
         return obj;
     };
     /**
-    * 
-    * @param {}
-    * @return {}
+    * Pivots the matrix at the specified row and column.
+	* Pivoting forces a specified row and column element to 1,
+	* with the rest of the column elements to zero through basic row operations.
+    * @param {Number} rowI - row index
+	* @param {Number} colI - column index
+    * @return {Matrix} - self
+    * @chainable
+    * @example 
+   var exampleMatrix = YASMIJ.Matrix.parse([[1,2],[3,4]]);
+   exampleMatrix.pivot(0,0);
+   exampleMatrix.toString() === "[[1,2],[0,-2]]";
     */
     Matrix.prototype.pivot = function( rowI, colI ){
-        var i = this.array.length, val, pRow = this.array[ rowI ];
-        if( !pRow ){
+		if( !this.array[ rowI ] ){
             return this;
         }
-        this.scaleRow( (1/this.getElement( rowI, colI )), rowI );
-        
-        while( i-- ){
-            if( i !== rowI ){
-                val = this.getElement( i, colI );
-                this.array[ i ] = Matrix.scaleAndAddRows( -val, pRow, 1, this.array[ i ] );
-            }
+        var x = this.getElement( rowI, colI ),
+			val, 
+			pRow;
+
+		// force element at (rowI, colI) to 1
+        this.scaleRow( 1/x, rowI );
+        pRow = this.array[ rowI ];
+		
+		// force element at (i, colI) to 0, this works because (rowI, colI) == 1, 
+		// so just multiply by the negative -1 and add to the current row.
+		for(var i = 0, len = this.array.length; i < len; i++ ){
+            if( i === rowI ){
+				continue;
+			}
+			val = this.getElement( i, colI );
+			this.array[ i ] = Matrix.scaleAndAddRows( -val, pRow, 1, this.array[ i ] );		
         }
         return this;
     };
     /**
-    * 
-    * @param {}
-    * @return {}
+    * Return the unit value for a column.
+	* If a column has only one non-zero value then 
+	* the last element in the row (RHS element) is returned.
+	* Otherwise, 0 is returned.
+    * @param {Number} colI - column Index
+    * @return {Number}
+    * @example
+   var exampleMatrix = YASMIJ.Matrix.parse([[0,3],[1,4]]);
+   exampleMatrix.getUnitValueForColumn(0) === 4;
     */
     Matrix.prototype.getUnitValueForColumn = function( colI ){
         var nonZeroValues = 0, val = 0;
         
         this.forEachRow(function(i, row){
             if (row[colI] === 1) {
+				// get value in the Right Hand Side(RHS)
                 val = row[row.length - 1];
             }
             if( row[ colI ] ){
@@ -374,9 +507,11 @@
         return val;
     };
     /**
-    * 
-    * @param {}
-    * @return {}
+    * Returns the last element in the last row of the matrix.
+    * @return {Object} should be a number
+    * @example 
+   var exampleMatrix = YASMIJ.Matrix.parse([[1,2],[3,4]]);
+   exampleMatrix.getLastElementOnLastRow() === 4;
     */
     Matrix.prototype.getLastElementOnLastRow = function(){
         var row = this.array[this.array.length - 1];
