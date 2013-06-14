@@ -114,11 +114,12 @@ tests.runMatrixTests = function(){
 	test( "test YASMIJ.Matrix.getMaxArray()", function(){
 		var func = YASMIJ.Matrix.getMaxArray;
 		equal( func(), null );
-		deepEqual( func( [[]] ), [0,0] );
-		deepEqual( func( [[],[]] ), [0,0] );
-		deepEqual( func( [[1],[]] ), [0,1] );
-		deepEqual( func( [[1],[1,2]] ), [1,2] );
-		deepEqual( func( [[1],[1,2],[1,2,3]] ), [2,3] );
+		deepEqual( func( [[]] ), {index:0, max:0} );
+		deepEqual( func( [1,2,3] ), {index:0, max:3} );
+		deepEqual( func( [[],[]] ), {index:0, max:0} );
+		deepEqual( func( [[1],[]] ), {index:0, max:1} );
+		deepEqual( func( [[1],[1,2]] ), {index:1, max:2} );
+		deepEqual( func( [[1],[1,2],[1,2,3]] ), {index:2, max:3} );
 	});
 	test("test YASMIJ.Matrix.prototype.addToRow()", function(){
 		var func = function( arr, iRow, els ){
@@ -179,10 +180,12 @@ tests.runMatrixTests = function(){
 		var fn = function( arr ){
 			return YASMIJ.Matrix.transpose( arr );
 		};
-		deepEqual( fn(), undefined );
-		deepEqual( fn([]), [] );
-		deepEqual( fn([1,2,3]), [[1],[2],[3]] );
-		deepEqual( fn([[1],[2],[3]]), [1,2,3]  );
+		deepEqual( fn(), null );
+		deepEqual( fn([]), null );
+		deepEqual( fn([1,2,3]), null );
+		
+		deepEqual( fn([[1,2,3]]), [[1],[2],[3]] );
+		deepEqual( fn([[1],[2],[3]]), [[1,2,3]]  );
 		deepEqual( fn(
 			[
 				[1,2,3],
