@@ -1,0 +1,22 @@
+.side_column{
+	width: 10em;
+}
+.content_column{
+	width: 30em;
+}
+.column{
+	display: inline-block;
+}
+.input_row{
+	width: 41em;
+}
+textarea{
+	width: 40em;
+	height: 20em;
+  overflow: auto;
+}
+fieldset{
+	width: 40em;
+	height: 20em;
+	overflow: auto;
+}
