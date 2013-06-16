@@ -91,7 +91,6 @@ Please raise a ticket for help.
 ### Version 0.3: 
 - Add support for Minimization (Standard and Non-standard)<br/>
 - Add documentation.<br/>
-- Add Demo<br/>
 - Add template<br/>
 - Add build script<br/>
 
