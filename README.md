@@ -22,12 +22,13 @@ Include all the javascript files in source.
 
 	<!-- Source Files -->
 	<script src="./src/YASMIJ.base.js"></script>
-	<script src="./src/YASMIJ.Constraint.js"></script>
 	<script src="./src/YASMIJ.Expression.js"></script>
+	<script src="./src/YASMIJ.Constraint.js"></script>
 	<script src="./src/YASMIJ.Input.js"></script>
 	<script src="./src/YASMIJ.Matrix.js"></script>
 	<script src="./src/YASMIJ.Tableau.js"></script>
 	<script src="./src/YASMIJ.Output.js"></script>
+	<script src="./src/YASMIJ.Simplex.js"></script>
 
 ## Environment
 Run the test cases to determine support.<br/>
