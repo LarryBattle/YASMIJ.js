@@ -43,6 +43,30 @@ tests.runBaseTests = function(){
 				"z": 16
 		});
 	});
+		test( "test YASMIJ.solve() with non-standard maximization", function(){
+		var fn = function(input){
+			return (YASMIJ.solve(input)||{}).result;
+		}
+		// Problem taken from `http://people.hofstra.edu/stefan_waner/realworld/tutorialsf4/frames4_4.html`
+		var input = {
+			"type": "maximize",
+			"objective": "-2x - y - 2z1",
+			"constraints": [
+				"2x + 4y + z1 >= 80",
+				"x + 5y + z1 <= 100 ",
+				"x + 2y + z1 >= 50 "
+			]
+		}
+		deepEqual( fn(input), {
+				"slack1": 0,
+				"slack2": 0,
+				"slack3": 0,				
+				"x": 0,
+				"y": 50/3,
+				"z": 50/3,
+				"z": -50
+		});
+	});
 	test( "test YASMIJ.solve() with non-standard minimization", function(){
 		var fn = function(input){
 			return (YASMIJ.solve(input)||{}).result;

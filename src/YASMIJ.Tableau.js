@@ -17,17 +17,30 @@
         this.cycles = 0;
         //this.state = null;
     };
+    /**
+    * Checks the input for errors.
+    * @param {YASMIJ.Input} input -
+    */
     Tableau.getErrorMessage = function( input ){
         if( !(input instanceof YASMIJ.Input) ){
             return "Must pass an instance of the Input class.";
         }
     };
+    /**
+    * Checks the input for errors.
+    * @param {YASMIJ.Input} input -
+    */
     Tableau.checkForError = function( input ){
         var errMsg = Tableau.getErrorMessage( input );
         if( errMsg ){
             throw new Error( errMsg );
         }
     };
+    /**
+    * Parse the input and returns new instance of YASMIJ.Tableau
+    * @param {YASMIJ.Input} input -
+    * @return {YASMIJ.Tableau}
+    */
     Tableau.parse = function( input ){
         var obj = new Tableau();
         Tableau.checkForError( input );
@@ -35,6 +48,9 @@
         obj.setMatrixFromInput();
         return obj;
     };
+    /**
+    * @.........
+    */
     Tableau.getPivotPoint = function( matrix ){
         if( !(matrix instanceof YASMIJ.Matrix ) ){
             return null;

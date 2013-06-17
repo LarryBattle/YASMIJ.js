@@ -20,7 +20,7 @@ None
 <del>Just include `lib\yasmij.js`</del>
 Include all the javascript files in source.
 
-		<!-- Source Files -->
+	<!-- Source Files -->
 	<script src="./src/YASMIJ.base.js"></script>
 	<script src="./src/YASMIJ.Constraint.js"></script>
 	<script src="./src/YASMIJ.Expression.js"></script>
@@ -91,7 +91,6 @@ Please raise a ticket for help.
 ### Version 0.3: 
 - Add support for Minimization (Standard and Non-standard)<br/>
 - Add documentation.<br/>
-- Add template<br/>
 - Add build script<br/>
 
 ### Version 0.4:

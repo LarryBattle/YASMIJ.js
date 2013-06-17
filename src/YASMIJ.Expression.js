@@ -4,11 +4,10 @@
 * @license {{=it.license.overview}}
 * @date 07/08/2012
 */
-YASMIJ.Expression = (function(){
+(function(YASMIJ){
 	/**
 	* Goals for the Expression Object:
 	* - Convert String to Object such that the terms, constants and sign and be easily accessed.
-	*
 	* @constructor
 	* @returns {Expression}
 	*/
@@ -17,7 +16,6 @@ YASMIJ.Expression = (function(){
 	};
 	/**
 	* Converts a string to a Expression Object.
-	*
 	* @returns {Expression} 
 	*/
 	Expression.parse = function(str){
@@ -31,10 +29,10 @@ YASMIJ.Expression = (function(){
 		return obj;
 	};
 	/**
-	 *
-	 *
-	 * @param {String}
-	 * @returns {Object}
+	 * Converts scientific notated values to special characters.
+	 * This is needed so the `e` and power aren't treated as a varible.
+	 * @param {String} str - linear algebraic expression
+	 * @returns {String}
 	 * @example
 	 */
 	Expression.encodeE = function( str ){
@@ -44,10 +42,9 @@ YASMIJ.Expression = (function(){
 		return str;
 	};
 	/**
-	 *
-	 *
-	 * @param {String}
-	 * @returns {Object}
+	 * Converts special characters for scientific notated values back to original.
+	 * @param {String} str - linear algebraic expression
+	 * @returns {String}
 	 * @example
 	 */
 	Expression.decodeE = function( str ){
@@ -58,7 +55,6 @@ YASMIJ.Expression = (function(){
 	};
 	/**
 	* Checks to see if a string has more than one of these symbols; ">", "<", ">=", "<=", "=".
-	*
 	* @param {String} str
 	* @returns {Boolean}
 	* @example Expression.hasManyCompares( "a < b < c" ) == true;
@@ -69,10 +65,9 @@ YASMIJ.Expression = (function(){
 		return 1 < matches.length;
 	};
 	/**
-	 *
-	 *
-	 * @param {String}
-	 * @returns {Object}
+	 * Adds spaces in between terms
+	 * @param {String} str - linear algebraic expression
+	 * @returns {String}
 	 * @example
 	 */
 	Expression.addSpaceBetweenTerms = function(str){	
@@ -255,10 +250,9 @@ YASMIJ.Expression = (function(){
 		return terms;
 	};
 	/**
-	 *
-	 *
-	 * @param {String}
-	 * @returns {Object}
+	 * Iterates through each term in the expression.
+	 * Each call passes the "term name", "term value", and "term object holder"
+	 * @param {Function} fn - callback
 	 * @example
 	 */
 	Expression.prototype.forEachTerm = function(fn){	
@@ -272,10 +266,9 @@ YASMIJ.Expression = (function(){
 		}
 	};
 	/**
-	 *
-	 *
-	 * @param {String}
-	 * @returns {Object}
+	 * Iterates through each constant in the expression.
+	 * Each call passes the "term name", "term value", and "term object holder"
+	 * @param {Function} fn - callback
 	 * @example
 	 */
 	Expression.prototype.forEachConstant = function(fn){
@@ -289,10 +282,9 @@ YASMIJ.Expression = (function(){
 		}
 	};
 	/**
-	 *
-	 *
-	 * @param {String}
-	 * @returns {Object}
+   * Iterates through each varaible in the expression.
+	 * Each call passes the "term name", "term value", and "term object holder"
+	 * @param {Function} fn - callback
 	 * @example
 	 */
 	Expression.prototype.forEachVariable = function(fn){
@@ -307,7 +299,6 @@ YASMIJ.Expression = (function(){
 	};
 	/**
 	* Convers the Expression object a string by turning the terms property to a expression.
-	*
 	* @returns {String}
 	*/
 	Expression.prototype.toString = function(){
@@ -322,10 +313,8 @@ YASMIJ.Expression = (function(){
 		return arr.join( " " ).replace(/\s[\+\-]/g, "$& ");
 	};
 	/**
-	 *
-	 *
-	 * @param {String}
-	 * @returns {Object}
+	 * Multiplies the expression by -1
+	 * @returns {YASMIJ.Expression} self -
 	 * @example
 	 */
 	Expression.prototype.inverse = function(){
@@ -335,10 +324,10 @@ YASMIJ.Expression = (function(){
 		return this;
 	};
 	/**
-	 *
-	 *
-	 * @param {String}
-	 * @returns {Object}
+	 * Adds a new term to the expression.
+	 * @param {String} name - name of term
+ 	 * @param {Number} val - value of term
+	 * @returns {YASMIJ.Expression} self -
 	 * @example
 	 */
 	Expression.prototype.addTerm = function( name, value ){
@@ -351,16 +340,21 @@ YASMIJ.Expression = (function(){
 		return this;
 	};
 	/**
-	 *
-	 *
-	 * @param {String}
-	 * @returns {Object}
+	 * Removes a term from the expression.
+	 * @param {String} name - name of term
+	 * @returns {YASMIJ.Expression} self -
 	 * @example
 	 */
 	Expression.prototype.removeTerm = function( name ){
 		delete this.terms[ name ];
 		return this;
 	};
+	/**
+	 * Multiples all terms by a factor
+	 * @param {String} factor - factor
+	 * @returns {YASMIJ.Expression} self -
+	 * @example
+	 */
 	Expression.prototype.scale = function( factor ){
 		factor = +factor;
 		this.forEachTerm( function( name, value, terms ){
@@ -368,12 +362,31 @@ YASMIJ.Expression = (function(){
 		});
 		return this;
 	};
+	/**
+	 * Checks if a term exist within an expression.
+	 * @param {String} name - name of term
+	 * @returns {Boolean}
+	 * @example
+	 */
 	Expression.prototype.hasTerm = function( name ){
 		return !!this.terms[name];
 	};
+	/**
+	 * Returns the value of a term
+	 * @param {String} name - name of term
+	 * @returns {Number}
+	 * @example
+	 */
 	Expression.prototype.getTermValue = function( name ){
 		return this.terms[name];
 	};
+	/**
+	 * Returns a list of coeffients for each term
+	 * @param {Boolean} excludeNumbers - do not include numbers/constants
+	 * @param {Boolean} excludeSlack - do not include slack variables
+	 * @returns {Array}
+	 * @example
+	 */
 	Expression.prototype.getCoeffients = function( excludeNumbers, excludeSlack ){
 		var arr = [];
 		var names = this.getTermNames( excludeNumbers, excludeSlack );
@@ -382,6 +395,12 @@ YASMIJ.Expression = (function(){
 		}
 		return arr;
 	};
+	/**
+	 * Returns a list of coefficients for specified terms.
+	 * @param {Array} termNames - list of term names
+	 * @returns {Array}
+	 * @example
+	 */
 	Expression.prototype.createRowOfValues = function( termNames ){
 		var arr = [], i = termNames.length;
 		while( i-- ){
@@ -389,5 +408,5 @@ YASMIJ.Expression = (function(){
 		}
 		return arr;
 	};
-	return Expression;
-}());
+	YASMIJ.Expression = Expression;
+}(YASMIJ));

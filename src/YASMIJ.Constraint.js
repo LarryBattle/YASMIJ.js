@@ -4,15 +4,15 @@
  * @license {{=it.license.overview}}
  * @date 07/08/2012
  */
-YASMIJ.Constraint = (function(){
+(function(YASMIJ){
 	/**
 	 * Create an Constraint Object.
 	 * Goals for the Constraint Object:
 	 * - Convert String to Object such that the terms, constants and sign and be easily accessed.
 	 * - Allow for terms to be moved from one side to the other.
 	 * - The standard will be (variables, ...) (comparison) (constants)
-	 *
 	 * @constructor
+	 * @chainable
 	 * @returns {Constraint}
 	 */
 	var Constraint = function () {
@@ -29,13 +29,14 @@ YASMIJ.Constraint = (function(){
 	Constraint.EPSILON = 1e-6;
 	/**
 	 * Checks to see if an object equals the current instance of Constraint.
+	 * @param {Object} obj -
+	 * @return {Boolean}
 	 */
 	Constraint.equals = function (obj) {
 		return YASMIJ.areObjectsSame(this, obj);
 	};
 	/**
 	 * Checks to see if a string has more than one of these symbols; ">", "<", ">=", "<=", "=".
-	 *
 	 * @param {String} str
 	 * @returns {Boolean}
 	 * @example Constraint.hasManyCompares( "a < b < c" ) == true;
@@ -47,7 +48,6 @@ YASMIJ.Constraint = (function(){
 	};
 	/**
 	 * Checks to see if a string doesn't have a left and right terms with each addition and subtraction operation.
-	 *
 	 * @param {String} str
 	 * @returns {Boolean}
 	 * @example Constraint.hasIncompleteBinaryOperator( "a + b +" ) == true;
@@ -62,7 +62,6 @@ YASMIJ.Constraint = (function(){
 	};
 	/**
 	 * Checks to see if string comply with standards.
-	 *
 	 * @param {String} str
 	 * @returns {String} Error message
 	 * @example Constraint.getErrorMessage( "a + b" ) == null;
@@ -79,7 +78,6 @@ YASMIJ.Constraint = (function(){
 	};
 	/**
 	 * Checks to see if string doesn't comply with standards.
-	 *
 	 * @param {String} str
 	 * @throws Error
 	 * @example Constraint.checkInput( "a / b" ); // throws Error();
@@ -92,6 +90,9 @@ YASMIJ.Constraint = (function(){
 	};
 	/**
 	* For all the term types in sideA, move them over to sideB using the provided function.
+	* @param {YASMIJ.Expression} sideA - 
+	* @param {YASMIJ.Expression} sideB - 	
+	* @param {Function} forEachTermFunc - callback
 	*/
 	Constraint.switchSides = function (sideA, sideB, forEachTermFunc) {
 		forEachTermFunc.call(sideA, function (name, value) {
@@ -101,8 +102,7 @@ YASMIJ.Constraint = (function(){
 	};
 	/**
 	 * Returns an array of variables without the coefficients.
-	 *
-	 * @param {Object} obj
+	 * @param {Boolean} excludeNumbers - only include variables in the result
 	 * @returns {Array}
 	 * @example Constraint.parse("a = cats + 30").getTermNames(); // returns ["a", "cats", "30" ]
 	 */
@@ -111,11 +111,10 @@ YASMIJ.Constraint = (function(){
 		return YASMIJ.getUniqueArray(arr);
 	};
 	/**
-	 *
-	 *
-	 * @param {String}
+	 * Converts a string to an Constraint object literal.
+	 * @todo Join this with `YASMIJ.Constraint.parse()`
+	 * @param {String} str -
 	 * @returns {Object}
-	 * @example
 	 */
 	Constraint.parseToObject = function (str) {
 		str = str.replace( /([><])(\s+)(=)/g, "$1$3" );
@@ -135,10 +134,8 @@ YASMIJ.Constraint = (function(){
 	};
 	/**
 	 * Converts a string to an Constraint Object.
-	 *
 	 * @param {String}
 	 * @returns {Constraint}
-	 * @example
 	 */
 	Constraint.parse = function (str) {
 		var obj = Constraint.parseToObject(str),
@@ -152,18 +149,17 @@ YASMIJ.Constraint = (function(){
 		return e;
 	};
 	/**
-	 * Returns a string representation of the Constraint Object.r
+	 * Returns a string representation of the Constraint Object.
+	 * @return {String}
 	 */
 	Constraint.prototype.toString = function () {
 		return [this.leftSide, this.comparison, this.rightSide].join(" ");
 	};
 	/**
 	 * Return an object that represents the sides left to right or vice versa.
-	 *
 	 * @param {String} side - `left` or `right`
 	 * @returns {Object} sides
 	 * @see Constraint.prototype.switchSides
-	 * @example
 	 */
 	Constraint.prototype.getSwappedSides = function (doSwap) {
 		return {
@@ -172,10 +168,11 @@ YASMIJ.Constraint = (function(){
 		};
 	};
 	/**
-	 *
-	 *
-	 * @param {String}
-	 * @returns {Object}
+	 * Designates which side the variables and numbers should be located at.
+	 * @param {String} varSide - `left` or `right` side
+	 * @param {String} numSide - `left` or `right` side
+	 * @returns {YASMIJ.Constraint} self -
+ 	 * @chainable
 	 * @example
 	 */
 	Constraint.prototype.moveTypeToOneSide = function (varSide, numSide) {
@@ -193,13 +190,13 @@ YASMIJ.Constraint = (function(){
 		return this;
 	};
 	/**
-	 *
-	 *
-	 * @param {String}
-	 * @returns {Object}
+	 * Multiplies the constraint by -1
+	 * @returns {YASMIJ.Constraint} self -
+	 * @chainable
 	 * @example
 	 */
 	Constraint.prototype.inverse = function () {
+		// @todo moves to outside to constants on the YASMIJ.Constraint.CONST
 		var oppositeCompare = {
 			"=" : "=",
 			">=" : "<",
@@ -215,11 +212,9 @@ YASMIJ.Constraint = (function(){
 		return this;
 	};
 	/**
-	 *
-	 *
-	 * @param {String}
-	 * @returns {Object}
-	 * @example
+	 * Changes the strict relationship from "<" or ">" to "<=" and ">=" correspondingly.
+	 * @returns {YASMIJ.Constraint} self -
+	 * @chainable
 	 */
 	Constraint.prototype.removeStrictInequality = function () {
 		var eps;
@@ -232,6 +227,8 @@ YASMIJ.Constraint = (function(){
 	};
 	/**
 	 * Places the constants on the right and the variables on the left hand side.
+	 * @returns {YASMIJ.Constraint} self -
+	 * @chainable
 	 */
 	Constraint.prototype.normalize = function () {
 		this.moveTypeToOneSide("left", "right");
@@ -241,23 +238,34 @@ YASMIJ.Constraint = (function(){
 		return this.removeStrictInequality();
 	};
 	/**
-	 *
-	 *
-	 * @param {String}
-	 * @returns {Object}
+	 * Adds a new slack variable to the constraint.
+	 * Note: A constraint can only contain one slack variable.
+	 * @param {Number} val - value of slack
+	 * @returns {YASMIJ.Constraint} self -
+	 * @chainable
 	 * @example
 	 */
 	Constraint.prototype.addSlack = function(val){
+		// @todo find out the point of creating `this.slack`.
 		this.slack = { 
 			name: "slack", 
-			value: val 
+			value: val
 		};
 		this.leftSide.addTerm( "slack", val );
 		return this;
 	};
+	/**
+	* Updates the value of the slack for the constraint.
+	* @param {String}[optional] name - name of slack variable
+	* @param {Number} val - value of slack variable
+	* @return {YASMIJ.Constraint} self
+  * @chainable
+	*/
 	Constraint.prototype.updateSlack = function( name, val){
 		var oldName = (this.slack || {} ).name;
-		val = (!val && val !== 0) ? this.leftSide.getTermValue( oldName ) : val;
+		if(!val && val !== 0){
+			val = this.leftSide.getTermValue( oldName );
+		}
 		this.slack = { 
 			"name": name || oldName, 
 			"value": val 
@@ -266,6 +274,11 @@ YASMIJ.Constraint = (function(){
 		this.leftSide.addTerm( name||"slack", val );
 		return this;
 	};
+	/**
+	* Converts a constraint to standard maximization form
+	* @return {YASMIJ.Constraint} self
+  * @chainable
+	*/
 	Constraint.prototype.convertToStandardMaxForm = function () {
 		this.normalize();
 		if (this.comparison == "<=") {
@@ -277,11 +290,24 @@ YASMIJ.Constraint = (function(){
 		this.comparison = "=";
 		return this;
 	};
+	/**
+	* Multiplies the left and right side of a constraint by a factor
+	* @param {Number} factor -
+	* @return {YASMIJ.Constraint} self
+	* @chainable
+	*/
 	Constraint.prototype.scale = function ( factor ) {
 		this.leftSide.scale( factor );
 		this.rightSide.scale( factor );
 		return this;
 	};
+	/**
+	* Moves a variable to the left or right side of a comparison
+	* @param {String} name - variable name
+	* @param {String} moveTo - `left` or `right` side
+	* @return {YASMIJ.Constraint} self
+  * @chainable
+	*/
 	Constraint.prototype.varSwitchSide = function ( name, moveTo ) {
 		if( !/left|right/.test(moveTo) ){
 			return this;
@@ -313,8 +339,8 @@ YASMIJ.Constraint = (function(){
 		}
 		return arr;
 	};
-	return Constraint;
-}());
+	YASMIJ.Constraint = Constraint;
+}(YASMIJ));
 
 
 

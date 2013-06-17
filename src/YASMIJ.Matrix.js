@@ -6,12 +6,12 @@
 (function(root){
     "use strict";
     // Matrix Class
-    /**
-    * Represents a matrix.
+	/**
+	* Represents a matrix.
 	* The is constructed so that the last element in each row is considered the Right Hand Side(RHS).
 	* This last row is the indicator row, which holds the coefficients from the objective function.
-    * @constructor YASMIJ.Matrix
-    * @example
+	* @constructor YASMIJ.Matrix
+	* @example
    var exampleMatrix = YASMIJ.Matrix.parse([[1,2],[3,4]]);
    exampleMatrix.toString() === "[[1,2],[3,4]]";
     */
