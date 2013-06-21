@@ -171,7 +171,7 @@
      * Designates which side the variables and numbers should be located at.
      * @param {String} varSide - `left` or `right` side
      * @param {String} numSide - `left` or `right` side
-     * @returns {YASMIJ.Constraint} self -
+     * @returns {YASMIJ.Constraint} - self
       * @chainable
      * @example
      */
@@ -191,7 +191,7 @@
     };
     /**
      * Multiplies the constraint by -1
-     * @returns {YASMIJ.Constraint} self -
+     * @returns {YASMIJ.Constraint} - self
      * @chainable
      * @example
      */
@@ -213,7 +213,7 @@
     };
     /**
      * Changes the strict relationship from "<" or ">" to "<=" and ">=" correspondingly.
-     * @returns {YASMIJ.Constraint} self -
+     * @returns {YASMIJ.Constraint} - self
      * @chainable
      */
     Constraint.prototype.removeStrictInequality = function () {
@@ -227,7 +227,7 @@
     };
     /**
      * Places the constants on the right and the variables on the left hand side.
-     * @returns {YASMIJ.Constraint} self -
+     * @returns {YASMIJ.Constraint} - self
      * @chainable
      */
     Constraint.prototype.normalize = function () {
@@ -241,7 +241,7 @@
      * Adds a new slack variable to the constraint.
      * Note: A constraint can only contain one slack variable.
      * @param {Number} val - value of slack
-     * @returns {YASMIJ.Constraint} self -
+     * @returns {YASMIJ.Constraint} - self
      * @chainable
      * @example
      */
@@ -259,7 +259,7 @@
     * @param {String}[optional] name - name of slack variable
     * @param {Number} val - value of slack variable
     * @return {YASMIJ.Constraint} self
-  * @chainable
+    * @chainable
     */
     Constraint.prototype.updateSlack = function( name, val){
         var oldName = (this.slack || {} ).name;
@@ -289,6 +289,9 @@
         }
         this.comparison = "=";
         return this;
+    };
+    Constraint.prototype.convertToStandardForm = function () {
+        // ***********
     };
     /**
     * Multiplies the left and right side of a constraint by a factor
@@ -327,7 +330,7 @@
      * @param {Array} termNames - names of terms
      * @return {Array} - Array of numbers
      */
-    Constraint.prototype.createRowOfValues = function( termNames ){
+    Constraint.prototype.getCoefficients = function( termNames ){
         var arr = new Array( termNames.length ), 
             val,
             i = arr.length;
@@ -341,9 +344,9 @@
         }
         return arr;
     };
-	/**
+    /**
      * Returns an list of coeffients of terms from the left side.
-	 * Note: The terms should only be on one side after normilized.
+     * Note: The terms should only be on one side after normilized.
      * @param {Array} termNames - names of terms
      * @return {Array} - Array of numbers
      */
