@@ -155,9 +155,10 @@ tests.runInputTests = function(){
 	test( "test YASMIJ.Input.prototype.computeType() with (non)standard max", function(){
 		var t = YASMIJ.CONST;
 		var fn = function(type, arr){
-			var x = YASMIJ.Input.parse(type, "x1 + 2x2 - x3", arr);
+			var x = YASMIJ.Input.parse(type, "a + 2b - c", arr);
 			return x.computeType();
 		};
+		// standard
 		equal( fn("maximize",[
 			"a <= 14",
 			"a + b <= 28"
@@ -171,6 +172,7 @@ tests.runInputTests = function(){
 			"a + b < 28"
 		]), t.STANDARD_MAX );
 		
+		// non-standard
 		equal( fn("maximize",[
 			"a > 14",
 			"a + b < 28"
@@ -183,7 +185,7 @@ tests.runInputTests = function(){
 	test( "test YASMIJ.Input.prototype.computeType() with (non)standard min", function(){
 		var t = YASMIJ.CONST;
 		var fn = function(type, arr){
-			var x = YASMIJ.Input.parse(type, "x1 + 2x2 - x3", arr);
+			var x = YASMIJ.Input.parse(type, "a + 2b - c", arr);
 			return x.computeType();
 		};
 		equal( fn("minimize",[
