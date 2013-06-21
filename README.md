@@ -11,7 +11,7 @@ Yasmij.js is a small side project that I work on in my spare time.<br/>
 Please feel free to contribute.
 
 ## Version
-0.2.5
+BETA 0.2.5 - (unstable)
 
 ## Dependencies
 None
@@ -95,6 +95,6 @@ Please raise a ticket for help.
 - Add build script<br/>
 
 ### Version 0.4:
-- Add support for unbounded variables.
+- Add support for unrestricted variables.
 
 <br/>
