@@ -68,6 +68,9 @@
 	* @return {Boolean}
 	*/
 	Input.prototype.doAnyConstrainsHaveRelation = function(comparison){
+		if(!comparison){
+			return false;
+		}
 		comparison = new RegExp(comparison);
 		return this.anyConstraints(function(i, constraint){
 			return comparison.test(constraint.comparison);
@@ -129,6 +132,11 @@
 			}
 		}
 	};
+	/**
+	* Returns a list of term names
+	* @param {Boolean} onlyVariables - only include variables names, no numbers.
+	* @return {Array} list of term names
+	*/
 	Input.prototype.getTermNames = function (onlyVariables) {
 		var vars = [],
 		i = this.constraints.length;
