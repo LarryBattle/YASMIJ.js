@@ -1,0 +1,23 @@
+/**
+*
+get input
+
+get type
+
+convert constraints to standard form
+    add "or equal to" to "less than" and "greater than" constraints.
+    add +-slack to constraints
+    add artifical variables to constraint
+
+    
+switch (type)
+    standard_max:
+        result = perform normal Simplex()
+    non_standard_max:
+    standard_min:
+    non_standard_min:
+        result = perform two phase()
+
+interpect the results in the tableau
+*
+**/
