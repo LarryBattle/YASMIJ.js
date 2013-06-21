@@ -321,12 +321,22 @@ tests.runConstraintTests = function(){
 	test( "test YASMIJ.Constraint.prototype.createRowOfValues", function(){
 		var func = function( str, arr ){
 			return YASMIJ.Constraint.parse(str).createRowOfValues( arr );
-		};
+		};		
 		deepEqual( func("5a + 6b = 2", ["a", "b"]), [5, 6] );
 		deepEqual( func("5a + 6b = 2", ["b", "a"]), [6, 5] );
 		deepEqual( func("5a + 6b = 2", [ "c", "b", "a"]), [0, 6, 5] );
 		deepEqual( func("5a + 6b = 2c", [ "c", "b", "a"]), [2, 6, 5] );
 		deepEqual( func("5a + 6b = 2c + 55", [ "c", "b", "a", "1" ]), [2, 6, 5, 55] );
+	});
+	test( "test YASMIJ.Constraint.prototype.getTermValuesFromLeftSide", function(){
+		var func = function( str, arr ){
+			return YASMIJ.Constraint.parse(str).getTermValuesFromLeftSide( arr );
+		};
+		deepEqual( func("5a + 6b = 2", ["a", "b"]), [5, 6] );
+		deepEqual( func("5a + 6b = 2", ["b", "a"]), [6, 5] );
+		deepEqual( func("5a + 6b = 2", [ "c", "b", "a"]), [0, 6, 5] );
+		deepEqual( func("5a + 6b = 2c", [ "c", "b", "a"]), [-2, 6, 5] );
+		deepEqual( func("5a + 6b = 2c + 55", [ "c", "b", "a", "1" ]), [-2, 6, 5, -55] );
 	});
 };
 
