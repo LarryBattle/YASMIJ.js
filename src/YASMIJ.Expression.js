@@ -286,11 +286,10 @@
         if(typeof fn !== "function"){
             return;
         }
-        for( var prop in this.terms ){
-            if( this.terms.hasOwnProperty( prop ) && prop === "1" ){
-                fn( prop, this.terms[ prop ], this.terms );
-            }
-        }
+		var prop = "1";
+		if( this.terms[ prop ] ){
+			fn( prop, this.terms[ prop ], this.terms );
+		}
     };
     /**
    * Iterates through each varaible in the expression.
@@ -331,7 +330,7 @@
     };
     /**
      * Multiplies the expression by -1
-     * @returns {YASMIJ.Expression} self -
+     * @returns {YASMIJ.Expression} - self
      * @example
      */
     Expression.prototype.inverse = function(){
@@ -344,7 +343,7 @@
      * Adds a new term to the expression.
      * @param {String} name - name of term
       * @param {Number} val - value of term
-     * @returns {YASMIJ.Expression} self -
+     * @returns {YASMIJ.Expression} - self
      * @example
      */
     Expression.prototype.addTerm = function( name, value ){
@@ -359,47 +358,47 @@
     /**
     * Adds an expression to the current expression
     * @param {YASMIJ.Expression|String} obj - YASMIJ.Expression or string representing an expression
-    * @return {YASMIJ.Expression} self -
+    * @return {YASMIJ.Expression} - self
     */
     Expression.prototype.addExpression = function(obj){
         if(!(obj instanceof Expression)){
-			obj = Expression.parse( obj );
-		}
-		this.addTerms(obj.toTermValueArray());
+            obj = Expression.parse( obj );
+        }
+        this.addTerms(obj.toTermValueArray());
         return this;
     };
-	/**
-	* @return {Array} - array of String[]
-	*/
-	Expression.prototype.toTermValueArray = function(){
-		var arr = [];
-		for(var name in this.terms){
-			if(this.terms.hasOwnProperty(name)){
-				arr.push([name, this.terms[name]]);
-			}
-		}
-		return arr;
-	};
-	/**
-	* Add multiple terms to the expression
-	* @param {Array} arr - array of an array of names and values. Ex. `[[name, value],...]`
-	* @return {YASMIJ.Expression} - self
-	*/
-	Expression.prototype.addTerms = function(arr){
-		if(!arr || typeof arr !== "object"){
-			return this;
-		}
-		for(var i = 0, len = arr.length; i < len; i++){
-			if(arr[i] && typeof arr[i] === "object"){			
-				this.addTerm(arr[i][0], arr[i][1]);
-			}
-		}
-		return this;
-	};
+    /**
+    * @return {Array} - array of String[]
+    */
+    Expression.prototype.toTermValueArray = function(){
+        var arr = [];
+        for(var name in this.terms){
+            if(this.terms.hasOwnProperty(name)){
+                arr.push([name, this.terms[name]]);
+            }
+        }
+        return arr;
+    };
+    /**
+    * Add multiple terms to the expression
+    * @param {Array} arr - array of an array of names and values. Ex. `[[name, value],...]`
+    * @return {YASMIJ.Expression} - self
+    */
+    Expression.prototype.addTerms = function(arr){
+        if(!arr || typeof arr !== "object"){
+            return this;
+        }
+        for(var i = 0, len = arr.length; i < len; i++){
+            if(arr[i] && typeof arr[i] === "object"){            
+                this.addTerm(arr[i][0], arr[i][1]);
+            }
+        }
+        return this;
+    };
     /**
      * Removes a term from the expression.
      * @param {String} name - name of term
-     * @returns {YASMIJ.Expression} self -
+     * @returns {YASMIJ.Expression} - self
      * @example
      */
     Expression.prototype.removeTerm = function( name ){
@@ -409,7 +408,7 @@
     /**
      * Multiples all terms by a factor
      * @param {String} factor - factor
-     * @returns {YASMIJ.Expression} self -
+     * @returns {YASMIJ.Expression} - self
      * @example
      */
     Expression.prototype.scale = function( factor ){
@@ -458,7 +457,7 @@
      * @returns {Array}
      * @example
      */
-    Expression.prototype.createRowOfValues = function( termNames ){
+    Expression.prototype.getCoefficients = function( termNames ){
         var arr = [], i = termNames.length;
         while( i-- ){
             arr[i] = this.terms[ termNames[i] ] || 0;
