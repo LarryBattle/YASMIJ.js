@@ -246,12 +246,28 @@
      * @example
      */
     Constraint.prototype.addSlack = function(val){
-        // @todo find out the point of creating `this.slack`.
         this.slack = { 
             name: "slack", 
             value: val
         };
         this.leftSide.addTerm( "slack", val );
+        return this;
+    };
+    /**
+     * Adds a new artifical variable to the constraint.
+     * Note: A constraint can only contain one artifical variable.
+     * @param {Number} val - value 
+     * @returns {YASMIJ.Constraint} - self
+     * @chainable
+     * @example
+     */
+	Constraint.prototype.addArtificalVariable = function(val){
+        this.artifical = {
+            name: "artifical", 
+            value: val
+        };
+        //this.leftSide.addTerm( "artifical", val );
+        this.leftSide.addTerm( "artifical", 0 );
         return this;
     };
     /**
@@ -281,12 +297,15 @@
     */
     Constraint.prototype.convertToStandardMaxForm = function () {
         this.normalize();
-        if (this.comparison == "<=") {
-            this.addSlack(1);
-        }
-        else if (this.comparison == ">=") {
-            this.addSlack(-1);
-        }
+		switch(this.comparison){
+			case "<=":
+				this.addSlack(1);	
+				break;
+			case ">=":
+				this.addSlack(-1);
+				this.addArtificalVariable(1);
+				break;
+		}
         this.comparison = "=";
         return this;
     };
@@ -331,6 +350,9 @@
      * @return {Array} - Array of numbers
      */
     Constraint.prototype.getCoefficients = function( termNames ){
+		if(!termNames){
+			return null;
+		}
         var arr = new Array( termNames.length ), 
             val,
             i = arr.length;
@@ -351,6 +373,9 @@
      * @return {Array} - Array of numbers
      */
     Constraint.prototype.getTermValuesFromLeftSide = function( termNames ){
+				if(!termNames){
+					return null;
+				}
         var arr = new Array( termNames.length ), 
             val,
             i = arr.length;

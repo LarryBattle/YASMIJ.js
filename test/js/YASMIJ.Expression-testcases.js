@@ -377,17 +377,17 @@ tests.runExpressionTests = function(){
 		});		
 		equal( 1, arr.length );
 	});
-	test( "test YASMIJ.Expression.prototype.getCoeffients()", function(){
+	test( "test YASMIJ.Expression.prototype.getAllCoeffients()", function(){
 		var fn = function( str, excludeNumbers, excludeSlack ){
-			return YASMIJ.Expression.parse(str).getCoeffients(excludeNumbers, excludeSlack);
+			return YASMIJ.Expression.parse(str).getAllCoeffients(excludeNumbers, excludeSlack);
 		};
 		deepEqual( fn("a + b + slack + 10" ), [1,1,1,10] );
 		deepEqual( fn("a + b + slack + 10", true ), [1,1,1] );
 		deepEqual( fn("a + b + slack + 10", true, true ), [1,1] );
 	});
-	test( "test YASMIJ.Expression.prototype.createRowOfValues()", function(){
+	test( "test YASMIJ.Expression.prototype.getCoefficients()", function(){
 		var fn = function(str, termNames){
-			return YASMIJ.Expression.parse(str).createRowOfValues( termNames );
+			return YASMIJ.Expression.parse(str).getCoefficients( termNames );
 		};
 		deepEqual( fn("a + b + 5", ["a"]), [1] );
 		deepEqual( fn("a + b + 5", ["b", "a"]), [1, 1] );

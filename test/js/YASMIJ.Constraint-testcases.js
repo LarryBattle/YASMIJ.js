@@ -318,9 +318,9 @@ tests.runConstraintTests = function(){
 		equal( func( "a + 3b < 20" ), "a + 3b + slack = 19.999999" );
 		equal( func( "a - 2b - c + 20 < 4 + 4c" ), "-a + 2b + 5c - slack = 16" );
 	});
-	test( "test YASMIJ.Constraint.prototype.createRowOfValues", function(){
+	test( "test YASMIJ.Constraint.prototype.getCoefficients()", function(){
 		var func = function( str, arr ){
-			return YASMIJ.Constraint.parse(str).createRowOfValues( arr );
+			return YASMIJ.Constraint.parse(str).getCoefficients( arr );
 		};		
 		deepEqual( func("5a + 6b = 2", ["a", "b"]), [5, 6] );
 		deepEqual( func("5a + 6b = 2", ["b", "a"]), [6, 5] );

@@ -16,6 +16,24 @@
         this.tableau = new root.Tableau();
         this.state = null;
     };
+	Simplex.Phrase1 = function(obj){
+		// add slack and artifical variables
+		obj.convertToEquationForm()
+		// solve the tableau such that you min z = sum of artificial variables.
+		// checkForFeasibility( obj.getSolutionValue() ); something like `if( 0 < z ) return not feasibile`
+		// 
+		// remove artificial variables from tableau
+		// solve original problem using simplex method
+	};
+	Simplex.Phrase2 = function(){
+		
+	};
+	Simplex.TwoPhraseMethod = function(){
+		Simplex.Pharase1( obj );
+		check( obj );
+		Simplex.Pharase2( obj );
+		return result;
+	};
     /*
     * @todo Create this function
     */
@@ -55,7 +73,7 @@
         if(errMsg){
             throw new Error(errMsg);
         }
-    };
+    };	
 	Simplex.solve = function( input ){
 		Simplex.checkForErrors( input );
         return root.Tableau.parse(

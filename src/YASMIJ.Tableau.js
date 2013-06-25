@@ -49,14 +49,17 @@
         return obj;
     };
     /**
-    * @.........
+	* Returns the pivot point of a Tableau
+    * @param {YASMIJ.Matrix} matrix -
+	* @param {Boolean} isMin
+	* @return {Object}
     */
-    Tableau.getPivotPoint = function( matrix ){
+    Tableau.getPivotPoint = function( matrix, isMin ){
         if( !(matrix instanceof YASMIJ.Matrix ) ){
             return null;
         }
         var point = {};
-        point.column = matrix.getMostNegIndexFromLastRow();
+        point.column = matrix.getGreatestValueFromLastRow(!!isMin);
 		var obj = matrix.getRowIndexWithPosMinColumnRatio( point.column, true ) || {};
 		point.row = obj.rowIndex;
         if( point.column < 0 || point.row < 0 ){
@@ -67,14 +70,14 @@
     Tableau.prototype.addConstraintsToMatrix = function( termNames ){
         var constraints = this.input.constraints;
         for( var i = 0, len = constraints.length; i < len; i++ ){
-            this.matrix.addRow( constraints[i].createRowOfValues( termNames ) );
+            this.matrix.addRow( constraints[i].getCoefficients( termNames ) );
         }
     };
     /**
      * Appends the objective function to the end of the matrix.
      */
     Tableau.prototype.addZToMatrix = function( termNames ){
-        var row = this.input.z.createRowOfValues( termNames );
+        var row = this.input.z.getCoefficients( termNames );
         this.matrix.addRow( YASMIJ.Matrix.inverseArray( row ) );
     };
     Tableau.prototype.setMatrixFromInput = function(){
@@ -113,6 +116,9 @@
         obj.z = this.matrix.getLastElementOnLastRow();
         return YASMIJ.Output.parse(obj,this.matrix);
     };
+	Tableau.prototype.getCoefficients = function(){
+		return [];
+	};
     root.Tableau = Tableau;
 }(YASMIJ));
 

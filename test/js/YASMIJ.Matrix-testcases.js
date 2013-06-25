@@ -29,6 +29,24 @@ tests.runMatrixTests = function(){
         equal( fn(Math), false );
         equal( fn(false), false );
     });
+	test( "test YASMIJ.Matrix.getGreatestElementInRow()", function(){
+		var fn = function(a,b,c){
+			return YASMIJ.Matrix.getGreatestElementInRow(a,b,c);
+		};
+		deepEqual( fn(), null );
+		deepEqual( fn("cat"), null );
+		deepEqual( fn(1,true), null );
+		deepEqual( fn([], null, true), {value:-Infinity, index:-1} );
+		
+		deepEqual( fn([1], null, true), {value:1, index: 0} );
+		deepEqual( fn([1], null, false), {value:1, index: 0} );
+		
+		deepEqual( fn([-2, -1, 0, 1, 2], null, true), {value:2, index: 4} );
+		deepEqual( fn([-2, -1, 0, 1, 2], 4, true), {value:1, index: 3} );
+		
+		deepEqual( fn([-2, -1, 0, 1, 2], null, false), {value:-2, index: 0} );
+		deepEqual( fn([-2, -1, 0, 1, 2], 0, false), {value:-1, index: 1} );
+	});
     test( "test YASMIJ.Matrix.prototype.setUniformedWidth()", function(){
         var fn = function(arr){
             return YASMIJ.Matrix.parse(arr).setUniformedWidth().toString();
@@ -115,13 +133,6 @@ tests.runMatrixTests = function(){
         deepEqual( fn( [[1,2],[3,4]], 1 ), [3,4] );
         deepEqual( fn( [[1,2],[3,4]], null, 1 ), [2,4] );
     });
-    test( "test YASMIJ.Matrix.prototype.getMinElementInRow()", function(){
-        var fn = function(obj, i){
-            return YASMIJ.Matrix.parse(obj).getMinElementInRow( i );
-        };
-        deepEqual( fn([-2,-1,0,1,2], 0), [0,-2] );
-        deepEqual( fn([2,1,-3], 0), [2,-3] );
-    });
     test("test YASMIJ.Matrix.prototype.toString()", function(){
         var fn = function(obj){
             return YASMIJ.Matrix.parse(obj).toString();
@@ -170,14 +181,19 @@ tests.runMatrixTests = function(){
         deepEqual(fn([], 1, [1,2,3]), [[1,2,3]] );
         deepEqual(fn([[1],[2]], 0, [2,3,4] ), [[1,2,3,4],[2]]);
     });
-    test( "test YASMIJ.Matrix.prototype.getMostNegIndexFromLastRow()", function(){
-        var fn = function(arr){
-            return YASMIJ.Matrix.parse(arr).getMostNegIndexFromLastRow();
+    test( "test YASMIJ.Matrix.prototype.getGreatestValueFromLastRow()", function(){
+        var fn = function(arr, b){
+            return YASMIJ.Matrix.parse(arr).getGreatestValueFromLastRow(b);
         };
         equal( fn([1,2,3]), -1 );
         equal( fn([1,2,-3, -4]), 2 );
         equal( fn([[1,2,3],[1,-3,-1]]), 1 );
         equal( fn([[1,2,3],[1,-3,-1,-9]]), 1 );
+		
+		equal( fn([1,2,3], true), 1 );
+        equal( fn([1,2,-3, -4], true), 1 );
+        equal( fn([[1,2,3],[1,-3,-1]], true), 0 );
+        equal( fn([[1,2,3],[1,-3,-1,-9]], true), 0 );
     });
     test( "test YASMIJ.Matrix.prototype.getRowIndexWithPosMinColumnRatio()", function(){
         var fn = function(arr, colI){

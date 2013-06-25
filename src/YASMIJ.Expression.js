@@ -443,7 +443,7 @@
      * @returns {Array}
      * @example
      */
-    Expression.prototype.getCoeffients = function( excludeNumbers, excludeSlack ){
+    Expression.prototype.getAllCoeffients = function( excludeNumbers, excludeSlack ){
         var arr = [];
         var names = this.getTermNames( excludeNumbers, excludeSlack );
         for( var i = 0, len = names.length; i < len; i++ ){

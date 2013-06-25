@@ -140,6 +140,36 @@
       }
         return result;
     };
+	/**
+	* Find the index and value of the largest positive or negative number in an array.
+	* @param {Boolean} findPositive - if true, looks for the largest positive number, otherwise searches for largest negative.
+	* @param {Number} excludeIndex - index to 
+	* @param {Array} arr - single dimensional array
+	* @return {Object} - Object with value and index of the largest number found.
+	* @example
+	YASMIJ.Matrix.getGreatestElementInRow([-1,0,1], 1, false ); // return {value: -1, index: 0}
+	YASMIJ.Matrix.getGreatestElementInRow([-1,0,1], 2, true ); // return {value: 0, index: 1}
+    */
+    Matrix.getGreatestElementInRow = function( arr, excludeIndex, findPositive ){
+		if(!arr || !Matrix.isArray(arr) ){
+			return null;
+		}
+		var obj = {
+			value : Infinity * (findPositive ? -1 : 1),
+			index : -1
+		};
+		
+        for( var i = 0, len = arr.length; i < len; i++ ){
+			if(excludeIndex === i ){
+				continue;
+			}
+            if( (findPositive && obj.value < arr[i] ) || (!findPositive && arr[i] < obj.value) ){
+                obj.index = i;
+				obj.value = arr[i];
+            }
+        }
+        return obj;
+    };
     /**
     * Adds a new single dimensional array 
     * @param {Array} - single dimensional array
@@ -288,39 +318,26 @@
 		return this.array;
 	};
     /**
-     * Returns the mininum value in a row.
-     * @param {Number} rowI - index of the row
-     * @param {Boolean} excludeLastElement - exclude the last element in each row
-     * @return {Array} - Array[ "index of min value", "min value" ]
-     * @example 
-   var exampleMatrix = YASMIJ.Matrix.parse([[1,2],[3,4]]);
-   exampleMatrix.getMinElementInRow(1); // returns [0,3]
-     */
-    Matrix.prototype.getMinElementInRow = function( rowI, excludeLastElement ){
-        var row = (this.array[rowI] || []),
-            arr = [ 0, row[0] ], 
-            i = 0, 
-            len = row.length + (excludeLastElement ? -1 : 0);
-        
-        for( ; i < len; i++ ){
-            if( row[ i ] < arr[1] ){
-                arr[0] = i;
-                arr[1] = row[i];
-            }
-        }
-        return arr;
-    };
-    /**
-    * Returns the index of the element in the last row with the greatest negativity.
+    * Returns the index of the element in the last row with the greatest negativity or positivity.
     * Note: This excludes the last element in the row. The last element in each row is reserved as "Right Hand Side".
+	* @param {Boolean} isPositive - true:largest positive, false:largest negative
     * @return {Number}
     * @example 
     var exampleMatrix = YASMIJ.Matrix.parse([[-1,-2],[-3,-4,-5]]);
-    exampleMatrix.getMostNegIndexFromLastRow() === 1; // represents -4
+    exampleMatrix.getGreatestValueFromLastRow() === 1; // represents -4
     */
-    Matrix.prototype.getMostNegIndexFromLastRow = function(){
-        var result = this.getMinElementInRow( this.array.length - 1, true );
-        return result[1] < 0 ? result[0] : -1;
+    Matrix.prototype.getGreatestValueFromLastRow = function(isPositive){
+		if(!this.array || this.array.length < 1){
+			return -1;
+		}
+		var row = this.array[ this.array.length - 1];
+		var obj = Matrix.getGreatestElementInRow( row, row.length-1, !!isPositive);
+		
+		if(isPositive){
+			return -1 < obj.value ? obj.index : -1;
+		}else{
+			return obj.value < 0 ? obj.index : -1;	
+		}
     };
     /**
     * Returns the row index of the 
