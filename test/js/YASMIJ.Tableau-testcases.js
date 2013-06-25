@@ -23,7 +23,8 @@ tests.runTableauTests = function(){
 			return YASMIJ.Tableau.parse( inputObj ).toString();
 		};
 			
-		var result = "[a,b,slack1,slack2,slack3,Constant][[1,0,1,0,0,33.999999],[0,1,0,1,0,4],[1,1,0,0,-1,2.000001],[-1,-1,0,0,0,0]]";
+		var result = "[a,b,artifical1,slack1,slack2,slack3,Constant]";
+		result += "[[1,0,0,1,0,0,33.999999],[0,1,0,0,1,0,4],[1,1,1,0,0,-1,2.000001],[-1,-1,0,0,0,0]]";
 		equal( func( inputObj ), result );
 		
 		inputObj = YASMIJ.Input.parse( "maximize", "8x1 + 10x2 + 7x3", ["x1 + 3x2 + 2x3 <= 10", "x1 + 5x2 + x3 <= 8"] );

@@ -20,6 +20,7 @@
         this.leftSide = {};
         this.rightSide = {};
         this.slack = null;
+        this.artifical = null;
         this.terms = {};
         return this;
     };
@@ -250,7 +251,7 @@
             name: "slack", 
             value: val
         };
-        this.leftSide.addTerm( "slack", val );
+        this.leftSide.setTerm( "slack", val );
         return this;
     };
     /**
@@ -266,8 +267,7 @@
             name: "artifical", 
             value: val
         };
-        //this.leftSide.addTerm( "artifical", val );
-        this.leftSide.addTerm( "artifical", 0 );
+        this.leftSide.setTerm( "artifical", val );
         return this;
     };
     /**
@@ -308,9 +308,6 @@
 		}
         this.comparison = "=";
         return this;
-    };
-    Constraint.prototype.convertToStandardForm = function () {
-        // ***********
     };
     /**
     * Multiplies the left and right side of a constraint by a factor

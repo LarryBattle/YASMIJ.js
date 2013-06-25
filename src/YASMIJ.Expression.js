@@ -342,12 +342,25 @@
     /**
      * Adds a new term to the expression.
      * @param {String} name - name of term
-      * @param {Number} val - value of term
+     * @param {Number} val - value of term
      * @returns {YASMIJ.Expression} - self
-     * @example
      */
     Expression.prototype.addTerm = function( name, value ){
         value += this.terms[ name ] || 0;
+        if(value){
+            this.terms[ name ] = value;
+        }else{
+            this.removeTerm( name );
+        }
+        return this;
+    };
+    /**
+     * Updates the value of a term
+     * @param {String} name - name of term
+     * @param {Number} val - value of term
+     * @returns {YASMIJ.Expression} - self
+     */
+    Expression.prototype.setTerm = function( name, value ){
         if(value){
             this.terms[ name ] = value;
         }else{
