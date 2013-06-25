@@ -51,7 +51,7 @@
     /**
 	* Returns the pivot point of a Tableau
     * @param {YASMIJ.Matrix} matrix -
-	* @param {Boolean} isMin
+	* @param {Boolean} isMin - true: minimization, false:maximization
 	* @return {Object}
     */
     Tableau.getPivotPoint = function( matrix, isMin ){
@@ -73,25 +73,31 @@
             this.matrix.addRow( constraints[i].getCoefficients( termNames ) );
         }
     };
+	Tableau.prototype.getSortedTermNames = function(){
+        var termNames = this.input.getTermNames(true);
+        var specialNames = this.input.getAllSpecialTermNames();
+		return YASMIJ.sortArrayWithSubsetAtEnd(termNames, specialNames);
+    };
     /**
      * Appends the objective function to the end of the matrix.
      */
     Tableau.prototype.addZToMatrix = function( termNames ){
-        var row = this.input.z.getCoefficients( termNames );
-        this.matrix.addRow( YASMIJ.Matrix.inverseArray( row ) );
+		var b = YASMIJ.Constraint.parse( "0 = " + this.input.z.toString() );
+		b.moveTypeToOneSide("left","right");
+		var row = b.leftSide.getCoefficients(termNames);
+		row = row.concat( b.rightSide.getTermValue("1") );
+        this.matrix.addRow( row );
     };
     Tableau.prototype.setMatrixFromInput = function(){
         this.matrix = new YASMIJ.Matrix();
-        this.colNames = this.input.getTermNames(true);
-        var termNames = this.colNames.concat("1");
-        
-        this.addConstraintsToMatrix( termNames );
-        this.addZToMatrix( termNames );
+		this.colNames = this.getSortedTermNames();
+        this.addConstraintsToMatrix( this.colNames.concat("1") );
+        this.addZToMatrix( this.colNames );
     };
     Tableau.prototype.toString = function(){
         var result = "";
         if( this.matrix ){
-            result += "[" + this.colNames.concat("Constant").toString() + "]";
+            result += "[" + this.colNames.concat("Constant").toString() + "],";
             result += this.matrix.toString();
         }
         return result;
@@ -116,9 +122,6 @@
         obj.z = this.matrix.getLastElementOnLastRow();
         return YASMIJ.Output.parse(obj,this.matrix);
     };
-	Tableau.prototype.getCoefficients = function(){
-		return [];
-	};
     root.Tableau = Tableau;
 }(YASMIJ));
 

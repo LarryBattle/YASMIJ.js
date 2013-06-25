@@ -6,7 +6,7 @@
 
 tests.runInputTests = function(){
 	module( "YASMIJ.Input Class" );
-	test( "test YASMIJ.Input.prototype.addNumbersToSlacks", function(){
+	test( "test YASMIJ.Input.prototype.addNumbersToSpecialTerms", function(){
 		var func = function(str, eqs){
 			return YASMIJ.Input.parse( "maximize", str, eqs).convertToStandardForm();
 		};
@@ -15,8 +15,8 @@ tests.runInputTests = function(){
 			"a + b <=28"
 		]);
 		var c = x.constraints.join( ", " );
-		equal( /slack1/.test(c), true );
-		equal( /slack2/.test(c), true );
+		equal( /slack1/.test(c), true, "Has a term named slack1" );
+		equal( /slack2/.test(c), true, "Has a term named slack2" );
 	});
 	test( "test YASMIJ.Input.prototype.getZTermNotInAnyOfTheConstraints", function(){
 		var func = function(str, eqs){
@@ -46,7 +46,7 @@ tests.runInputTests = function(){
 			return obj.constraints[0].toString();
 		};
 		var testThis = function(str){
-			var x = YASMIJ.Constraint.parse(str).convertToStandardMaxForm().toString();
+			var x = YASMIJ.Constraint.parse(str).convertToEquation().toString();
 			equal( func( str ), x );
 		};
 		testThis( "a + b < 4" );

@@ -107,4 +107,25 @@ tests.runBaseTests = function(){
 				"z": 8
 		}, "Minimiization isn't implemented. Not sure if this example is correct");
 	});
+	test( "test YASMIJ.convertArrayValuesToHashMap()", function(){
+		var fn = YASMIJ.convertArrayValuesToHashMap;
+		deepEqual(fn(), {});
+		deepEqual(fn([]), {});
+		
+		deepEqual(fn([1]), {1:1});
+		deepEqual(fn([1,2]), {1:1,2:1});
+		deepEqual(fn(["a","b"]), {a:1,b:1});
+	});
+	test( "test YASMIJ.sortArrayWithSubsetAtEnd()", function(){
+		var fn = YASMIJ.sortArrayWithSubsetAtEnd;
+		deepEqual(fn(), []);
+		deepEqual(fn([],[]), []);
+		
+		deepEqual(fn([1,2,3],[5,6]), [1,2,3,5,6]);
+		deepEqual(fn([1,2,3,4,5,6],[2,3]), [1,4,5,6,2,3]);
+		deepEqual(fn(["a","b","c","d","e"],["a","b"]), ["c","d","e","a","b"]);
+	});
 };
+
+
+

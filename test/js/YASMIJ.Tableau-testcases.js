@@ -23,12 +23,16 @@ tests.runTableauTests = function(){
 			return YASMIJ.Tableau.parse( inputObj ).toString();
 		};
 			
-		var result = "[a,b,artifical1,slack1,slack2,slack3,Constant]";
-		result += "[[1,0,0,1,0,0,33.999999],[0,1,0,0,1,0,4],[1,1,1,0,0,-1,2.000001],[-1,-1,0,0,0,0]]";
+		var result = "[a,b,artifical1,slack1,slack2,slack3,Constant],";
+		result += "[[1,0,0,1,0,0,33.999999],[0,1,0,0,1,0,4],[1,1,1,0,0,-1,2.000001],[-1,-1,0,0,0,0,0]]";
 		equal( func( inputObj ), result );
 		
 		inputObj = YASMIJ.Input.parse( "maximize", "8x1 + 10x2 + 7x3", ["x1 + 3x2 + 2x3 <= 10", "x1 + 5x2 + x3 <= 8"] );
-		result = "[slack1,slack2,x1,x2,x3,Constant][[1,0,1,3,2,10],[0,1,1,5,1,8],[0,0,-8,-10,-7,0]]";
+		result = "[x1,x2,x3,slack1,slack2,Constant],[[1,3,2,1,0,10],[1,5,1,0,1,8],[-8,-10,-7,0,0,0]]";
+		equal( func( inputObj ), result );
+		
+		inputObj = YASMIJ.Input.parse( "maximize", "8x1 + 10x2 + 7x3 + 2", ["x1 + 3x2 + 2x3 <= 10", "x1 + 5x2 + x3 <= 8"] );
+		result = "[x1,x2,x3,slack1,slack2,Constant],[[1,3,2,1,0,10],[1,5,1,0,1,8],[-8,-10,-7,0,0,2]]";
 		equal( func( inputObj ), result );
 	});
 	test( "test YASMIJ.Tableau.prototype.getPivotPoint()", function(){

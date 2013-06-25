@@ -39,6 +39,43 @@ String.prototype.trim = String.prototype.trim || function(){
         }
         return result;
     };
+	/**
+	* Returns the elements of an array as the keys for a hash object.
+	* @param {Array} arr -
+	* @return {Object}
+	*/
+	YASMIJ.convertArrayValuesToHashMap = function (arr) {
+		if(!arr || typeof arr !== "object"){
+			return {};
+		}
+		var obj = {};
+		for (var i = 0, len = arr.length; i < len; i++) {
+			obj[arr[i]] = 1;
+		}
+		return obj;
+	};
+	/**
+	* Returns a sorted array, where the elements in a subset are sorted and grouped towards the end of the array.
+	* @param {Array} arr - the main array that contains elements from `subset`
+	* @param {Array} subset - an array whose elements are contained within `arr`
+	* @return {Array}
+	* @example
+	YASMIJ.sortArrayWithSubsetAtEnd(["a","1","b","2"],["1","2"]); // returns ["a", "b", "1", "2"]
+	*/
+	YASMIJ.sortArrayWithSubsetAtEnd = function (arr, subset) {
+		if(!arr || typeof arr !== "object" || !subset || typeof subset !== "object"){
+			return [];
+		}
+		var list = [];
+		var hash = YASMIJ.convertArrayValuesToHashMap(subset);
+		for (var i = 0, len = arr.length; i < len; i++) {
+			if (!hash[arr[i]]) {
+				list.push(arr[i]);
+			}
+		}
+		return list.sort().concat(subset.sort());
+	};
+
     /**
     * Checks to see if two objects are identical.
     * @param {Object} obj1 - 

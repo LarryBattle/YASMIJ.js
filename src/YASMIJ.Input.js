@@ -122,13 +122,18 @@
 			fn(i, this.constraints[i], this.constraints);
 		}
 	};
-	Input.prototype.addNumbersToSlacks = function () {
+	Input.prototype.addNumbersToSpecialTerms = function () {
 		var c = this.constraints,
-		slackI = 1;
+		slackI = 1,
+		artificalI = 1;
 		for (var i = 0, len = c.length; i < len; i++) {
-			if (c[i].slack) {
-				c[i].updateSlack("slack" + slackI);
+			if (c[i].hasSpecialTerm("slack")) {
+				c[i].renameSlack("slack" + slackI);
 				slackI++;
+			}
+			if(c[i].hasSpecialTerm("artifical")){
+				c[i].renameArtificial("artifical"+artificalI);
+				artificalI++;
 			}
 		}
 	};
@@ -144,6 +149,15 @@
 			vars = vars.concat(this.constraints[i].getTermNames(onlyVariables));
 		}
 		return YASMIJ.getUniqueArray(vars).sort();
+	};
+	Input.prototype.getAllSpecialTermNames = function(){
+		var names = [];
+		this.forEachConstraint(function(i, constraint){
+			names = names.concat(
+				constraint.getSpecialTermNames()
+			);
+		});
+		return names;
 	};
 	Input.prototype.setTermNames = function () {
 		this.terms = this.getTermNames();
@@ -188,7 +202,7 @@
 	Input.prototype.convertConstraintsToMaxForm = function () {
 		var c = this.constraints;
 		for (var i = 0, len = c.length; i < len; i++) {
-			c[i] = c[i].convertToStandardMaxForm();
+			c[i] = c[i].convertToEquation();
 		}
 	};
 	Input.prototype.convertToStandardForm = function () {
@@ -199,7 +213,7 @@
 			this.z = this.z.inverse();
 		}
 		this.convertConstraintsToMaxForm();
-		this.addNumbersToSlacks();
+		this.addNumbersToSpecialTerms();
 		this.setTermNames();
 		this.isStandardMode = true;
 		return this;

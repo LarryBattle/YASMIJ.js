@@ -241,6 +241,8 @@
     /**
     * Returns an array of alphanumeric sorted variables without the coefficients.
     *
+	* @param {Boolean} excludeNumbers - 
+	* @param {Boolean} excludeSlack - 
     * @returns {Array}
     * @example Expression.parse( "a + 2cats + 30" ).getTermNames(); // returns ["a", "cats", "30" ]
     */

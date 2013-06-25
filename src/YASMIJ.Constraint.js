@@ -19,8 +19,7 @@
         this.comparison = "";
         this.leftSide = {};
         this.rightSide = {};
-        this.slack = null;
-        this.artifical = null;
+        this.specialTerms = {};
         this.terms = {};
         return this;
     };
@@ -247,13 +246,37 @@
      * @example
      */
     Constraint.prototype.addSlack = function(val){
-        this.slack = { 
+		this.setSpecialTerm({
+			key : "slack",
             name: "slack", 
             value: val
-        };
-        this.leftSide.setTerm( "slack", val );
+        });
         return this;
     };
+	/**
+	* Sets the value of a special term to the left side of constraint and on the constraint object itself.
+	* @param {Object} obj - object must have `name`, `key` and `value` as properties.
+	* @return {YASMIJ.Constraint} - self
+	* @chainable
+	*/
+	Constraint.prototype.setSpecialTerm = function (obj) {
+		if(!obj || typeof obj !== "object" || !obj.name || !obj.key){
+			return this;
+		}
+		this.specialTerms[obj.key] = this.specialTerms[obj.key] || {};
+		var oldName = this.specialTerms[obj.key].name;
+		if(oldName){
+			if(typeof obj.value === "undefined"){
+				// get old value
+				obj.value = this.leftSide.getTermValue( oldName );
+			}
+			// remove old value
+			this.leftSide.removeTerm(oldName);
+		}
+		this.specialTerms[obj.key].name = obj.name;
+		this.leftSide.setTerm(this.specialTerms[obj.key].name, +obj.value);
+		return this;
+	};
     /**
      * Adds a new artifical variable to the constraint.
      * Note: A constraint can only contain one artifical variable.
@@ -263,43 +286,57 @@
      * @example
      */
 	Constraint.prototype.addArtificalVariable = function(val){
-        this.artifical = {
+        this.setSpecialTerm({
+			key : "artifical",
             name: "artifical", 
             value: val
-        };
-        this.leftSide.setTerm( "artifical", val );
+        });
         return this;
     };
-    /**
-    * Updates the value of the slack for the constraint.
-    * @param {String}[optional] name - name of slack variable
-    * @param {Number} val - value of slack variable
-    * @return {YASMIJ.Constraint} self
-    * @chainable
-    */
-    Constraint.prototype.updateSlack = function( name, val){
-        var oldName = (this.slack || {} ).name;
-        if(!val && val !== 0){
-            val = this.leftSide.getTermValue( oldName );
-        }
-        this.slack = { 
-            "name": name || oldName, 
-            "value": val 
-        };
-        this.leftSide.removeTerm( oldName );
-        this.leftSide.addTerm( name||"slack", val );
-        return this;
-    };
+	/**
+	* Returns if a special term 
+	* @param {String} name - name of the special term
+	* @return {Boolean}
+	*/
+	Constraint.prototype.hasSpecialTerm = function(name){
+		return !!this.specialTerms[name];
+	};
+	/**
+	* Renames the slack variable
+	* @param {String} name - new name 
+	* @return {YASMIJ.Constraint} - self
+	* @chainable
+	*/
+	Constraint.prototype.renameSlack = function(name){
+		this.setSpecialTerm({
+			key : "slack",
+            name: name
+        });
+		return this;
+	};
+	/**
+	* Renames the artifical variable
+	* @param {String} name - new name 
+	* @return {YASMIJ.Constraint} - self
+	* @chainable
+	*/
+	Constraint.prototype.renameArtificial = function(name){
+		this.setSpecialTerm({
+			key : "artifical",
+            name: name
+        });
+		return this;
+	};
     /**
     * Converts a constraint to standard maximization form
     * @return {YASMIJ.Constraint} self
-  * @chainable
+    * @chainable
     */
-    Constraint.prototype.convertToStandardMaxForm = function () {
+    Constraint.prototype.convertToEquation = function () {
         this.normalize();
 		switch(this.comparison){
 			case "<=":
-				this.addSlack(1);	
+				this.addSlack(1);
 				break;
 			case ">=":
 				this.addSlack(-1);
@@ -309,6 +346,20 @@
         this.comparison = "=";
         return this;
     };
+	/**
+	* Returns 
+	* @return {Array}
+	*/
+	Constraint.prototype.getSpecialTermNames = function(){
+		var names = [];
+			
+		for(var prop in this.specialTerms){
+			if(this.specialTerms.hasOwnProperty(prop) && this.specialTerms[prop] ){
+				names.push( this.specialTerms[prop].name );
+			}
+		}
+		return names.length ? names : null;
+	};
     /**
     * Multiplies the left and right side of a constraint by a factor
     * @param {Number} factor -
