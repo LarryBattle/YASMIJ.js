@@ -1,8 +1,5 @@
 /*
-* @project {{=it.name}}
 * @author Larry Battle
-* @license {{=it.license.overview}}
-* @date 07/08/2012
 */
 tests.runExpressionTests = function(){
 	module( "YASMIJ.Expression Class: Checking input" );

@@ -2,7 +2,6 @@
 * @project YASMIJ.js, "Yet another simplex method implementation in Javascript"
 * @author Larry Battle
 * @license MIT License <http://www.opensource.org/licenses/mit-license>
-* @version {=it.version}
 */
 // Removes spaces before and after a string.
 String.prototype.trim = String.prototype.trim || function(){

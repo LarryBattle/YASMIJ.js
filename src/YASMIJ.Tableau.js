@@ -2,7 +2,6 @@
 * @project YASMIJ.js, "Yet another simplex method implementation in Javascript"
 * @author Larry Battle
 * @license MIT License <http://www.opensource.org/licenses/mit-license>
-* @date 07/02/2012
 */
 (function(root){
     /**
@@ -49,10 +48,10 @@
         return obj;
     };
     /**
-	* Returns the pivot point of a Tableau
-    * @param {YASMIJ.Matrix} matrix -
-	* @param {Boolean} isMin - true: minimization, false:maximization
-	* @return {Object}
+		* Returns the pivot point of a Tableau
+		* @param {YASMIJ.Matrix} matrix -
+		* @param {Boolean} isMin - true: minimization, false:maximization
+		* @return {Object}
     */
     Tableau.getPivotPoint = function( matrix, isMin ){
         if( !(matrix instanceof YASMIJ.Matrix ) ){
@@ -60,8 +59,8 @@
         }
         var point = {};
         point.column = matrix.getGreatestValueFromLastRow(!!isMin);
-		var obj = matrix.getRowIndexWithPosMinColumnRatio( point.column, true ) || {};
-		point.row = obj.rowIndex;
+				var obj = matrix.getRowIndexWithPosMinColumnRatio( point.column, true ) || {};
+				point.row = obj.rowIndex;
         if( point.column < 0 || point.row < 0 ){
             return null;
         }
@@ -73,24 +72,24 @@
             this.matrix.addRow( constraints[i].getCoefficients( termNames ) );
         }
     };
-	Tableau.prototype.getSortedTermNames = function(){
+		Tableau.prototype.getSortedTermNames = function(){
         var termNames = this.input.getTermNames(true);
         var specialNames = this.input.getAllSpecialTermNames();
-		return YASMIJ.sortArrayWithSubsetAtEnd(termNames, specialNames);
+				return YASMIJ.sortArrayWithSubsetAtEnd(termNames, specialNames);
     };
     /**
      * Appends the objective function to the end of the matrix.
      */
     Tableau.prototype.addZToMatrix = function( termNames ){
-		var b = YASMIJ.Constraint.parse( "0 = " + this.input.z.toString() );
-		b.moveTypeToOneSide("left","right");
-		var row = b.leftSide.getCoefficients(termNames);
-		row = row.concat( b.rightSide.getTermValue("1") );
+				var b = YASMIJ.Constraint.parse( "0 = " + this.input.z.toString() );
+				b.moveTypeToOneSide("left","right");
+				var row = b.leftSide.getCoefficients(termNames);
+				row = row.concat( b.rightSide.getTermValue("1") || 0 );
         this.matrix.addRow( row );
     };
     Tableau.prototype.setMatrixFromInput = function(){
         this.matrix = new YASMIJ.Matrix();
-		this.colNames = this.getSortedTermNames();
+				this.colNames = this.getSortedTermNames();
         this.addConstraintsToMatrix( this.colNames.concat("1") );
         this.addZToMatrix( this.colNames );
     };

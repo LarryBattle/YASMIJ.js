@@ -1,7 +1,5 @@
 /*
-* @project {{=it.name}}
 * @author Larry Battle
-* @license {{=it.license.overview}}
 */
 
 tests.runBaseTests = function(){

@@ -1,8 +1,5 @@
 /*
- * @project {{=it.name}}
  * @author Larry Battle
- * @license {{=it.license.overview}}
- * @date 07/02/2012
  */
 (function(root){
 	var Input = function () {
@@ -122,6 +119,16 @@
 			fn(i, this.constraints[i], this.constraints);
 		}
 	};
+	Input.prototype.getAllArtificalNames = function(){
+		var names = [];
+		this.forEachConstraint(function(i, constraint){
+			var name = constraint.getArtificalName();
+			if(name){
+				names.push( name );
+			}
+		});
+		return names;
+	};
 	Input.prototype.addNumbersToSpecialTerms = function () {
 		var c = this.constraints,
 		slackI = 1,
@@ -208,9 +215,6 @@
 	Input.prototype.convertToStandardForm = function () {
 		if (this.isStandardMode) {
 			return this;
-		}
-		if (/min/.test(this.type)) {
-			this.z = this.z.inverse();
 		}
 		this.convertConstraintsToMaxForm();
 		this.addNumbersToSpecialTerms();

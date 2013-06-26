@@ -1,8 +1,5 @@
 /**
-* @project {{=it.name}}
 * @author Larry Battle
-* @license {{=it.license.overview}}
-* @date 07/08/2012
 */
 (function(YASMIJ){
     /**
@@ -444,6 +441,7 @@
     };
     /**
      * Returns the value of a term
+     * @note undefined is returned if the term doesn't exist.
      * @param {String} name - name of term
      * @returns {Number}
      * @example

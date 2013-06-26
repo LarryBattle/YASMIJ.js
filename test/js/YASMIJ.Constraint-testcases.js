@@ -1,8 +1,5 @@
 /*
-* @project {{=it.name}}
 * @author Larry Battle
-* @license {{=it.license.overview}}
-* @date 07/02/2012
 */
 tests.runConstraintTests = function(){
 	var checkIfSame = function( fn, str, expect ){

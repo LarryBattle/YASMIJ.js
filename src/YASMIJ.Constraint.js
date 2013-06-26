@@ -1,8 +1,5 @@
 /**
- * @project {{=it.name}}
  * @author Larry Battle
- * @license {{=it.license.overview}}
- * @date 07/08/2012
  */
 (function(YASMIJ){
     /**
@@ -346,20 +343,34 @@
         this.comparison = "=";
         return this;
     };
-	/**
-	* Returns 
-	* @return {Array}
-	*/
-	Constraint.prototype.getSpecialTermNames = function(){
-		var names = [];
-			
-		for(var prop in this.specialTerms){
-			if(this.specialTerms.hasOwnProperty(prop) && this.specialTerms[prop] ){
-				names.push( this.specialTerms[prop].name );
+		/**
+		* Returns 
+		* @return {Array}
+		*/
+		Constraint.prototype.getSpecialTermNames = function(){
+			var names = [];
+		
+			for(var prop in this.specialTerms){
+				if(this.specialTerms.hasOwnProperty(prop) && this.specialTerms[prop] ){
+					names.push( this.specialTerms[prop].name );
+				}
 			}
-		}
-		return names.length ? names : null;
-	};
+			return names.length ? names : null;
+		};
+		Constraint.prototype.getSpecialTermValue = function(name){
+			var obj = this.specialTerms[name];
+			if( !obj ){
+				return null;
+			}
+			return this.getCoefficients( [ obj.name ] )[0];
+		};
+		Constraint.prototype.getArtificalName = function(){
+			var obj = this.specialTerms.artifical;
+			if(!obj){
+				return null;
+			}
+			return obj.name;
+		};
     /**
     * Multiplies the left and right side of a constraint by a factor
     * @param {Number} factor -
