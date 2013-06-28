@@ -1,7 +1,7 @@
 /*
  * @author Larry Battle
  */
-(function(root){
+(function (root) {
 	var Input = function () {
 		this.z = null;
 		this.type = null;
@@ -43,65 +43,65 @@
 		return errMsgs;
 	};
 	/**
-	* Returns the problem type.
-	* @note this function assume all the constraints have 
-	* variables on the left and constants on the right.
-	* @return {String}
-	*/
-	Input.prototype.computeType = function(){
-		var hasLessThan = this.doAnyConstrainsHaveRelation( /<=?/ );
-		var hasGreaterThan = this.doAnyConstrainsHaveRelation( />=?/ );		
+	 * Returns the problem type.
+	 * @note this function assume all the constraints have
+	 * variables on the left and constants on the right.
+	 * @return {String}
+	 */
+	Input.prototype.computeType = function () {
+		var hasLessThan = this.doAnyConstrainsHaveRelation(/<=?/);
+		var hasGreaterThan = this.doAnyConstrainsHaveRelation(/>=?/);
 		
-		if( /max/.test( this.type ) ){
+		if (/max/.test(this.type)) {
 			return hasGreaterThan ? YASMIJ.CONST.NONSTANDARD_MAX : YASMIJ.CONST.STANDARD_MAX;
 		}
-		if( /min/.test( this.type ) ){
+		if (/min/.test(this.type)) {
 			return hasLessThan ? YASMIJ.CONST.NONSTANDARD_MIN : YASMIJ.CONST.STANDARD_MIN;
 		}
 	};
 	/**
-	* Checks if any constraints the same comparison.
-	* @param {String|RegExp} comparison
-	* @return {Boolean}
-	*/
-	Input.prototype.doAnyConstrainsHaveRelation = function(comparison){
-		if(!comparison){
+	 * Checks if any constraints the same comparison.
+	 * @param {String|RegExp} comparison
+	 * @return {Boolean}
+	 */
+	Input.prototype.doAnyConstrainsHaveRelation = function (comparison) {
+		if (!comparison) {
 			return false;
 		}
 		comparison = new RegExp(comparison);
-		return this.anyConstraints(function(i, constraint){
+		return this.anyConstraints(function (i, constraint) {
 			return comparison.test(constraint.comparison);
 		});
 	};
 	/**
-	* Checks if all constraints the same comparison.
-	* @param {String|RegExp} comparison
-	* @return {Boolean}
-	*/
-	Input.prototype.doAllConstrainsHaveRelation = function(comparison){
+	 * Checks if all constraints the same comparison.
+	 * @param {String|RegExp} comparison
+	 * @return {Boolean}
+	 */
+	Input.prototype.doAllConstrainsHaveRelation = function (comparison) {
 		comparison = new RegExp(comparison);
-		return this.allConstraints(function(i, constraint){
+		return this.allConstraints(function (i, constraint) {
 			return comparison.test(constraint.comparison);
 		});
 	};
 	/**
-	* Checks if the callback returns a truthy value for any constraints.
-	* @param {Function} fn - callback
-	* @return {Boolean}
-	*/
+	 * Checks if the callback returns a truthy value for any constraints.
+	 * @param {Function} fn - callback
+	 * @return {Boolean}
+	 */
 	Input.prototype.anyConstraints = function (fn) {
 		for (var i = 0, len = this.constraints.length; i < len; i++) {
-			if( fn(i, this.constraints[i], this.constraints) ){
+			if (fn(i, this.constraints[i], this.constraints)) {
 				return true;
 			}
 		}
 		return false;
 	};
 	/**
-	* Checks if the callback returns a truthy value for all constraints.
-	* @param {Function} fn - callback
-	* @return {Boolean}
-	*/
+	 * Checks if the callback returns a truthy value for all constraints.
+	 * @param {Function} fn - callback
+	 * @return {Boolean}
+	 */
 	Input.prototype.allConstraints = function (fn) {
 		var result = true;
 		for (var i = 0, len = this.constraints.length; i < len; i++) {
@@ -110,21 +110,21 @@
 		return result;
 	};
 	/**
-	* Iterates over a the constraints, executing the callback for each element.
-	* @param {Function} fn - callback
-	* @return {Boolean}
-	*/
+	 * Iterates over a the constraints, executing the callback for each element.
+	 * @param {Function} fn - callback
+	 * @return {Boolean}
+	 */
 	Input.prototype.forEachConstraint = function (fn) {
 		for (var i = 0, len = this.constraints.length; i < len; i++) {
 			fn(i, this.constraints[i], this.constraints);
 		}
 	};
-	Input.prototype.getAllArtificalNames = function(){
+	Input.prototype.getAllArtificalNames = function () {
 		var names = [];
-		this.forEachConstraint(function(i, constraint){
+		this.forEachConstraint(function (i, constraint) {
 			var name = constraint.getArtificalName();
-			if(name){
-				names.push( name );
+			if (name) {
+				names.push(name);
 			}
 		});
 		return names;
@@ -138,17 +138,17 @@
 				c[i].renameSlack("slack" + slackI);
 				slackI++;
 			}
-			if(c[i].hasSpecialTerm("artifical")){
-				c[i].renameArtificial("artifical"+artificalI);
+			if (c[i].hasSpecialTerm("artifical")) {
+				c[i].renameArtificial("artifical" + artificalI);
 				artificalI++;
 			}
 		}
 	};
 	/**
-	* Returns a list of term names
-	* @param {Boolean} onlyVariables - only include variables names, no numbers.
-	* @return {Array} list of term names
-	*/
+	 * Returns a list of term names
+	 * @param {Boolean} onlyVariables - only include variables names, no numbers.
+	 * @return {Array} list of term names
+	 */
 	Input.prototype.getTermNames = function (onlyVariables) {
 		var vars = [],
 		i = this.constraints.length;
@@ -157,12 +157,11 @@
 		}
 		return YASMIJ.getUniqueArray(vars).sort();
 	};
-	Input.prototype.getAllSpecialTermNames = function(){
+	Input.prototype.getAllSpecialTermNames = function () {
 		var names = [];
-		this.forEachConstraint(function(i, constraint){
+		this.forEachConstraint(function (i, constraint) {
 			names = names.concat(
-				constraint.getSpecialTermNames()
-			);
+					constraint.getSpecialTermNames());
 		});
 		return names;
 	};
@@ -223,4 +222,5 @@
 		return this;
 	};
 	root.Input = Input;
-}(YASMIJ));
+}
+	(YASMIJ));
