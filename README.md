@@ -1,3 +1,6 @@
+# Note
+Project is retired and not under active development.
+
 # YASMIJ.js 
 
 ## Purpose:
