@@ -8,7 +8,7 @@ String.prototype.trim = String.prototype.trim || function () {
 	return (this || "").replace(/^\s+|\s+$/g, "");
 };
 (function (root) {
-	if (!root.JSON) {
+	if (!global.JSON) {
 		return "JSON is required. Please update your browser or JS engine.";
 	}
 	// Singleton to everything
@@ -121,5 +121,4 @@ String.prototype.trim = String.prototype.trim || function () {
 		return YASMIJ.Simplex.solve(input);
 	};
 	root.YASMIJ = YASMIJ;
-    return YASMIJ;
-}((module && module.exports && global) || this));
+}((module && module.exports) || this));
