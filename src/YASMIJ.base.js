@@ -121,4 +121,5 @@ String.prototype.trim = String.prototype.trim || function () {
 		return YASMIJ.Simplex.solve(input);
 	};
 	root.YASMIJ = YASMIJ;
+    return YASMIJ;
 }((module && module.exports && global) || this));
