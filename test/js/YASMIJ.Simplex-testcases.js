@@ -20,10 +20,10 @@ tests.runSimplexTests = function () {
 		];
 		var problem = new YASMIJ.Simplex();
 		problem.setInput(input);
-		
+
 		equal(problem.input.raw.z, input.z);
 		deepEqual(problem.input.raw.constraints, input.constraints);
-		
+
 		// deepEqual( problem.input.z.valueOf(), [1,2,-1] );
 		// deepEqual( problem.input.constraints.valueOf(), [
 		// [2,1,1,"<=",14],[4,2,3,"<=",28],[2,5,5,"<=",30]

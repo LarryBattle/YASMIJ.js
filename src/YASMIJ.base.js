@@ -75,7 +75,7 @@ String.prototype.trim = String.prototype.trim || function () {
 		}
 		return list.sort().concat(subset.sort());
 	};
-	
+
 	/**
 	 * Checks to see if two objects are identical.
 	 * @param {Object} obj1 -
@@ -121,5 +121,4 @@ String.prototype.trim = String.prototype.trim || function () {
 		return YASMIJ.Simplex.solve(input);
 	};
 	root.YASMIJ = YASMIJ;
-}
-	(this));
+}((module && module.exports && global) || this));
