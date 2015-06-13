@@ -1,7 +1,7 @@
 # Note
 Project is retired and not under active development.
 
-# YASMIJ.js 
+# YASMIJ.js
 
 ## Purpose:
 YASMIJ stands for `Yet Another Simplex Method Library for Javascript`.<br/>
@@ -9,8 +9,9 @@ The purpose of this project is to provide a simple Simplex Method library for Ja
 The simplex method is a popular algorithm for linear programming.<br/>
 It is used to solve optimization by using of artifical variables and/or branch and bound.<br/>
 
-<b>Note</b>: <br/>
-Yasmij.js is a small side project that I work on in my spare time.<br/>
+<b>Notes</b>: <br/>
+- Yasmij.js is a small side project that I work on in my spare time.
+- CommonJS bundlers will place a global YASMIJ onto the window
 Please feel free to contribute.
 
 ## Version
@@ -20,18 +21,8 @@ BETA 0.2.5 - (unstable)
 None
 
 ## Installation
-<del>Just include `lib\yasmij.js`</del>
-Include all the javascript files in source.
-
-	<!-- Source Files -->
-	<script src="./src/YASMIJ.base.js"></script>
-	<script src="./src/YASMIJ.Expression.js"></script>
-	<script src="./src/YASMIJ.Constraint.js"></script>
-	<script src="./src/YASMIJ.Input.js"></script>
-	<script src="./src/YASMIJ.Matrix.js"></script>
-	<script src="./src/YASMIJ.Tableau.js"></script>
-	<script src="./src/YASMIJ.Output.js"></script>
-	<script src="./src/YASMIJ.Simplex.js"></script>
+- `require('yasmij')`, or
+- include `<script src="./dist/yasmij.js"></script>` from this repo
 
 ## Environment
 Run the test cases to determine support.<br/>
@@ -39,7 +30,7 @@ In general, yasmij.js should be supported in Javascript ES5 environments.<br/>
 Ex. Chrome 10+, Firefox 12+, IE9+ and Node.js<br/>
 <br/>
 
-## Documentation 
+## Documentation
 Refer to the `docs` folder
 
 Please read the test cases to understand how everything works.
@@ -54,7 +45,7 @@ Please raise a ticket for help.
 
 	Maximize x1 + 2x2 - x3
 
-	Subject to 
+	Subject to
 	2x1 + x2 + x3 <= 14,
 	4x1 + 2x2 + 3x3 <= 28,
 	2x1 + 5x2 + 5x3 <= 30
@@ -73,11 +64,11 @@ Please raise a ticket for help.
 		]
 	};
 	var output = YASMIJ.solve( input );
-	
+
 <b>Output</b><br/>
 
 	JSON.stringify(output, null, 2)
-	// returns 
+	// returns
 	"{
 	  "result": {
 		"slack1": 0,
@@ -92,7 +83,7 @@ Please raise a ticket for help.
 
 
 ## Roadmap
-### Version 0.3: 
+### Version 0.3:
 - Add support for Minimization (Standard and Non-standard)<br/>
 - Add documentation.<br/>
 - Add build script<br/>

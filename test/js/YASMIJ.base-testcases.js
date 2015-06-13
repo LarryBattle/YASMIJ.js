@@ -4,7 +4,7 @@
 
 tests.runBaseTests = function () {
 	module("YASMIJ.base Class");
-	
+
 	test("test YASMIJ.CONST", function () {
 		var x = YASMIJ.CONST;
 		ok(x);
@@ -36,7 +36,7 @@ tests.runBaseTests = function () {
 	});
 	// remove when maximization is fully implemented.
 	return;
-	
+
 	test("test YASMIJ.solve() with non-standard maximization", function () {
 		var fn = function (input) {
 			return (YASMIJ.solve(input) || {}).result;
@@ -109,7 +109,7 @@ tests.runBaseTests = function () {
 		var fn = YASMIJ.convertArrayValuesToHashMap;
 		deepEqual(fn(), {});
 		deepEqual(fn([]), {});
-		
+
 		deepEqual(fn([1]), {
 			1 : 1
 		});
@@ -126,7 +126,7 @@ tests.runBaseTests = function () {
 		var fn = YASMIJ.sortArrayWithSubsetAtEnd;
 		deepEqual(fn(), []);
 		deepEqual(fn([], []), []);
-		
+
 		deepEqual(fn([1, 2, 3], [5, 6]), [1, 2, 3, 5, 6]);
 		deepEqual(fn([1, 2, 3, 4, 5, 6], [2, 3]), [1, 4, 5, 6, 2, 3]);
 		deepEqual(fn(["a", "b", "c", "d", "e"], ["a", "b"]), ["c", "d", "e", "a", "b"]);
