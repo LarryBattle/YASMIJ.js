@@ -1,5 +1,8 @@
 # Release notes for YASMIJ.js
 
+## __Version: 0.2.6__ (June 12, 2015)
+- Make CommonJs compatible
+
 ## __Version: 0.2.5__ (May 9, 2013)
 - Updated README.md
 - Renamed a few files

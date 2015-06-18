@@ -5,7 +5,7 @@ tests.runConstraintTests = function () {
 	var checkIfSame = function (fn, str, expect) {
 		var result = fn(str),
 		errMsg = "`" + str + "` failed to match object.";
-		
+
 		if (YASMIJ.areObjectsSame(result, expect)) {
 			ok(true);
 		} else {
@@ -22,34 +22,34 @@ tests.runConstraintTests = function () {
 		equal(fn("a < b"), false);
 		equal(fn("a > b"), false);
 		equal(fn("a = b"), false);
-		
+
 		equal(fn("a >= b"), false);
 		equal(fn("a <= b"), false);
-		
+
 		equal(fn("a = < b"), true);
 		equal(fn("a => b"), true);
 	});
 	test("test YASMIJ.Constraint.hasManyCompares() with many compares", function () {
 		var fn = YASMIJ.Constraint.hasManyCompares;
 		equal(fn("a << b"), true);
-		
+
 		equal(fn("a < < b"), true);
 		equal(fn("a >> b"), true);
 		equal(fn("a > > b"), true);
-		
+
 		equal(fn("a == b"), true);
 		equal(fn("a = = b"), true);
 		equal(fn("a >=>= b"), true);
-		
+
 		equal(fn("a <=<= b"), true);
 		equal(fn("a > b > c"), true);
 		equal(fn("a > b < c"), true);
-		
+
 		equal(fn("a < b < c"), true);
 	});
 	test("test YASMIJ.Constraint.hasIncompleteBinaryOperator() with valid expressions.", function () {
 		var fn = YASMIJ.Constraint.hasIncompleteBinaryOperator;
-		
+
 		equal(fn("+a - b"), false);
 		equal(fn("a + b"), false);
 		equal(fn("a < b"), false);
@@ -62,7 +62,7 @@ tests.runConstraintTests = function () {
 	});
 	test("test YASMIJ.Constraint.hasIncompleteBinaryOperator() with invalid expressions.", function () {
 		var fn = YASMIJ.Constraint.hasIncompleteBinaryOperator;
-		
+
 		equal(fn("a b"), true);
 		equal(fn("a b > c"), true);
 		equal(fn("a + b < c d"), true);
@@ -82,30 +82,30 @@ tests.runConstraintTests = function () {
 	test("test YASMIJ.Constraint.getErrorMessage() with valid input.", function () {
 		var fn = YASMIJ.Constraint.getErrorMessage,
 		x;
-		
+
 		equal(fn("a < c"), x);
 		equal(fn("a > c"), x);
 		equal(fn("a <= c"), x);
-		
+
 		equal(fn("a >= c"), x);
 		equal(fn("a = c"), x);
 		equal(fn("a < c + 12"), x);
-		
+
 		equal(fn("a - 3 > c"), x);
 		equal(fn("12 + 2 <= c"), x);
 		equal(fn("2 >= 1"), x);
-		
+
 		equal(fn("13 = 13"), x);
 	});
 	test("test YASMIJ.Constraint.checkInput() will throw an error when YASMIJ.Constraint.getErrorMessage returns a message.", function () {
 		var fn = YASMIJ.Constraint.checkInput,
 		args = "error",
 		oldFn = YASMIJ.Constraint.getErrorMessage;
-		
+
 		YASMIJ.Constraint.getErrorMessage = function () {
 			return args;
 		};
-		
+
 		try {
 			raises(function () {
 				fn();
@@ -118,7 +118,7 @@ tests.runConstraintTests = function () {
 	test("test YASMIJ.Constraint.parseToObject() with valid expressions", function () {
 		var fn = YASMIJ.Constraint.parseToObject,
 		x = fn("10x1 -2x2 - 10");
-		
+
 		var y = {
 			rhs : {
 				terms : {
@@ -134,14 +134,14 @@ tests.runConstraintTests = function () {
 			},
 			comparison : "="
 		};
-		
+
 		deepEqual(x.rhs.terms, y.rhs.terms);
 		deepEqual(x.lhs.terms, y.lhs.terms);
 		deepEqual(x.comparison, y.comparison);
 	});
 	test("test YASMIJ.Constraint.parseToObject() with different compares", function () {
 		var fn = YASMIJ.Constraint.parseToObject;
-		
+
 		checkIfSame(fn, "2a + 3b <= 30", {
 			lhs : {
 				terms : {
@@ -236,7 +236,7 @@ tests.runConstraintTests = function () {
 			return YASMIJ.Constraint.parse(str);
 		},
 		x = fn("2x1 + x2 + x3 <= 14");
-		
+
 		deepEqual(x.leftSide.toString(), "2x1 + x2 + x3");
 		deepEqual(x.rightSide.toString(), "14");
 		deepEqual(x.comparison.toString(), "<=");
@@ -255,14 +255,14 @@ tests.runConstraintTests = function () {
 		var checkSwapped = function (str) {
 			var obj = YASMIJ.Constraint.parse(str),
 			sideObj = fn(str, true);
-			
+
 			equal(obj.leftSide.toString(), sideObj.b.toString(), "checkSwapped(): " + str + ", leftSide(swapped side) should be side.b");
 			equal(obj.rightSide.toString(), sideObj.a.toString(), "checkSwapped(): " + str + ", rightSide(swapped side) should be side.a");
 		};
 		var checkNotSwapped = function (str) {
 			var obj = YASMIJ.Constraint.parse(str),
 			sideObj = fn(str);
-			
+
 			equal(obj.leftSide.toString(), sideObj.a.toString(), "checkNotSwapped(): " + str + ", leftSide(same side) should be side.a");
 			equal(obj.rightSide.toString(), sideObj.b.toString(), "checkNotSwapped(): " + str + ", rightSide(same side) should be side.b");
 		};
@@ -278,14 +278,14 @@ tests.runConstraintTests = function () {
 		var fn = function (str, doSwap) {
 			var obj = YASMIJ.Constraint.parse(str),
 			sides = obj.getSwappedSides(doSwap);
-			
+
 			YASMIJ.Constraint.switchSides(sides.a, sides.b, sides.a.forEachTerm);
 			return obj;
 		};
 		result = fn("x = y");
 		equal("0", result.leftSide.toString());
 		equal("-x + y", result.rightSide.toString());
-		
+
 		result = fn("x + 4 + 2 = y + c + 3c");
 		equal("0", result.leftSide.toString());
 		equal("4c - x + y - 6", result.rightSide.toString());
@@ -308,7 +308,7 @@ tests.runConstraintTests = function () {
 		equal(fn(str, "left", null), "a <= 30");
 		equal(fn(str, null, "right"), "a <= 30");
 		equal(fn(str, "left", "right"), "a <= 30");
-		
+
 		equal(fn(str, "right", null), "0 <= -a + 30");
 		equal(fn(str, null, "left"), "a - 30 <= 0");
 		equal(fn(str, "right", "left"), "-30 <= -a");
@@ -321,7 +321,7 @@ tests.runConstraintTests = function () {
 		equal(fn(str, "left", null), "-4b + c + d <= 32");
 		equal(fn(str, "right", null), "0 <= 4b - c - d + 32");
 		equal(fn(str, "left", "right"), "-4b + c + d <= 32");
-		
+
 		equal(fn(str, null, "right"), "a + b + d <= a + 5b - c + 32");
 		equal(fn(str, null, "left"), "a + b + d - 32 <= a + 5b - c");
 		equal(fn(str, "right", "left"), "-32 <= 4b - c - d");
@@ -362,7 +362,7 @@ tests.runConstraintTests = function () {
 				key : "ok",
 				value : "1"
 			}).toString(), "a + ok = 3", "setups a special term");
-		
+
 		var x = fn("a = 3", {
 				name : "ok",
 				key : "ok",

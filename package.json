@@ -1,17 +1,32 @@
 {
-	"name" : "YASMIJ",
-	"description" : "Yet another simplex method library for javascript",
-	"version" : "0.2.5",
-	"author" : "Larry Battle <http://bateru.com/news/contact-me>",
-	"homepage" : "https://github.com/LarryBattle/YASMIJ.js/",
-	"license" : "MIT",
-	"main" : "./src/yasmij.js",
-	"keywords" : ["Simplex method", "LPP", "Linear Algebra", "Operation Research", "numbers", "Math"],
-	"repository" : {
-		"type" : "git",
-		"url" : "https://github.com/LarryBattle/yasmig.js.git"
-	},
-	"engines" : {
-		"node" : "*"
-	}
+  "name": "yasmij",
+  "description": "Yet another simplex method library for javascript",
+  "version": "0.2.6",
+  "author": "Larry Battle <http://bateru.com/news/contact-me>",
+  "homepage": "https://github.com/LarryBattle/YASMIJ.js/",
+  "license": "MIT",
+  "main": "./index.js",
+  "keywords": [
+    "Simplex method",
+    "LPP",
+    "Linear Algebra",
+    "Operation Research",
+    "numbers",
+    "Math"
+  ],
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/LarryBattle/yasmij.js.git"
+  },
+  "engines": {
+    "node": "*"
+  },
+  "devDependencies": {
+    "browserify": "^10.2.4",
+    "precommit-hook": "^2.0.1"
+  },
+  "pre-commit": ["build"],
+  "scripts": {
+    "build": "browserify index.js --standalone YASMIJ -o dist/yasmij.js"
+  }
 }

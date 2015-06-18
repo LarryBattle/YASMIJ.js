@@ -22,7 +22,7 @@ tests.runInputTests = function () {
 		};
 		equal(func("a", ["a < 1", "b < 3"]), "");
 		equal(func("c + d", ["c < 1", "d < 1"]), "");
-		
+
 		equal(func("a", ["b < 3"]), "a");
 		equal(func("c + d", ["c < 1"]), "d");
 	});
@@ -32,10 +32,10 @@ tests.runInputTests = function () {
 		};
 		ok(func("a", ["a < 1", "b < 3"]));
 		ok(func("c + d", ["d < 1"]));
-		
+
 	});
 	test("test YASMIJ.Input.prototype.convertConstraintsToMaxForm", function () {
-		
+
 		var func = function (str) {
 			var obj = {
 				constraints : [YASMIJ.Constraint.parse(str)]
@@ -82,7 +82,7 @@ tests.runInputTests = function () {
 					"4x1+2x2+3x3<=28",
 					"2x1+5x2+5x3<=30"
 				]), ["x1", "x2", "x3", "14", "28", "30"].sort().join(", "));
-		
+
 		equal(func("x1 + 2x2 - x3", [
 					"2x1+x2+x3 <= 14",
 					"4x1+2x2+3x3<=28",
@@ -117,7 +117,7 @@ tests.runInputTests = function () {
 					"a > 14",
 					"a + b >= 28"
 				], /^>=$/), true);
-		
+
 		equal(fn([
 					"a < 14",
 					"a + b <= 28"
@@ -140,7 +140,7 @@ tests.runInputTests = function () {
 					"a < 14",
 					"a + b <= 28"
 				], /^<$/), false);
-		
+
 		equal(fn([
 					"a > 14",
 					"a + b > 28"
@@ -169,7 +169,7 @@ tests.runInputTests = function () {
 					"a < 14",
 					"a + b < 28"
 				]), t.STANDARD_MAX);
-		
+
 		// non-standard
 		equal(fn("maximize", [
 					"a > 14",
@@ -198,7 +198,7 @@ tests.runInputTests = function () {
 					"a > 14",
 					"a + b > 28"
 				]), t.STANDARD_MIN);
-		
+
 		equal(fn("minimize", [
 					"a > 14",
 					"a + b < 28"
