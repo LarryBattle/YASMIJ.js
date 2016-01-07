@@ -10,10 +10,6 @@ String.prototype.trim = String.prototype.trim || function () {
     return (this || '').replace(/^\s+|\s+$/g, '');
 };
 
-if (!JSON) {
-    return 'JSON is required. Please update your browser or JS engine.';
-}
-
 module.exports = _YASMIJ || (function() {
     var YASMIJ = {};
     // Holds the constants
