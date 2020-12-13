@@ -1,6 +1,8 @@
 # Note
 Project is retired and not under active development.
 
+PROJECT IS BUGGY. DON'T USE IT.
+
 # YASMIJ.js
 
 ## Purpose:
